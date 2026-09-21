@@ -9,7 +9,12 @@ declare( strict_types = 1 );
 
 namespace RCP_Stripe_Sepa;
 
+use RCP_Stripe_Sepa\Admin\DiagnosticsPage;
+use RCP_Stripe_Sepa\Admin\MembershipMandate;
+use RCP_Stripe_Sepa\Admin\SiteHealth;
 use RCP_Stripe_Sepa\Compat\RcpEnvironment;
+use RCP_Stripe_Sepa\Email\Notifications;
+use RCP_Stripe_Sepa\Frontend\MandateDetails;
 use RCP_Stripe_Sepa\Compat\RequirementsNotice;
 use RCP_Stripe_Sepa\Gateway\Registrar;
 use RCP_Stripe_Sepa\Migration\AccountPage;
@@ -109,6 +114,14 @@ final class Plugin {
 		Registrar::register();
 		AccountPage::register();
 		AjaxController::register();
+		MandateDetails::register();
+		Notifications::register();
+
+		if ( is_admin() ) {
+			DiagnosticsPage::register();
+			SiteHealth::register();
+			MembershipMandate::register();
+		}
 
 		add_action( 'rest_api_init', array( Endpoint::class, 'register' ) );
 		add_action( 'admin_init', array( EventStore::class, 'install' ) );

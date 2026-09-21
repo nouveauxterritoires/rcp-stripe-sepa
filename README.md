@@ -5,14 +5,16 @@
 Plugin WordPress ajoutant le prélèvement automatique SEPA comme moyen de paiement dans Restrict
 Content Pro, qui n'intègre nativement que la carte bancaire via Stripe.
 
-> **État du projet : jalons J1, J3, J4 et J6 livrés.**
+> **État du projet : jalons J1, J3, J4, J6 et J7 livrés.**
 > La passerelle `stripe_sepa` s'enregistre auprès de RCP et coexiste avec la passerelle carte
 > native. Le formulaire collecte le mandat dans un Stripe Element, l'inscription crée l'intention
 > SEPA et laisse l'adhésion en attente, et le point de terminaison des webhooks décide de son
 > activation. 255 tests, 85 % de couverture.
 > Un adhérent peut basculer son adhésion de la carte vers le prélèvement SEPA depuis « Mon compte »,
 > sans changement de prix ni de date d'échéance. 305 tests, 85 % de couverture.
-> Restent à livrer : les écrans d'administration (J7), les e-mails transactionnels et les tests E2E.
+> Un écran de diagnostic, l'affichage des mandats et les e-mails transactionnels complètent
+> l'ensemble. 378 tests, 84 % de couverture.
+> Restent à livrer : l'internationalisation complète et les tests de bout en bout.
 
 ## Documentation
 
@@ -26,6 +28,7 @@ Content Pro, qui n'intègre nativement que la carte bancaire via Stripe.
 | [Traitement des webhooks](docs/webhooks-traitement.md) | Chemin d'une requête, codes de réponse, idempotence, machine à états |
 | [Passerelle SEPA](docs/passerelle-sepa.md) | Inscription, intentions, mandat, et écarts assumés avec la passerelle carte |
 | [Migration carte vers SEPA](docs/migration-carte-vers-sepa.md) | Éligibilité, contrôles d'accès, invariants de prix et d'échéance |
+| [Exploitation](docs/exploitation.md) | Diagnostic, adhésion en attente, impayés, litiges, e-mails |
 | [SECURITY.md](SECURITY.md) | Politique de sécurité et checklist de revue |
 
 ## Fonctionnalités visées

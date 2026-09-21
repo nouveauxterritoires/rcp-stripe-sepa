@@ -68,6 +68,13 @@ class Event extends StripeObject {
 
 	/** @var bool */
 	public $livemode;
+
+	/**
+	 * @param string|array $id      Identifiant.
+	 * @param array        $options Options de requête.
+	 * @return \Stripe\Event
+	 */
+	public static function retrieve( $id, $options = null ) {}
 }
 
 /**

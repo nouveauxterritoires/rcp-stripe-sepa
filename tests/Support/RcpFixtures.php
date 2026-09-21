@@ -108,6 +108,25 @@ trait RcpFixtures {
 	}
 
 	/**
+	 * Crée un administrateur habilité à gérer Restrict Content Pro.
+	 *
+	 * RCP attribue ses capacités lors de son activation, qui ne se produit pas
+	 * dans le harnais de tests : un simple administrateur WordPress n'a donc
+	 * pas `rcp_manage_settings`.
+	 *
+	 * @return int
+	 */
+	protected function create_rcp_admin(): int {
+		$user_id = (int) self::factory()->user->create( array( 'role' => 'administrator' ) );
+
+		$user = get_userdata( $user_id );
+		$user->add_cap( 'rcp_manage_settings' );
+		$user->add_cap( 'rcp_view_members' );
+
+		return $user_id;
+	}
+
+	/**
 	 * Crée le client RCP d'un utilisateur, ou renvoie celui qui existe déjà.
 	 *
 	 * @param int $user_id Utilisateur WordPress.

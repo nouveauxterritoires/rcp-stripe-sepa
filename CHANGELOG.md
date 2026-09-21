@@ -6,6 +6,17 @@ Versionnement : [SemVer](https://semver.org/lang/fr/).
 ## [Non publié]
 
 ### Ajouté
+- Écran « Restrict › Prélèvement SEPA » : état de la configuration, URL du point de terminaison,
+  vingt derniers événements reçus et rejeu manuel de l'un d'eux.
+- Rejeu d'événement relisant la charge utile auprès de Stripe plutôt qu'une copie locale, avec
+  contrôle de cohérence du mode.
+- Remontée des anomalies dans « Outils › Santé du site ».
+- Affichage du mandat sur la fiche d'adhésion, avec liens vers le tableau de bord Stripe dans le
+  mode courant, et sur la page « Mon compte » de l'adhérent.
+- E-mails transactionnels propres au prélèvement : attente, refus, nouveau mandat, et alertes
+  d'administration pour les litiges et les événements abandonnés. L'encaissement réussi n'envoie
+  rien, RCP émettant déjà son e-mail d'activation.
+- Guide d'exploitation (`docs/exploitation.md`).
 - Bascule d'une adhésion de la carte vers le prélèvement SEPA, depuis « Mon compte » : bouton dans
   les actions de l'adhésion, formulaire de mandat, et application immédiate — un SetupIntent SEPA
   aboutit sans délai, aucun fonds ne circulant.

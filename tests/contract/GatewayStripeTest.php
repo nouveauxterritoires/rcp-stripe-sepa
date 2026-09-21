@@ -19,6 +19,7 @@ use RCP_Stripe_Sepa\Gateway\Gateway;
 use RCP_Stripe_Sepa\Gateway\SignupProcessor;
 use RCP_Stripe_Sepa\Membership\StateMachine;
 use RCP_Stripe_Sepa\Support\StripeSdk;
+use RCP_Stripe_Sepa\Tests\Support\RcpFixtures;
 use WP_UnitTestCase;
 
 /**
@@ -27,6 +28,8 @@ use WP_UnitTestCase;
  * @group contract
  */
 final class GatewayStripeTest extends WP_UnitTestCase {
+
+	use RcpFixtures;
 
 	/**
 	 * Clé secrète acceptée par stripe-mock.
@@ -83,6 +86,13 @@ final class GatewayStripeTest extends WP_UnitTestCase {
 	 */
 	private $level_id = 0;
 
+	/**
+	 * Clé d'abonnement, unique par test.
+	 *
+	 * @var string
+	 */
+	private $subscription_key = '';
+
 	public function set_up(): void {
 		parent::set_up();
 
@@ -109,7 +119,7 @@ final class GatewayStripeTest extends WP_UnitTestCase {
 
 		$this->skip_unless_mock_reachable();
 
-		$this->create_membership();
+		$this->create_membership_with_payment();
 	}
 
 	public function tear_down(): void {
@@ -152,46 +162,35 @@ final class GatewayStripeTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Crée une adhésion et son paiement.
+	 * Crée une adhésion et son enregistrement de paiement.
 	 *
 	 * @return void
 	 */
-	private function create_membership(): void {
+	private function create_membership_with_payment(): void {
 		global $rcp_payments_db;
 
-		$this->user_id     = (int) self::factory()->user->create( array( 'user_email' => 'membre@example.test' ) );
-		$this->customer_id = (int) rcp_add_customer( array( 'user_id' => $this->user_id ) );
-		$this->level_id    = (int) rcp_add_membership_level(
-			array(
-				'name'          => 'Mensuel',
-				'price'         => 10,
-				'duration'      => 1,
-				'duration_unit' => 'month',
-				'status'        => 'active',
-			)
-		);
+		$this->subscription_key = 'key_' . wp_generate_password( 12, false );
+		$this->user_id          = $this->create_user();
+		$this->customer_id      = $this->create_customer( $this->user_id );
+		$this->level_id         = $this->create_level();
 
-		$this->membership_id = (int) rcp_add_membership(
+		$this->membership_id = $this->create_membership(
 			array(
+				'user_id'          => $this->user_id,
 				'customer_id'      => $this->customer_id,
 				'object_id'        => $this->level_id,
-				'object_type'      => 'membership',
 				'status'           => 'pending',
 				'gateway'          => Gateway::GATEWAY_ID,
-				'subscription_key' => 'key_contract',
-				'auto_renew'       => 1,
+				'subscription_key' => $this->subscription_key,
 				'expiration_date'  => gmdate( 'Y-m-d 23:59:59', strtotime( '+1 month' ) ),
 			)
 		);
 
-		$this->assertGreaterThan( 0, $this->membership_id );
-		$this->assertInstanceOf( 'WP_User', get_userdata( $this->user_id ) );
-
-		$this->payment_id = (int) $rcp_payments_db->insert(
+		$payment = $rcp_payments_db->insert(
 			array(
 				'subscription'     => 'Mensuel',
 				'object_id'        => $this->level_id,
-				'subscription_key' => 'key_contract',
+				'subscription_key' => $this->subscription_key,
 				'amount'           => 10,
 				'user_id'          => $this->user_id,
 				'customer_id'      => $this->customer_id,
@@ -200,6 +199,10 @@ final class GatewayStripeTest extends WP_UnitTestCase {
 				'gateway'          => Gateway::GATEWAY_ID,
 			)
 		);
+
+		$this->assertNotWPError( $payment, 'Création de paiement' );
+
+		$this->payment_id = (int) $payment;
 
 		$this->assertGreaterThan( 0, $this->payment_id );
 	}
@@ -224,7 +227,7 @@ final class GatewayStripeTest extends WP_UnitTestCase {
 				'length'                  => 1,
 				'length_unit'             => 'month',
 				'fee'                     => 0,
-				'key'                     => 'key_contract',
+				'key'                     => $this->subscription_key,
 				'subscription_id'         => $this->level_id,
 				'subscription_name'       => 'Mensuel',
 				'auto_renew'              => true,

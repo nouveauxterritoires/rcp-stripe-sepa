@@ -6,6 +6,15 @@ Versionnement : [SemVer](https://semver.org/lang/fr/).
 ## [Non publié]
 
 ### Ajouté
+- Bascule d'une adhésion de la carte vers le prélèvement SEPA, depuis « Mon compte » : bouton dans
+  les actions de l'adhésion, formulaire de mandat, et application immédiate — un SetupIntent SEPA
+  aboutit sans délai, aucun fonds ne circulant.
+- Prix et date de prochaine échéance préservés, invariants vérifiés sur un compte Stripe réel.
+- Quatre contrôles d'accès par requête : session, nonce, propriété de l'adhésion et rattachement de
+  l'intention au client Stripe. Une adhésion inexistante et une adhésion d'autrui produisent le même
+  message, pour empêcher toute énumération.
+- Règles d'éligibilité isolées dans une classe purement fonctionnelle, entièrement couverte.
+- Fabrique de données de test partagée, remplaçant la duplication de cinq jeux de fixtures.
 - Passerelle de paiement `stripe_sepa`, dérivée de la passerelle Stripe de RCP, coexistant avec la
   passerelle carte native sur le même site et avec les mêmes clés API.
 - Formulaire de collecte du mandat : Stripe Element pour l'IBAN, nom du titulaire, texte de mandat
@@ -60,6 +69,11 @@ Versionnement : [SemVer](https://semver.org/lang/fr/).
   désormais l'outillage et les tests.
 
 ### Corrigé
+- `rcp_subscription_details_action_links` est une action et non un filtre : le bouton de migration
+  n'apparaissait pas. Les tests appelaient `apply_filters()` et validaient donc l'hypothèse plutôt
+  que la réalité ; ils empruntent désormais le même chemin que le gabarit de RCP.
+- `AccountPage` déréférençait le client RCP sans vérifier son existence, ce qui aurait produit une
+  erreur fatale pour un utilisateur sans client.
 - La passerelle déclare les trois propriétés que RCP affecte sans les déclarer : PHP 8.2 dépréciait
   leur création dynamique à chaque inscription.
 - Les abonnements sont créés avec `items[].price` et non le paramètre `plan`, déprécié et refusé par

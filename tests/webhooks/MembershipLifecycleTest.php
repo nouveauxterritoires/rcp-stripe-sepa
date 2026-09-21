@@ -35,7 +35,7 @@ final class MembershipLifecycleTest extends WP_UnitTestCase {
 	}
 
 	public function test_l_adhesion_est_resolue_par_les_metadonnees(): void {
-		$membership_id = $this->create_membership();
+		$membership_id = $this->create_sepa_membership();
 
 		$event = $this->event(
 			'payment_intent.succeeded',
@@ -51,7 +51,7 @@ final class MembershipLifecycleTest extends WP_UnitTestCase {
 	}
 
 	public function test_un_prelevement_abouti_active_l_adhesion(): void {
-		$membership_id = $this->create_membership( 0, StateMachine::MEMBERSHIP_PENDING );
+		$membership_id = $this->create_sepa_membership( 0, StateMachine::MEMBERSHIP_PENDING );
 
 		$this->send(
 			$this->event(
@@ -68,7 +68,7 @@ final class MembershipLifecycleTest extends WP_UnitTestCase {
 
 	public function test_un_prelevement_en_cours_laisse_l_adhesion_en_attente(): void {
 		// RG-01 : aucun accès au contenu avant encaissement effectif.
-		$membership_id = $this->create_membership( 0, StateMachine::MEMBERSHIP_PENDING );
+		$membership_id = $this->create_sepa_membership( 0, StateMachine::MEMBERSHIP_PENDING );
 
 		$this->send(
 			$this->event(
@@ -87,7 +87,7 @@ final class MembershipLifecycleTest extends WP_UnitTestCase {
 	}
 
 	public function test_un_premier_prelevement_refuse_resilie_l_adhesion(): void {
-		$membership_id = $this->create_membership( 0, StateMachine::MEMBERSHIP_PENDING );
+		$membership_id = $this->create_sepa_membership( 0, StateMachine::MEMBERSHIP_PENDING );
 
 		$this->send(
 			$this->event(
@@ -106,7 +106,7 @@ final class MembershipLifecycleTest extends WP_UnitTestCase {
 	}
 
 	public function test_un_renouvellement_refuse_laisse_l_adhesion_active(): void {
-		$membership_id = $this->create_membership( 0, StateMachine::MEMBERSHIP_ACTIVE );
+		$membership_id = $this->create_sepa_membership( 0, StateMachine::MEMBERSHIP_ACTIVE );
 
 		$this->send(
 			$this->event(
@@ -127,7 +127,7 @@ final class MembershipLifecycleTest extends WP_UnitTestCase {
 	public function test_les_evenements_arrives_dans_le_desordre_ne_retrogradent_pas_l_adhesion(): void {
 		// I-3 : un « processing » livré après un « succeeded » ne doit pas
 		// refermer un accès déjà accordé.
-		$membership_id = $this->create_membership( 0, StateMachine::MEMBERSHIP_PENDING );
+		$membership_id = $this->create_sepa_membership( 0, StateMachine::MEMBERSHIP_PENDING );
 		$metadata      = array( 'metadata' => array( 'rcp_membership_id' => (string) $membership_id ) );
 
 		$this->send( $this->event( 'payment_intent.succeeded', $metadata ) );
@@ -147,7 +147,7 @@ final class MembershipLifecycleTest extends WP_UnitTestCase {
 		 *
 		 * @see docs/environnement-stripe-test.md §4.4
 		 */
-		$membership_id = $this->create_membership( 0, StateMachine::MEMBERSHIP_PENDING );
+		$membership_id = $this->create_sepa_membership( 0, StateMachine::MEMBERSHIP_PENDING );
 
 		$event = $this->event(
 			'invoice.payment_failed',
@@ -170,7 +170,7 @@ final class MembershipLifecycleTest extends WP_UnitTestCase {
 	}
 
 	public function test_un_veritable_impaye_resilie_l_adhesion(): void {
-		$membership_id = $this->create_membership( 0, StateMachine::MEMBERSHIP_PENDING );
+		$membership_id = $this->create_sepa_membership( 0, StateMachine::MEMBERSHIP_PENDING );
 
 		$this->send(
 			$this->event(
@@ -192,7 +192,7 @@ final class MembershipLifecycleTest extends WP_UnitTestCase {
 	}
 
 	public function test_un_litige_revoque_l_adhesion(): void {
-		$membership_id = $this->create_membership( 0, StateMachine::MEMBERSHIP_ACTIVE );
+		$membership_id = $this->create_sepa_membership( 0, StateMachine::MEMBERSHIP_ACTIVE );
 
 		$this->send(
 			$this->event(
@@ -212,7 +212,7 @@ final class MembershipLifecycleTest extends WP_UnitTestCase {
 	}
 
 	public function test_l_adhesion_est_resolue_par_l_abonnement_stripe(): void {
-		$membership_id = $this->create_membership( 0, StateMachine::MEMBERSHIP_PENDING );
+		$membership_id = $this->create_sepa_membership( 0, StateMachine::MEMBERSHIP_PENDING );
 		$membership    = $this->reload_membership( $membership_id );
 
 		$event = $this->event(
@@ -234,7 +234,7 @@ final class MembershipLifecycleTest extends WP_UnitTestCase {
 	}
 
 	public function test_chaque_transition_laisse_une_note_sur_l_adhesion(): void {
-		$membership_id = $this->create_membership( 0, StateMachine::MEMBERSHIP_PENDING );
+		$membership_id = $this->create_sepa_membership( 0, StateMachine::MEMBERSHIP_PENDING );
 
 		$this->send(
 			$this->event(

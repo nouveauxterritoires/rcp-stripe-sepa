@@ -245,6 +245,14 @@ class Subscription extends StripeObject {
 	public static function retrieve( $id, $options = null ) {}
 
 	/**
+	 * @param string $id      Identifiant.
+	 * @param array  $params  Champs à mettre à jour.
+	 * @param array  $options Options de requête.
+	 * @return \Stripe\Subscription
+	 */
+	public static function update( $id, $params = null, $options = null ) {}
+
+	/**
 	 * @param array $params  Paramètres.
 	 * @param array $options Options de requête.
 	 * @return \Stripe\Subscription

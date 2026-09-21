@@ -72,7 +72,7 @@ final class RealPayloadsTest extends WP_UnitTestCase {
 	 */
 	private function membership_for( array $event, string $status ): int {
 		$object        = $event['data']['object'];
-		$membership_id = $this->create_membership( 0, $status );
+		$membership_id = $this->create_sepa_membership( 0, $status );
 		$membership    = $this->reload_membership( $membership_id );
 
 		$subscription = 'subscription' === ( $object['object'] ?? '' )

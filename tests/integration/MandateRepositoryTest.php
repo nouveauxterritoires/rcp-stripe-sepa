@@ -11,12 +11,15 @@ namespace RCP_Stripe_Sepa\Tests\Integration;
 
 use RCP_Stripe_Sepa\Mandate\MandateData;
 use RCP_Stripe_Sepa\Mandate\MandateRepository;
+use RCP_Stripe_Sepa\Tests\Support\RcpFixtures;
 use WP_UnitTestCase;
 
 /**
  * @covers \RCP_Stripe_Sepa\Mandate\MandateRepository
  */
 final class MandateRepositoryTest extends WP_UnitTestCase {
+
+	use RcpFixtures;
 
 	/**
 	 * Identifiant d'adhésion utilisé par les tests.
@@ -28,28 +31,8 @@ final class MandateRepositoryTest extends WP_UnitTestCase {
 	public function set_up(): void {
 		parent::set_up();
 
-		$user_id             = self::factory()->user->create();
-		$customer_id         = rcp_add_customer( array( 'user_id' => $user_id ) );
-		$level_id            = rcp_add_membership_level(
-			array(
-				'name'          => 'Mensuel',
-				'price'         => 10,
-				'duration'      => 1,
-				'duration_unit' => 'month',
-				'status'        => 'active',
-			)
-		);
-		$this->membership_id = (int) rcp_add_membership(
-			array(
-				'customer_id' => $customer_id,
-				'object_id'   => $level_id,
-				'object_type' => 'membership',
-				'status'      => 'pending',
-				'gateway'     => 'stripe_sepa',
-			)
-		);
+		$this->membership_id = $this->create_membership( array( 'gateway' => 'stripe_sepa' ) );
 
-		$this->assertGreaterThan( 0, $this->membership_id );
 	}
 
 	/**

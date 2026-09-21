@@ -238,6 +238,12 @@ fraîcheur vérifiée.
 - **Vérifier en exécutant.** Une fonctionnalité n'est pas livrée parce que le
   code existe : la commande a tourné, la suite est verte, la requête HTTP a
   renvoyé le code attendu.
+- **Un test ne doit pas emprunter un chemin que la production n'emprunte pas.**
+  Vérifier comment le code appelant invoque réellement un point d'extension —
+  `do_action` et `apply_filters` ne s'utilisent pas de la même façon, et un nom
+  de hook ne dit pas lequel c'est. Un test qui appelle `apply_filters()` sur ce
+  que la production invoque par `do_action()` valide une hypothèse, pas un
+  comportement.
 - **Un test qui échoue est une information.** Avant de l'assouplir, chercher ce
   qu'il révèle. Plusieurs défauts réels de ce projet ont été trouvés ainsi.
 - **Corriger la cause, pas le symptôme.** Filtrer un avertissement dans la

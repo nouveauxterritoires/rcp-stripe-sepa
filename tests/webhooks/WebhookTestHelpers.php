@@ -14,6 +14,7 @@ use RCP_Stripe_Sepa\Webhook\Endpoint;
 use RCP_Stripe_Sepa\Webhook\EventStore;
 use RCP_Stripe_Sepa\Webhook\RateLimiter;
 use RCP_Stripe_Sepa\Webhook\SignatureVerifier;
+use RCP_Stripe_Sepa\Tests\Support\RcpFixtures;
 use RCP_Stripe_Sepa\Webhook\WebhookSecret;
 use WP_REST_Request;
 use WP_REST_Response;
@@ -22,6 +23,8 @@ use WP_REST_Response;
  * Construit des requêtes de webhook signées et inspecte le journal d'événements.
  */
 trait WebhookTestHelpers {
+
+	use RcpFixtures;
 
 	/**
 	 * Secret utilisé pour signer les charges utiles de test.
@@ -43,10 +46,8 @@ trait WebhookTestHelpers {
 	 * @return void
 	 */
 	private function prepare_webhook_environment(): void {
-		global $rcp_options;
-
-		$rcp_options            = is_array( $rcp_options ) ? $rcp_options : array();
-		$rcp_options['sandbox'] = 1;
+		$this->configure_rcp_stripe();
+		$this->redirect_stripe_to_mock();
 
 		$this->webhook_secret = 'whsec_' . str_repeat( 'a1b2c3d4', 6 );
 
@@ -66,6 +67,8 @@ trait WebhookTestHelpers {
 	 * @return void
 	 */
 	private function reset_webhook_environment(): void {
+		$this->restore_stripe_api_base();
+
 		RateLimiter::reset( RateLimiter::identify() );
 
 		delete_option( WebhookSecret::OPTION_TEST );
@@ -125,7 +128,7 @@ trait WebhookTestHelpers {
 	 */
 	private function membership_id(): int {
 		if ( 0 === $this->default_membership_id ) {
-			$this->default_membership_id = $this->create_membership();
+			$this->default_membership_id = $this->create_sepa_membership();
 		}
 
 		return $this->default_membership_id;
@@ -138,71 +141,22 @@ trait WebhookTestHelpers {
 	 * @param string $status   Statut initial.
 	 * @return int
 	 */
-	private function create_membership( int $existing = 0, string $status = 'pending' ): int {
+	private function create_sepa_membership( int $existing = 0, string $status = 'pending' ): int {
 		if ( $existing > 0 ) {
 			return $existing;
 		}
 
-		$user_id = self::factory()->user->create();
+		$user_id = $this->create_user();
 
-		$membership_id = rcp_add_membership(
+		return $this->create_membership(
 			array(
-				'customer_id'             => $this->create_customer( $user_id ),
-				'object_id'               => $this->create_level(),
-				'object_type'             => 'membership',
+				'user_id'                 => $user_id,
 				'status'                  => $status,
 				'gateway'                 => 'stripe_sepa',
 				'gateway_customer_id'     => 'cus_test_' . $user_id,
 				'gateway_subscription_id' => 'sub_test_' . $user_id,
-				'subscription_key'        => 'key_test_' . $user_id,
-				'auto_renew'              => 1,
 			)
 		);
-
-		$this->assertNotWPError( $membership_id, 'Création d\'adhésion' );
-		$this->assertGreaterThan( 0, (int) $membership_id, 'Adhésion non créée.' );
-
-		return (int) $membership_id;
-	}
-
-
-	/**
-	 * Crée un client RCP.
-	 *
-	 * @param int $user_id Utilisateur WordPress.
-	 * @return int
-	 */
-	private function create_customer( int $user_id ): int {
-		$customer_id = rcp_add_customer( array( 'user_id' => $user_id ) );
-
-		$this->assertNotWPError( $customer_id, 'Création de client' );
-
-		return (int) $customer_id;
-	}
-
-	/**
-	 * Crée un niveau d'adhésion.
-	 *
-	 * Un niveau est créé par appel : la base est restaurée entre deux tests,
-	 * mémoriser un identifiant dans une variable statique le rendrait caduc dès
-	 * le test suivant.
-	 *
-	 * @return int
-	 */
-	private function create_level(): int {
-		$level_id = rcp_add_membership_level(
-			array(
-				'name'          => 'Mensuel de test ' . wp_generate_password( 6, false ),
-				'price'         => 10,
-				'duration'      => 1,
-				'duration_unit' => 'month',
-				'status'        => 'active',
-			)
-		);
-
-		$this->assertNotWPError( $level_id, 'Création de niveau' );
-
-		return (int) $level_id;
 	}
 
 	/**

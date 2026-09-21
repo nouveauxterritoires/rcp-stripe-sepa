@@ -316,6 +316,9 @@ class RCP_Membership {
 	/** @return bool */
 	public function is_disabled() {}
 
+	/** @return bool */
+	public function is_recurring() {}
+
 	/**
 	 * @param bool $formatted Formater la date.
 	 * @return string
@@ -402,6 +405,31 @@ function rcp_get_membership( $membership_id = 0 ) {}
  * @return RCP_Membership|false
  */
 function rcp_get_membership_by( $field = '', $value = '' ) {}
+
+/**
+ * Récupère le client RCP d'un utilisateur.
+ *
+ * @param int $user_id Identifiant utilisateur.
+ * @return object|false
+ */
+function rcp_get_customer_by_user_id( $user_id = 0 ) {}
+
+/**
+ * Récupère un client RCP.
+ *
+ * @param int $customer_id Identifiant client.
+ * @return object|false
+ */
+function rcp_get_customer( $customer_id = 0 ) {}
+
+/**
+ * Récupère les adhésions d'un client.
+ *
+ * @param int   $customer_id Identifiant client.
+ * @param array $args        Critères.
+ * @return RCP_Membership[]
+ */
+function rcp_get_customer_memberships( $customer_id = 0, $args = array() ) {}
 
 /**
  * Récupère des adhésions.

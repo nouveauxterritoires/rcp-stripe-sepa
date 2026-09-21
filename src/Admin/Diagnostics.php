@@ -307,9 +307,11 @@ final class Diagnostics {
 	// -- Fabrique de contrôles ------------------------------------------------------
 
 	/**
+	 * Construit un contrôle satisfait.
+	 *
 	 * @param string $id     Identifiant.
 	 * @param string $label  Intitulé.
-	 * @param string $detail Details.
+	 * @param string $detail Detail affiché.
 	 * @return array
 	 */
 	private static function ok( string $id, string $label, string $detail ): array {
@@ -317,9 +319,11 @@ final class Diagnostics {
 	}
 
 	/**
+	 * Construit un contrôle en alerte.
+	 *
 	 * @param string $id     Identifiant.
 	 * @param string $label  Intitulé.
-	 * @param string $detail Details.
+	 * @param string $detail Detail affiché.
 	 * @return array
 	 */
 	private static function warning( string $id, string $label, string $detail ): array {
@@ -327,9 +331,11 @@ final class Diagnostics {
 	}
 
 	/**
+	 * Construit un contrôle en échec.
+	 *
 	 * @param string $id     Identifiant.
 	 * @param string $label  Intitulé.
-	 * @param string $detail Details.
+	 * @param string $detail Detail affiché.
 	 * @return array
 	 */
 	private static function error( string $id, string $label, string $detail ): array {

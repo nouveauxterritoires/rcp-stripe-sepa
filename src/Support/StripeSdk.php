@@ -50,6 +50,56 @@ final class StripeSdk {
 	}
 
 	/**
+	 * Charge le SDK et arme la clé secrète.
+	 *
+	 * `ensure_loaded()` suffit à vérifier une signature — une charge utile se
+	 * relit hors ligne. Tout appel à l'API Stripe exige en revanche une clé,
+	 * que RCP ne pose qu'en instanciant une passerelle : une requête AJAX ou
+	 * un webhook n'en instancie aucune et partirait sans clé.
+	 *
+	 * @return bool Le SDK est-il utilisable face à l'API.
+	 */
+	public static function ensure_ready(): bool {
+		if ( ! self::ensure_loaded() ) {
+			return false;
+		}
+
+		$key = self::secret_key();
+
+		if ( '' === $key ) {
+			return false;
+		}
+
+		/*
+		 * La clé est globale et statique, partagée avec la passerelle carte de
+		 * RCP. La poser est sans effet de bord : c'est la même clé, issue des
+		 * mêmes réglages.
+		 */
+		\Stripe\Stripe::setApiKey( $key );
+
+		return true;
+	}
+
+	/**
+	 * Clé secrète du mode courant, telle que RCP la conserve.
+	 *
+	 * @return string Chaîne vide si elle n'est pas renseignée.
+	 */
+	public static function secret_key(): string {
+		global $rcp_options;
+
+		if ( ! is_array( $rcp_options ) ) {
+			return '';
+		}
+
+		$option = ( function_exists( 'rcp_is_sandbox' ) && rcp_is_sandbox() )
+			? 'stripe_test_secret'
+			: 'stripe_live_secret';
+
+		return isset( $rcp_options[ $option ] ) ? trim( (string) $rcp_options[ $option ] ) : '';
+	}
+
+	/**
 	 * Version d'API que le plugin transmet dans ses requêtes.
 	 *
 	 * @return string

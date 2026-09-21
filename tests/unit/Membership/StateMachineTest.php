@@ -100,14 +100,19 @@ final class StateMachineTest extends TestCase {
 
 	// -- Échecs ----------------------------------------------------------------
 
-	public function test_un_echec_au_premier_paiement_resilie_l_adhesion(): void {
+	public function test_un_echec_au_premier_paiement_ferme_l_acces(): void {
+		/*
+		 * `expired` et non `cancelled` : dans RCP, une adhésion résiliée garde
+		 * l'accès jusqu'à son échéance, la période ayant été réglée. Ici rien
+		 * n'a été encaissé.
+		 */
 		$transition = StateMachine::resolve(
 			'payment_intent.payment_failed',
 			array( 'status' => 'requires_payment_method' ),
 			StateMachine::MEMBERSHIP_PENDING
 		);
 
-		$this->assertSame( StateMachine::MEMBERSHIP_CANCELLED, $transition->membership_status() );
+		$this->assertSame( StateMachine::MEMBERSHIP_EXPIRED, $transition->membership_status() );
 		$this->assertSame( StateMachine::PAYMENT_FAILED, $transition->payment_status() );
 	}
 
@@ -156,7 +161,7 @@ final class StateMachineTest extends TestCase {
 		);
 
 		$this->assertFalse( $transition->is_skipped() );
-		$this->assertSame( StateMachine::MEMBERSHIP_CANCELLED, $transition->membership_status() );
+		$this->assertSame( StateMachine::MEMBERSHIP_EXPIRED, $transition->membership_status() );
 		$this->assertSame( StateMachine::PAYMENT_FAILED, $transition->payment_status() );
 	}
 

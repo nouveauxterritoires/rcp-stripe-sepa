@@ -45,7 +45,7 @@ final class EventReplay {
 			);
 		}
 
-		if ( ! StripeSdk::ensure_loaded() ) {
+		if ( ! StripeSdk::ensure_ready() ) {
 			return new WP_Error(
 				'rcp_stripe_sepa_sdk_missing',
 				__( 'The Stripe SDK is unavailable.', 'rcp-stripe-sepa' )

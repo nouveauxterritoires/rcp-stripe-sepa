@@ -139,6 +139,14 @@ final class AccountPage {
 				'nonce'          => wp_create_nonce( self::NONCE_ACTION ),
 				'publishableKey' => $publishable,
 				'locale'         => substr( (string) get_locale(), 0, 2 ),
+
+				/*
+				 * Stripe exige une adresse de contact pour émettre un mandat
+				 * SEPA : il la notifie au débiteur. À l'inscription, l'adhérent
+				 * la saisit ; ici, il est déjà connecté — la sienne suffit, et
+				 * ne lui apprend rien qu'il ignore.
+				 */
+				'email'          => wp_get_current_user()->user_email,
 				'strings'        => array(
 					'missingName' => __( 'Please enter the account holder’s name.', 'rcp-stripe-sepa' ),
 					'working'     => __( 'Saving your mandate…', 'rcp-stripe-sepa' ),

@@ -49,7 +49,7 @@ final class Migrator {
 			return new WP_Error( 'rcp_stripe_sepa_not_eligible', ReasonPresenter::message( $eligibility->reason() ) );
 		}
 
-		if ( ! StripeSdk::ensure_loaded() ) {
+		if ( ! StripeSdk::ensure_ready() ) {
 			return new WP_Error( 'rcp_stripe_sepa_sdk_missing', ReasonPresenter::generic_failure() );
 		}
 
@@ -74,7 +74,16 @@ final class Migrator {
 		} catch ( Exception $exception ) {
 			self::log( 'Préparation de la migration impossible : ' . $exception->getMessage(), true );
 
-			return new WP_Error( 'rcp_stripe_sepa_setup_failed', ReasonPresenter::generic_failure() );
+			/*
+			 * L'adhérent lit un message générique ; la cause technique reste
+			 * attachée à l'erreur, où un développeur peut la lire sans
+			 * dépendre du journal de RCP, désactivable dans ses réglages.
+			 */
+			return new WP_Error(
+				'rcp_stripe_sepa_setup_failed',
+				ReasonPresenter::generic_failure(),
+				array( 'stripe_message' => $exception->getMessage() )
+			);
 		}
 
 		return array(
@@ -91,7 +100,7 @@ final class Migrator {
 	 * @return true|WP_Error
 	 */
 	public static function complete( RCP_Membership $membership, string $setup_intent_id ) {
-		if ( ! StripeSdk::ensure_loaded() ) {
+		if ( ! StripeSdk::ensure_ready() ) {
 			return new WP_Error( 'rcp_stripe_sepa_sdk_missing', ReasonPresenter::generic_failure() );
 		}
 

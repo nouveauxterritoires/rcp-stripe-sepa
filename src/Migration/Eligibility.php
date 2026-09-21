@@ -50,6 +50,8 @@ final class Eligibility {
 	private $reason;
 
 	/**
+	 * Construit une décision d'éligibilité.
+	 *
 	 * @param string $reason Motif de la décision.
 	 */
 	private function __construct( string $reason ) {

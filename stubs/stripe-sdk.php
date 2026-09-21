@@ -41,6 +41,12 @@ class Stripe {
 
 	/** @return string|null */
 	public static function getApiVersion() {}
+
+	/**
+	 * @param string $apiKey Clé secrète du compte.
+	 * @return void
+	 */
+	public static function setApiKey( $apiKey ) {}
 }
 
 /**

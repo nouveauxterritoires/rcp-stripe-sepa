@@ -86,7 +86,7 @@ final class MembershipLifecycleTest extends WP_UnitTestCase {
 		);
 	}
 
-	public function test_un_premier_prelevement_refuse_resilie_l_adhesion(): void {
+	public function test_un_premier_prelevement_refuse_ferme_l_acces(): void {
 		$membership_id = $this->create_sepa_membership( 0, StateMachine::MEMBERSHIP_PENDING );
 
 		$this->send(
@@ -100,7 +100,7 @@ final class MembershipLifecycleTest extends WP_UnitTestCase {
 		);
 
 		$this->assertSame(
-			StateMachine::MEMBERSHIP_CANCELLED,
+			StateMachine::MEMBERSHIP_EXPIRED,
 			$this->reload_membership( $membership_id )->get_status()
 		);
 	}
@@ -169,7 +169,7 @@ final class MembershipLifecycleTest extends WP_UnitTestCase {
 		$this->assertSame( EventStore::STATUS_SKIPPED, $this->stored_status( $event['id'] ) );
 	}
 
-	public function test_un_veritable_impaye_resilie_l_adhesion(): void {
+	public function test_un_veritable_impaye_ferme_l_acces(): void {
 		$membership_id = $this->create_sepa_membership( 0, StateMachine::MEMBERSHIP_PENDING );
 
 		$this->send(
@@ -186,7 +186,7 @@ final class MembershipLifecycleTest extends WP_UnitTestCase {
 		);
 
 		$this->assertSame(
-			StateMachine::MEMBERSHIP_CANCELLED,
+			StateMachine::MEMBERSHIP_EXPIRED,
 			$this->reload_membership( $membership_id )->get_status()
 		);
 	}

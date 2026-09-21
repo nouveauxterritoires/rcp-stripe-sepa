@@ -266,6 +266,7 @@ final class SignupProcessor {
 				array(
 					'customer'               => $customer->id,
 					'default_payment_method' => $payment_method->id,
+
 					/*
 					 * Le paramètre `plan`, encore employé par la passerelle
 					 * carte de RCP, est déprécié : il n'est accepté que par les

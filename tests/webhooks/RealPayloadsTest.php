@@ -120,7 +120,7 @@ final class RealPayloadsTest extends WP_UnitTestCase {
 
 		$this->assertSame( EventStore::STATUS_PROCESSED, $this->stored_status( $event['id'] ) );
 		$this->assertSame(
-			StateMachine::MEMBERSHIP_CANCELLED,
+			StateMachine::MEMBERSHIP_EXPIRED,
 			$this->reload_membership( $membership_id )->get_status()
 		);
 	}
@@ -163,14 +163,14 @@ final class RealPayloadsTest extends WP_UnitTestCase {
 		);
 	}
 
-	public function test_un_prelevement_reel_refuse_resilie_l_adhesion(): void {
+	public function test_un_prelevement_reel_refuse_ferme_l_acces(): void {
 		$event         = $this->fixture( 'payment-intent-payment-failed' );
 		$membership_id = $this->membership_for( $event, StateMachine::MEMBERSHIP_PENDING );
 
 		$this->send( $event );
 
 		$this->assertSame(
-			StateMachine::MEMBERSHIP_CANCELLED,
+			StateMachine::MEMBERSHIP_EXPIRED,
 			$this->reload_membership( $membership_id )->get_status()
 		);
 	}

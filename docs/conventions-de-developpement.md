@@ -244,6 +244,11 @@ fraîcheur vérifiée.
   de hook ne dit pas lequel c'est. Un test qui appelle `apply_filters()` sur ce
   que la production invoque par `do_action()` valide une hypothèse, pas un
   comportement.
+- **Un contexte d'exécution ne prépare pas les mêmes choses qu'un autre.** RCP
+  n'arme la clé secrète Stripe qu'en instanciant une passerelle. Une requête
+  `wp_ajax_`, un webhook ou une commande WP-CLI n'en instancient aucune : tout
+  appel à l'API y part sans clé. Éprouver chaque chemin dans son contexte réel,
+  et non seulement depuis une inscription.
 - **Un test qui échoue est une information.** Avant de l'assouplir, chercher ce
   qu'il révèle. Plusieurs défauts réels de ce projet ont été trouvés ainsi.
 - **Corriger la cause, pas le symptôme.** Filtrer un avertissement dans la

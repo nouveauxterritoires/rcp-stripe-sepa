@@ -113,7 +113,10 @@
 					{
 						payment_method: {
 							sepa_debit: forms[ membership ],
-							billing_details: { name: holderName }
+							billing_details: {
+								name: holderName,
+								email: rcpStripeSepaMigration.email
+							}
 						}
 					}
 				).then( function ( result ) {

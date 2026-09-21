@@ -179,8 +179,17 @@ final class StateMachine {
 			);
 		}
 
+		/*
+		 * `expired`, et non `cancelled` : dans Restrict Content Pro, une
+		 * adhésion résiliée conserve l'accès au contenu jusqu'à son échéance,
+		 * puisque la période a été réglée. Ici, rien n'a jamais été encaissé —
+		 * l'adhésion doit donc être sans accès, ce que seul `expired` garantit.
+		 *
+		 * Ce comportement a été révélé par un test de bout en bout : les tests
+		 * d'intégration vérifiaient notre statut, pas la règle d'accès de RCP.
+		 */
 		return Transition::to(
-			self::MEMBERSHIP_CANCELLED,
+			self::MEMBERSHIP_EXPIRED,
 			self::PAYMENT_FAILED,
 			'Premier prélèvement SEPA refusé.'
 		);

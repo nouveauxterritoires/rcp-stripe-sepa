@@ -49,8 +49,18 @@
 	function mountElements() {
 		var container = document.getElementById( 'rcp-stripe-sepa-iban-element' );
 
-		if ( ! container || state.mounted ) {
+		if ( ! container ) {
 			return;
+		}
+
+		// Le conteneur est reconstruit à chaque changement de passerelle :
+		// un élément monté sur un nœud détaché ne recevrait plus rien.
+		if ( state.mounted && container.contains( state.iban && state.iban._parent ) ) {
+			return;
+		}
+
+		if ( state.mounted ) {
+			unmountElements();
 		}
 
 		if ( ! state.stripe ) {
@@ -82,12 +92,23 @@
 	}
 
 	/**
-	 * Confirme l'intention renvoyée par le serveur.
+	 * Confirme le mandat, puis rend la main à Restrict Content Pro.
 	 *
+	 * La signature suit celle de RCP : l'événement transmet le formulaire
+	 * **puis** la réponse. C'est aussi RCP qui conclut l'inscription, par
+	 * `rcp_submit_registration_form()` — re-déclencher un `submit` sur le
+	 * formulaire court-circuiterait son traitement.
+	 *
+	 * @param {Object} event    Événement jQuery.
+	 * @param {Object} form     Formulaire d'inscription.
 	 * @param {Object} response Réponse AJAX de RCP.
 	 */
-	function confirmMandate( response ) {
-		var data = response && response.gateway ? response.gateway.data : null;
+	function confirmMandate( event, form, response ) {
+		if ( ! response || ! response.gateway || rcpStripeSepa.gateway !== response.gateway.slug ) {
+			return;
+		}
+
+		var data = response.gateway.data;
 		var holderName = $( '#rcp-stripe-sepa-holder-name' ).val();
 		var email = $( '#rcp_user_email' ).val() || '';
 
@@ -127,9 +148,15 @@
 				return;
 			}
 
-			// Le mandat est accepté : le formulaire peut être soumis au serveur,
-			// qui créera l'abonnement et attendra le webhook d'encaissement.
-			$( '#rcp_registration_form' ).off( 'submit' ).trigger( 'submit' );
+			// Le mandat est accepté : RCP peut finaliser l'inscription, créer
+			// l'abonnement et attendre le webhook d'encaissement.
+			if ( 'function' === typeof window.rcp_submit_registration_form ) {
+				window.rcp_submit_registration_form( form, response );
+				return;
+			}
+
+			showError( rcpStripeSepa.strings.genericError );
+			releaseForm();
 		} ).catch( function () {
 			showError( rcpStripeSepa.strings.genericError );
 			releaseForm();
@@ -137,19 +164,20 @@
 	}
 
 	$( document ).ready( function () {
-		$( 'body' ).on( 'rcp_gateway_loaded', function ( event, gateway ) {
-			if ( rcpStripeSepa.gateway === gateway ) {
+		/*
+		 * Le conteneur n'est présent dans le document que lorsque la passerelle
+		 * SEPA est sélectionnée : sa présence suffit à décider du montage, sans
+		 * avoir à interpréter la forme de l'argument transmis par RCP.
+		 */
+		$( 'body' ).on( 'rcp_gateway_loaded', function () {
+			if ( document.getElementById( 'rcp-stripe-sepa-iban-element' ) ) {
 				mountElements();
 			} else {
 				unmountElements();
 			}
 		} );
 
-		$( 'body' ).on( 'rcp_registration_form_processed', function ( event, response ) {
-			if ( response && response.gateway && rcpStripeSepa.gateway === response.gateway.slug ) {
-				confirmMandate( response );
-			}
-		} );
+		$( 'body' ).on( 'rcp_registration_form_processed', confirmMandate );
 
 		mountElements();
 	} );

@@ -1,0 +1,47 @@
+/**
+ * Formulaire de mandat SEPA.
+ *
+ * Les styles restent volontairement minimaux : le formulaire doit s'accorder
+ * au thème du site, pas lui imposer une apparence.
+ */
+
+.rcp-stripe-sepa-fields {
+	border: 0;
+	margin: 0;
+	padding: 0;
+}
+
+.rcp-stripe-sepa-element {
+	display: block;
+	padding: 0.65em 0.75em;
+	border: 1px solid #8c8f94;
+	border-radius: 3px;
+	background: #fff;
+}
+
+.rcp-stripe-sepa-errors {
+	margin: 0.5em 0;
+	color: #b32d2e;
+}
+
+.rcp-stripe-sepa-errors:empty {
+	display: none;
+}
+
+.rcp-stripe-sepa-mandate {
+	margin: 1em 0;
+	font-size: 0.8em;
+	line-height: 1.5;
+	color: #50575e;
+}
+
+@media (prefers-color-scheme: dark) {
+	.rcp-stripe-sepa-element {
+		border-color: #3c434a;
+		background: #1d2327;
+	}
+
+	.rcp-stripe-sepa-mandate {
+		color: #a7aaad;
+	}
+}

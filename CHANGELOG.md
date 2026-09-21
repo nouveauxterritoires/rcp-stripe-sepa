@@ -6,6 +6,17 @@ Versionnement : [SemVer](https://semver.org/lang/fr/).
 ## [Non publié]
 
 ### Ajouté
+- Passerelle de paiement `stripe_sepa`, dérivée de la passerelle Stripe de RCP, coexistant avec la
+  passerelle carte native sur le même site et avec les mêmes clés API.
+- Formulaire de collecte du mandat : Stripe Element pour l'IBAN, nom du titulaire, texte de mandat
+  filtrable portant les mentions obligatoires, messages d'erreur annoncés aux lecteurs d'écran.
+- Création des intentions SEPA : PaymentIntent lorsqu'il y a un montant à encaisser, SetupIntent
+  sinon, mandat réutilisable pour les seules adhésions reconductibles.
+- Finalisation d'inscription propre au prélèvement : le paiement reste en attente, l'adhésion n'est
+  pas activée, l'abonnement démarre à l'expiration de la période déjà réglée.
+- Persistance du mandat en métadonnées d'adhésion, avec preuve de consentement horodatée et purge
+  de l'adresse d'acceptation après treize mois.
+- Tests de contrat pilotant la passerelle contre `stripe-mock`.
 - Point de terminaison REST des webhooks (`/wp-json/rcp-stripe-sepa/v1/webhook`) : vérification de
   signature HMAC sur la charge utile brute, tolérance temporelle de 300 s, contrôle de cohérence du
   mode, limitation de débit et réponses minimales.
@@ -49,6 +60,10 @@ Versionnement : [SemVer](https://semver.org/lang/fr/).
   désormais l'outillage et les tests.
 
 ### Corrigé
+- La passerelle déclare les trois propriétés que RCP affecte sans les déclarer : PHP 8.2 dépréciait
+  leur création dynamique à chaque inscription.
+- Les abonnements sont créés avec `items[].price` et non le paramètre `plan`, déprécié et refusé par
+  la spécification actuelle de l'API — écart révélé par les tests de contrat.
 - La détection de variante reposait sur `active_plugins`, non renseignée lorsque RCP est chargé par
   un must-use plugin, un harnais de tests ou un bootstrap applicatif : elle repose désormais sur
   `RCP_PLUGIN_DIR`, défini par RCP à partir du fichier réellement chargé. Défaut révélé en exécutant

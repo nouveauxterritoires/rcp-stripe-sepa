@@ -35,11 +35,109 @@ abstract class RCP_Payment_Gateway {
 	public $initial_amount = 0.0;
 
 	/**
+	 * Montant des échéances suivantes.
+	 *
+	 * @var float
+	 */
+	public $amount = 0.0;
+
+	/**
 	 * Mode bac à sable hérité des réglages de RCP.
 	 *
 	 * @var bool
 	 */
 	public $test_mode = false;
+
+	/**
+	 * Adhésion en cours de traitement.
+	 *
+	 * @var RCP_Membership
+	 */
+	public $membership;
+
+	/**
+	 * Client RCP.
+	 *
+	 * @var object
+	 */
+	public $customer;
+
+	/**
+	 * Enregistrement de paiement en cours.
+	 *
+	 * @var object
+	 */
+	public $payment;
+
+	/**
+	 * Identifiant de l'utilisateur WordPress.
+	 *
+	 * @var int
+	 */
+	public $user_id = 0;
+
+	/**
+	 * Adresse électronique de l'adhérent.
+	 *
+	 * @var string
+	 */
+	public $email = '';
+
+	/**
+	 * Renouvellement automatique.
+	 *
+	 * @var bool
+	 */
+	public $auto_renew = false;
+
+	/**
+	 * Identifiant du niveau d'adhésion.
+	 *
+	 * @var int
+	 */
+	public $subscription_id = 0;
+
+	/**
+	 * Nom du niveau d'adhésion.
+	 *
+	 * @var string
+	 */
+	public $subscription_name = '';
+
+	/**
+	 * Durée de la période de facturation.
+	 *
+	 * @var int
+	 */
+	public $length = 0;
+
+	/**
+	 * Unité de la période de facturation.
+	 *
+	 * @var string
+	 */
+	public $length_unit = '';
+
+	/**
+	 * URL de retour après inscription.
+	 *
+	 * @var string
+	 */
+	public $return_url = '';
+
+	/**
+	 * Clé secrète Stripe du mode courant.
+	 *
+	 * @var string
+	 */
+	protected $secret_key = '';
+
+	/**
+	 * Clé publiable Stripe du mode courant.
+	 *
+	 * @var string
+	 */
+	protected $publishable_key = '';
 
 	/**
 	 * @param array $subscription_data Données d'inscription.
@@ -75,6 +173,18 @@ abstract class RCP_Payment_Gateway {
 	 * @return bool
 	 */
 	public function supports( $item = '' ) {}
+
+	/**
+	 * @param string $code    Code d'erreur.
+	 * @param string $message Message d'erreur.
+	 * @return void
+	 */
+	public function add_error( $code = '', $message = '' ) {}
+
+	/**
+	 * @return bool
+	 */
+	public function is_trial() {}
 }
 
 /**
@@ -95,6 +205,20 @@ class RCP_Payment_Gateway_Stripe extends RCP_Payment_Gateway {
 	 * @return string|WP_Error
 	 */
 	public function maybe_create_plan( $args ) {}
+
+	/**
+	 * @param int    $interval      Durée de la période.
+	 * @param string $interval_unit Unité de la période.
+	 * @param string $signup_date   Date d'inscription.
+	 * @return \DateTime
+	 */
+	public function get_stripe_max_billing_cycle_anchor( $interval, $interval_unit, $signup_date = 'now' ) {}
+
+	/**
+	 * @param \Exception|WP_Error $error Erreur rencontrée.
+	 * @return void
+	 */
+	protected function handle_processing_error( $error ) {}
 }
 
 /**
@@ -191,6 +315,18 @@ class RCP_Membership {
 
 	/** @return bool */
 	public function is_disabled() {}
+
+	/**
+	 * @param bool $formatted Formater la date.
+	 * @return string
+	 */
+	public function get_expiration_date( $formatted = true ) {}
+
+	/**
+	 * @param bool $recurring L'adhésion se renouvelle-t-elle.
+	 * @return bool
+	 */
+	public function set_recurring( $recurring = true ) {}
 }
 
 /**
@@ -281,6 +417,37 @@ function rcp_get_memberships( $args = array() ) {}
  * @return int
  */
 function rcp_stripe_get_currency_multiplier() {}
+
+/**
+ * Ajoute ou met à jour une métadonnée d'adhésion.
+ *
+ * @param int    $membership_id Identifiant d'adhésion.
+ * @param string $meta_key      Clé.
+ * @param mixed  $meta_value    Valeur.
+ * @param mixed  $prev_value    Valeur précédente.
+ * @return int|bool
+ */
+function rcp_update_membership_meta( $membership_id, $meta_key, $meta_value, $prev_value = '' ) {}
+
+/**
+ * Lit une métadonnée d'adhésion.
+ *
+ * @param int    $membership_id Identifiant d'adhésion.
+ * @param string $key           Clé.
+ * @param bool   $single        Valeur unique.
+ * @return mixed
+ */
+function rcp_get_membership_meta( $membership_id, $key = '', $single = false ) {}
+
+/**
+ * Supprime une métadonnée d'adhésion.
+ *
+ * @param int    $membership_id Identifiant d'adhésion.
+ * @param string $meta_key      Clé.
+ * @param mixed  $meta_value    Valeur.
+ * @return bool
+ */
+function rcp_delete_membership_meta( $membership_id, $meta_key, $meta_value = '' ) {}
 
 /**
  * Génère une clé d'idempotence déterministe pour une requête Stripe.

@@ -45,6 +45,18 @@ final class EventStore {
 	 */
 	public const MAX_ATTEMPTS = 5;
 
+	/*
+	 * Les requêtes de cette classe interpolent le nom de la table, construit à
+	 * partir de `$wpdb->prefix` et d'un littéral : il ne provient d'aucune
+	 * entrée. Toutes les valeurs, elles, passent par `$wpdb->prepare()`. Le
+	 * journal n'est par ailleurs jamais mis en cache : son intérêt tient
+	 * précisément à sa fraîcheur.
+	 */
+	// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+	// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery
+	// phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
+	// phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange
+
 	/**
 	 * Nom complet de la table.
 	 *
@@ -111,7 +123,6 @@ final class EventStore {
 
 		// `INSERT IGNORE` échoue silencieusement sur la contrainte d'unicité :
 		// c'est ce qui rend la réservation sûre entre requêtes concurrentes.
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$inserted = $wpdb->query(
 			$wpdb->prepare(
 				"INSERT IGNORE INTO {$table}
@@ -130,7 +141,6 @@ final class EventStore {
 			return self::CLAIM_GRANTED;
 		}
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$status = (string) $wpdb->get_var(
 			$wpdb->prepare( "SELECT status FROM {$table} WHERE event_id = %s", $event_id )
 		);
@@ -139,7 +149,6 @@ final class EventStore {
 			return self::CLAIM_DUPLICATE;
 		}
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$wpdb->query(
 			$wpdb->prepare( "UPDATE {$table} SET attempts = attempts + 1 WHERE event_id = %s", $event_id )
 		);
@@ -182,7 +191,6 @@ final class EventStore {
 
 		$table = self::table();
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		return (int) $wpdb->get_var(
 			$wpdb->prepare( "SELECT attempts FROM {$table} WHERE event_id = %s", $event_id )
 		);
@@ -199,7 +207,6 @@ final class EventStore {
 
 		$table = self::table();
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$rows = $wpdb->get_results(
 			$wpdb->prepare( "SELECT * FROM {$table} ORDER BY id DESC LIMIT %d", max( 1, $limit ) ),
 			ARRAY_A
@@ -219,7 +226,6 @@ final class EventStore {
 
 		$table = self::table();
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		return (int) $wpdb->query(
 			$wpdb->prepare(
 				"DELETE FROM {$table}
@@ -232,4 +238,9 @@ final class EventStore {
 			)
 		);
 	}
+
+	// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+	// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery
+	// phpcs:enable WordPress.DB.DirectDatabaseQuery.NoCaching
+	// phpcs:enable WordPress.DB.DirectDatabaseQuery.SchemaChange
 }

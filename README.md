@@ -5,12 +5,13 @@
 Plugin WordPress ajoutant le prélèvement automatique SEPA comme moyen de paiement dans Restrict
 Content Pro, qui n'intègre nativement que la carte bancaire via Stripe.
 
-> **État du projet : jalons J1 et J4 livrés.**
-> L'environnement Docker démarre, le plugin s'active, la compatibilité RCP est détectée, et le
-> point de terminaison des webhooks est opérationnel : signature vérifiée, idempotence, machine à
-> états du cycle de vie des adhésions. 151 tests, 86 % de couverture.
-> La passerelle de paiement elle-même — formulaire SEPA et création des intentions — arrive au
-> jalon J3.
+> **État du projet : jalons J1, J3 et J4 livrés.**
+> La passerelle `stripe_sepa` s'enregistre auprès de RCP et coexiste avec la passerelle carte
+> native. Le formulaire collecte le mandat dans un Stripe Element, l'inscription crée l'intention
+> SEPA et laisse l'adhésion en attente, et le point de terminaison des webhooks décide de son
+> activation. 255 tests, 85 % de couverture.
+> Restent à livrer : la migration carte vers SEPA (J6), les écrans d'administration (J7) et les
+> e-mails transactionnels.
 
 ## Documentation
 
@@ -22,6 +23,7 @@ Content Pro, qui n'intègre nativement que la carte bancaire via Stripe.
 | [Webhooks en local](docs/webhooks-en-local.md) | Rejouer des événements signés, hors ligne ou via la CLI Stripe |
 | [Environnement Stripe de test](docs/environnement-stripe-test.md) | Ce qui est nécessaire, ce qui ne l'est pas, et les pièges constatés |
 | [Traitement des webhooks](docs/webhooks-traitement.md) | Chemin d'une requête, codes de réponse, idempotence, machine à états |
+| [Passerelle SEPA](docs/passerelle-sepa.md) | Inscription, intentions, mandat, et écarts assumés avec la passerelle carte |
 | [SECURITY.md](SECURITY.md) | Politique de sécurité et checklist de revue |
 
 ## Fonctionnalités visées

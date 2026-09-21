@@ -11,6 +11,7 @@ namespace RCP_Stripe_Sepa;
 
 use RCP_Stripe_Sepa\Compat\RcpEnvironment;
 use RCP_Stripe_Sepa\Compat\RequirementsNotice;
+use RCP_Stripe_Sepa\Gateway\Registrar;
 use RCP_Stripe_Sepa\Webhook\Endpoint;
 use RCP_Stripe_Sepa\Webhook\EventStore;
 
@@ -102,6 +103,8 @@ final class Plugin {
 
 			return;
 		}
+
+		Registrar::register();
 
 		add_action( 'rest_api_init', array( Endpoint::class, 'register' ) );
 		add_action( 'admin_init', array( EventStore::class, 'install' ) );

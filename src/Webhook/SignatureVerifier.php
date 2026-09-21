@@ -52,6 +52,8 @@ final class SignatureVerifier {
 	private $tolerance;
 
 	/**
+	 * Construit un vérificateur.
+	 *
 	 * @param string $secret    Secret du point de terminaison.
 	 * @param int    $tolerance Tolérance temporelle, en secondes.
 	 */
@@ -90,7 +92,14 @@ final class SignatureVerifier {
 		try {
 			\Stripe\Webhook::constructEvent( $payload, $header, $this->secret, $this->tolerance );
 		} catch ( Throwable $exception ) {
-			throw new SignatureException( $exception->getMessage(), 0, $exception );
+			/*
+			 * L'exception d'origine est chaînée pour le diagnostic. Son message
+			 * part dans le journal du serveur, jamais dans la réponse HTTP :
+			 * le point de terminaison ne renvoie qu'un code, précisément pour
+			 * ne rien apprendre à un appelant non authentifié.
+			 */
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+			throw new SignatureException( esc_html( $exception->getMessage() ), 0, $exception );
 		}
 
 		$event = json_decode( $payload, true );

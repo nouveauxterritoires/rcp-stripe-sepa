@@ -71,10 +71,10 @@ coverage: prepare-tests ## Couverture fusionnée de toutes les suites (tests/cov
 
 # --- Qualité ------------------------------------------------------------------
 
-lint: ## PHPCS + PHPStan + ESLint
+lint: ## PHPCS + PHPStan (ESLint ajouté avec le JavaScript, au jalon J3)
 	$(CLI) "cd /var/www/html/wp-content/plugins/rcp-stripe-sepa && vendor/bin/phpcs && vendor/bin/phpstan analyse --memory-limit=1G"
 
-fix: ## Corrige automatiquement ce qui peut l'être
+fix: ## Corrige automatiquement les écarts de style PHP
 	$(CLI) "cd /var/www/html/wp-content/plugins/rcp-stripe-sepa && vendor/bin/phpcbf || true"
 
 # --- Stripe -------------------------------------------------------------------

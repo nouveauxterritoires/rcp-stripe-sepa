@@ -49,6 +49,10 @@ Versionnement : [SemVer](https://semver.org/lang/fr/).
   désormais l'outillage et les tests.
 
 ### Corrigé
+- La détection de variante reposait sur `active_plugins`, non renseignée lorsque RCP est chargé par
+  un must-use plugin, un harnais de tests ou un bootstrap applicatif : elle repose désormais sur
+  `RCP_PLUGIN_DIR`, défini par RCP à partir du fichier réellement chargé. Défaut révélé en exécutant
+  la suite contre Restrict Content Pro 3.5.51.
 - Le client MariaDB de l'image WordPress refusait le certificat auto-signé de MySQL 8 ; la
   vérification TLS est désactivée pour le client en ligne de commande du réseau de développement.
 - Les tables de RCP ne sont créées que sur `admin_init` : le provisionnement déclenche désormais ce

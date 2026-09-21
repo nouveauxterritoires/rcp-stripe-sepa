@@ -123,15 +123,16 @@ final class RcpEnvironment {
 	);
 
 	/**
-	 * Correspondance entre un chemin de plugin actif et une variante.
+	 * Correspondance entre un nom de répertoire de plugin et une variante.
 	 *
-	 * L'ordre compte : la variante commerciale prime si les deux sont présentes.
+	 * L'ordre compte : la variante commerciale prime si les deux marqueurs sont
+	 * présents, le nom de la variante libre étant un préfixe de l'autre.
 	 *
 	 * @var array<string, string>
 	 */
 	private const VARIANT_MARKERS = array(
-		'restrict-content-pro/' => self::VARIANT_PRO,
-		'restrict-content/'     => self::VARIANT_FREE,
+		'restrict-content-pro' => self::VARIANT_PRO,
+		'restrict-content'     => self::VARIANT_FREE,
 	);
 
 	/**
@@ -219,14 +220,29 @@ final class RcpEnvironment {
 	 * @return string
 	 */
 	public function variant(): string {
+		/*
+		 * Le répertoire d'où RCP a été chargé fait foi. `active_plugins` n'est
+		 * pas toujours renseignée — must-use plugin, harnais de tests,
+		 * bootstrap applicatif — alors que `RCP_PLUGIN_DIR` est défini par RCP
+		 * lui-même à partir du fichier réellement chargé.
+		 */
+		$directory = basename( rtrim( (string) ( $this->snapshot['constants']['RCP_PLUGIN_DIR'] ?? '' ), '/' ) );
+
+		foreach ( self::VARIANT_MARKERS as $marker => $variant ) {
+			if ( $marker === $directory ) {
+				return $variant;
+			}
+		}
+
 		foreach ( self::VARIANT_MARKERS as $marker => $variant ) {
 			foreach ( $this->snapshot['active_plugins'] as $plugin ) {
-				if ( 0 === strpos( $plugin, $marker ) ) {
+				if ( 0 === strpos( $plugin, $marker . '/' ) ) {
 					return $variant;
 				}
 			}
 		}
 
+		// Dernier indice : seule la variante libre définit cette constante.
 		if ( isset( $this->snapshot['constants']['RCF_VERSION'] ) ) {
 			return self::VARIANT_FREE;
 		}

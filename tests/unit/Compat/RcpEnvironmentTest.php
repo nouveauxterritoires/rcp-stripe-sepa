@@ -72,13 +72,80 @@ final class RcpEnvironmentTest extends TestCase {
 		$this->assertTrue( $env->is_supported() );
 	}
 
-	public function test_la_variante_pro_prime_si_les_deux_marqueurs_sont_presents(): void {
-		// Cas limite : Pro installée après la version libre, constante RCF_VERSION résiduelle.
+	public function test_la_variante_pro_prime_quand_les_deux_plugins_sont_listes(): void {
+		// Sans indication de répertoire, les deux variantes étant listées comme
+		// actives, la commerciale l'emporte : c'est elle qui fournit le noyau.
 		$snapshot = $this->snapshot(
 			array(
 				'active_plugins' => array(
 					'restrict-content/restrictcontent.php',
 					'restrict-content-pro/restrict-content-pro.php',
+				),
+				'constants'      => array( 'RCP_PLUGIN_VERSION' => '3.5.51' ),
+			)
+		);
+
+		$this->assertSame( RcpEnvironment::VARIANT_PRO, RcpEnvironment::from_snapshot( $snapshot )->variant() );
+	}
+
+	public function test_le_repertoire_charge_prime_sur_une_entree_residuelle(): void {
+		// La version libre reste listée comme active, mais c'est bien elle qui
+		// est chargée : le diagnostic doit dire « libre », pas « commerciale ».
+		$snapshot = $this->snapshot(
+			array(
+				'active_plugins' => array(
+					'restrict-content/restrictcontent.php',
+					'restrict-content-pro/restrict-content-pro.php',
+				),
+			)
+		);
+
+		$this->assertSame( RcpEnvironment::VARIANT_FREE, RcpEnvironment::from_snapshot( $snapshot )->variant() );
+	}
+
+	public function test_la_variante_est_deduite_du_repertoire_de_rcp(): void {
+		/*
+		 * `active_plugins` n'est pas toujours renseignée : RCP peut être chargé
+		 * par un must-use plugin, par un harnais de tests ou par un bootstrap
+		 * applicatif. `RCP_PLUGIN_DIR` est en revanche toujours défini, par RCP
+		 * lui-même, à partir du fichier réellement chargé.
+		 */
+		$snapshot = $this->snapshot(
+			array(
+				'active_plugins' => array(),
+				'constants'      => array(
+					'RCP_PLUGIN_VERSION' => '3.5.51',
+					'RCP_PLUGIN_DIR'     => '/var/www/html/wp-content/plugins/restrict-content-pro/',
+				),
+			)
+		);
+
+		$this->assertSame( RcpEnvironment::VARIANT_PRO, RcpEnvironment::from_snapshot( $snapshot )->variant() );
+	}
+
+	public function test_la_variante_libre_est_deduite_du_repertoire_de_rcp(): void {
+		$snapshot = $this->snapshot(
+			array(
+				'active_plugins' => array(),
+				'constants'      => array(
+					'RCP_PLUGIN_VERSION' => '4.0.7',
+					'RCP_PLUGIN_DIR'     => '/var/www/html/wp-content/plugins/restrict-content/',
+				),
+			)
+		);
+
+		$this->assertSame( RcpEnvironment::VARIANT_FREE, RcpEnvironment::from_snapshot( $snapshot )->variant() );
+	}
+
+	public function test_le_repertoire_prime_sur_la_liste_des_plugins_actifs(): void {
+		// Une version libre restée active dans l'option alors que Pro est
+		// effectivement chargée ne doit pas fausser le diagnostic.
+		$snapshot = $this->snapshot(
+			array(
+				'active_plugins' => array( 'restrict-content/restrictcontent.php' ),
+				'constants'      => array(
+					'RCP_PLUGIN_VERSION' => '3.5.51',
+					'RCP_PLUGIN_DIR'     => '/var/www/html/wp-content/plugins/restrict-content-pro/',
 				),
 			)
 		);

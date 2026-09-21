@@ -74,21 +74,39 @@ VENDOR_PLUGINS_DIR="${VENDOR_PLUGINS_DIR:-/vendor-plugins}"
 mkdir -p "$PLUGIN_DIR"
 
 install_rcp_pro() {
+  # Les deux variantes ne peuvent pas coexister : elles définissent la même
+  # classe et les mêmes constantes.
+  rm -rf "$PLUGIN_DIR/restrict-content" "$PLUGIN_DIR/restrict-content-pro"
+
+  # Source déjà décompressée, désignée par RCP_PRO_SOURCE.
+  if [ -n "${RCP_PRO_SOURCE:-}" ]; then
+    if [ ! -f "$RCP_PRO_SOURCE/restrict-content-pro.php" ]; then
+      echo "RCP_PRO_SOURCE ne contient pas restrict-content-pro.php : $RCP_PRO_SOURCE" >&2
+      exit 1
+    fi
+
+    log "Installation de Restrict Content Pro depuis $RCP_PRO_SOURCE"
+    cp -R "$RCP_PRO_SOURCE" "$PLUGIN_DIR/restrict-content-pro"
+    return
+  fi
+
   local archive
   archive="$(find "$VENDOR_PLUGINS_DIR" -maxdepth 1 -name 'restrict-content-pro*.zip' 2>/dev/null | sort | tail -1)"
 
   if [ -z "$archive" ]; then
-    echo "RCP_VARIANT=pro demandé mais aucune archive restrict-content-pro*.zip dans ${VENDOR_PLUGINS_DIR}." >&2
-    echo "Déposez l'archive commerciale ou utilisez RCP_VARIANT=free." >&2
+    echo "RCP_VARIANT=pro demandé mais aucune source trouvée." >&2
+    echo "Fournissez RCP_PRO_SOURCE=<répertoire> ou déposez une archive dans ${VENDOR_PLUGINS_DIR}." >&2
+    echo "Sinon, utilisez RCP_VARIANT=free." >&2
     exit 1
   fi
 
   log "Installation de Restrict Content Pro depuis $(basename "$archive")"
-  rm -rf "$PLUGIN_DIR/restrict-content-pro"
   unzip -q -o "$archive" -d "$PLUGIN_DIR"
 }
 
 install_rcp_free() {
+  rm -rf "$PLUGIN_DIR/restrict-content-pro"
+
   if [ -d "$PLUGIN_DIR/restrict-content" ]; then
     log "Restrict Content déjà présent"
     return

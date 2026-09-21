@@ -2,9 +2,14 @@
 /vendor/
 /node_modules/
 
-# Archives propriétaires (Restrict Content Pro) — ne jamais versionner
+# Sources et archives propriétaires (Restrict Content Pro) — ne jamais versionner.
+# RCP Pro est un produit commercial : ni son archive ni son code ne doivent
+# entrer dans ce dépôt.
 /vendor-plugins/
 !/vendor-plugins/.gitkeep
+/ressources/
+/restrict-content-pro/
+/**/restrict-content-pro/
 
 # Secrets et configuration locale
 .env

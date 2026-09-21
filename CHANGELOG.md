@@ -6,6 +6,17 @@ Versionnement : [SemVer](https://semver.org/lang/fr/).
 ## [Non publié]
 
 ### Ajouté
+- Point de terminaison REST des webhooks (`/wp-json/rcp-stripe-sepa/v1/webhook`) : vérification de
+  signature HMAC sur la charge utile brute, tolérance temporelle de 300 s, contrôle de cohérence du
+  mode, limitation de débit et réponses minimales.
+- Journal d'événements assurant l'idempotence, avec empreinte de la charge utile, compteur de
+  tentatives, abandon au-delà de cinq essais et purge quotidienne.
+- Machine à états du cycle de vie des adhésions, dont la distinction entre le faux
+  `invoice.payment_failed` émis à la création d'un abonnement et un impayé réel.
+- Résolution de l'adhésion par métadonnée, abonnement ou client Stripe.
+- Expurgation des journaux (clés, secrets, IBAN) avant écriture.
+- 102 tests supplémentaires, dont le rejeu des treize charges utiles capturées sur un compte
+  Stripe réel.
 - Amorçage du plugin : en-tête WordPress, autoloader, désactivation propre sans erreur fatale
   lorsque Restrict Content Pro est absent ou incompatible.
 - `Compat\RcpEnvironment` : détection de l'environnement RCP par capacités — compatible avec la

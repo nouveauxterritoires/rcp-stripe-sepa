@@ -117,9 +117,92 @@ class RCP_Payment_Gateways {
 }
 
 /**
+ * Adhésion RCP.
+ */
+class RCP_Membership {
+
+	/**
+	 * @param int|object $object_id Identifiant ou objet d'adhésion.
+	 */
+	public function __construct( $object_id = 0 ) {}
+
+	/** @return int */
+	public function get_id() {}
+
+	/** @return int */
+	public function get_user_id() {}
+
+	/** @return int */
+	public function get_customer_id() {}
+
+	/** @return int */
+	public function get_object_id() {}
+
+	/** @return string */
+	public function get_status() {}
+
+	/**
+	 * @param string $status Nouveau statut.
+	 * @return bool
+	 */
+	public function set_status( $status ) {}
+
+	/** @return string */
+	public function get_gateway() {}
+
+	/** @return string */
+	public function get_gateway_customer_id() {}
+
+	/** @return string */
+	public function get_gateway_subscription_id() {}
+
+	/**
+	 * @param string $subscription_id Identifiant d'abonnement Stripe.
+	 * @return bool
+	 */
+	public function set_gateway_subscription_id( $subscription_id ) {}
+
+	/**
+	 * @param string $customer_id Identifiant client Stripe.
+	 * @return bool
+	 */
+	public function set_gateway_customer_id( $customer_id ) {}
+
+	/** @return string */
+	public function get_subscription_key() {}
+
+	/** @return string */
+	public function get_membership_level_name() {}
+
+	/** @return string */
+	public function get_notes() {}
+
+	/**
+	 * @param string $note Note à ajouter.
+	 * @return bool
+	 */
+	public function add_note( $note ) {}
+
+	/**
+	 * @param array $data Champs à mettre à jour.
+	 * @return bool
+	 */
+	public function update( $data = array() ) {}
+
+	/** @return bool */
+	public function is_disabled() {}
+}
+
+/**
  * Accès aux paiements enregistrés par RCP.
  */
 class RCP_Payments {
+
+	/**
+	 * @param int $payment_id Identifiant du paiement.
+	 * @return object|false
+	 */
+	public function get_payment( $payment_id = 0 ) {}
 
 	/**
 	 * @param array $args Critères.
@@ -171,9 +254,26 @@ function rcp_get_currency() {}
  * Récupère une adhésion.
  *
  * @param int $membership_id Identifiant d'adhésion.
- * @return object|false
+ * @return RCP_Membership|false
  */
 function rcp_get_membership( $membership_id = 0 ) {}
+
+/**
+ * Récupère une adhésion par l'un de ses champs.
+ *
+ * @param string $field Champ recherché.
+ * @param mixed  $value Valeur recherchée.
+ * @return RCP_Membership|false
+ */
+function rcp_get_membership_by( $field = '', $value = '' ) {}
+
+/**
+ * Récupère des adhésions.
+ *
+ * @param array $args Critères.
+ * @return RCP_Membership[]
+ */
+function rcp_get_memberships( $args = array() ) {}
 
 /**
  * Multiplicateur à appliquer au montant selon la devise.

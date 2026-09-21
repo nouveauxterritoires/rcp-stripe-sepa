@@ -131,3 +131,35 @@ tests_add_filter(
 );
 
 require $tests_dir . '/includes/bootstrap.php';
+
+/*
+ * Restrict Content Pro crée ses tables sur le hook `admin_init`, qui ne se
+ * déclenche pas dans la suite de tests. Sans elles, toute création d'adhésion
+ * échoue.
+ *
+ * Les interfaces de table sont sollicitées directement plutôt que par
+ * `do_action( 'admin_init' )`, qui entraînerait tout le reste de
+ * l'initialisation de l'administration. Le DDL n'étant pas transactionnel, les
+ * tables survivent au rollback opéré entre deux tests.
+ */
+if ( function_exists( 'rcp_setup_components' ) && function_exists( 'rcp_get_component' ) ) {
+	rcp_setup_components();
+
+	$rcp_sepa_components = array( 'customers', 'discounts', 'memberships', 'queue', 'membership_counts', 'logs' );
+
+	foreach ( $rcp_sepa_components as $rcp_sepa_component ) {
+		$rcp_sepa_object = rcp_get_component( $rcp_sepa_component );
+
+		if ( ! $rcp_sepa_object ) {
+			continue;
+		}
+
+		foreach ( array( 'table', 'meta' ) as $rcp_sepa_interface ) {
+			$rcp_sepa_table = $rcp_sepa_object->get_interface( $rcp_sepa_interface );
+
+			if ( $rcp_sepa_table && method_exists( $rcp_sepa_table, 'maybe_upgrade' ) ) {
+				$rcp_sepa_table->maybe_upgrade();
+			}
+		}
+	}
+}

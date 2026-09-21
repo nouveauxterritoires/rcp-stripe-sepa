@@ -7,7 +7,7 @@
 #
 set -euo pipefail
 
-SUITES="${SUITES:-unit integration contract}"
+SUITES="${SUITES:-unit integration contract webhooks}"
 OUT_DIR="${OUT_DIR:-tests/coverage}"
 PARTS_DIR="$OUT_DIR/parts"
 

@@ -50,9 +50,7 @@ logs: ## Suit les journaux
 prepare-tests: ## Installe la bibliothèque de tests WordPress
 	$(CLI) "bash /var/www/html/wp-content/plugins/rcp-stripe-sepa/bin/install-wp-tests.sh"
 
-# La suite « webhooks » est livrée au jalon J4 ; elle est exclue de la cible
-# par défaut tant qu'elle est vide, une suite sans test faisant échouer PHPUnit.
-test: test-unit test-integration test-contract ## Exécute les suites PHP disponibles
+test: test-unit test-integration test-contract test-webhooks ## Exécute toute la suite PHP
 
 test-unit: ## Tests unitaires (WordPress mocké, sans base)
 	$(CLI) "cd /var/www/html/wp-content/plugins/rcp-stripe-sepa && composer install --no-interaction && vendor/bin/phpunit --testsuite unit"
@@ -63,7 +61,7 @@ test-integration: prepare-tests ## Tests d'intégration (WordPress + RCP réels)
 test-contract: ## Tests de contrat (stripe-mock + contrat RCP)
 	$(CLI) "cd /var/www/html/wp-content/plugins/rcp-stripe-sepa && vendor/bin/phpunit --testsuite contract"
 
-test-webhooks: ## Tests des webhooks (signature, idempotence, désordre)
+test-webhooks: ## Tests des webhooks (signature, idempotence, désordre, charges utiles réelles)
 	$(CLI) "cd /var/www/html/wp-content/plugins/rcp-stripe-sepa && vendor/bin/phpunit --testsuite webhooks"
 
 test-e2e: ## Tests de bout en bout (Playwright)

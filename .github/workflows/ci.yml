@@ -107,6 +107,7 @@ jobs:
       - run: vendor/bin/phpunit --testsuite contract
         env:
           STRIPE_MOCK_HOST: 127.0.0.1
+      - run: vendor/bin/phpunit --testsuite webhooks
       # La couverture agrège toutes les suites : elle exige WordPress et RCP,
       # et n'est donc mesurée qu'ici, sur la combinaison principale.
       - name: Couverture fusionnée
@@ -180,13 +181,14 @@ jobs:
           WP_TESTS_DB_USER: root
           WP_TESTS_DB_PASSWORD: root
         run: bash bin/install-wp-tests.sh
-      - name: Tests d'intégration et de contrat
+      - name: Tests d'intégration, de contrat et de webhooks
         if: steps.guard.outputs.run == 'true'
         env:
           STRIPE_MOCK_HOST: 127.0.0.1
         run: |
           vendor/bin/phpunit --testsuite integration
           vendor/bin/phpunit --testsuite contract
+          vendor/bin/phpunit --testsuite webhooks
       - name: Purger l'archive commerciale
         if: always()
         run: rm -rf vendor-plugins

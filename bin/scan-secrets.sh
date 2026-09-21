@@ -30,6 +30,17 @@ for path in src rcp-stripe-sepa.php uninstall.php assets bin tests docker; do
   [ -e "$path" ] && repository+=("$path")
 done
 
+# Les répertoires générés ne sont pas du code source : un rapport de couverture
+# recopie le code analysé en HTML, et déclencherait tous les motifs.
+EXCLUDES=(
+  --exclude-dir=coverage
+  --exclude-dir=vendor
+  --exclude-dir=node_modules
+  --exclude-dir=dist
+  --exclude-dir=build
+  --exclude-dir=.git
+)
+
 # Les commentaires citent légitimement les motifs recherchés : la documentation
 # du code explique par exemple pourquoi setApiVersion() ne doit jamais servir.
 strip_comments() {
@@ -42,7 +53,7 @@ check() { # libellé, motif, chemins…
 
   if [ $# -eq 0 ]; then pass "$label (rien à analyser)"; return; fi
 
-  hits="$( grep -rInE --binary-files=without-match "$pattern" "$@" 2>/dev/null | strip_comments )"
+  hits="$( grep -rInE --binary-files=without-match "${EXCLUDES[@]}" "$pattern" "$@" 2>/dev/null | strip_comments )"
 
   if [ -n "$hits" ]; then
     printf '%s\n' "$hits"
@@ -65,7 +76,7 @@ check "  Aucun IBAN reçu côté serveur" '\$_(POST|GET|REQUEST)\[[^]]*(iban|IBA
 # Tout IBAN présent ailleurs dans le dépôt doit figurer dans la liste de test.
 echo "Périmètre : IBAN de l'outillage et des tests"
 unknown="$(
-  grep -rIohE --binary-files=without-match '[A-Z]{2}[0-9]{2}[A-Z0-9]{11,30}' "${repository[@]}" 2>/dev/null \
+  grep -rIohE --binary-files=without-match "${EXCLUDES[@]}" '[A-Z]{2}[0-9]{2}[A-Z0-9]{11,30}' "${repository[@]}" 2>/dev/null \
     | sort -u \
     | grep -vE "^($TEST_IBANS)$" || true
 )"

@@ -11,6 +11,8 @@ namespace RCP_Stripe_Sepa;
 
 use RCP_Stripe_Sepa\Compat\RcpEnvironment;
 use RCP_Stripe_Sepa\Compat\RequirementsNotice;
+use RCP_Stripe_Sepa\Webhook\Endpoint;
+use RCP_Stripe_Sepa\Webhook\EventStore;
 
 /**
  * Amorçage : vérifie l'environnement, puis enregistre les composants.
@@ -101,6 +103,14 @@ final class Plugin {
 			return;
 		}
 
+		add_action( 'rest_api_init', array( Endpoint::class, 'register' ) );
+		add_action( 'admin_init', array( EventStore::class, 'install' ) );
+		add_action( 'rcp_stripe_sepa_purge_webhook_events', array( $this, 'purge_webhook_events' ) );
+
+		if ( ! wp_next_scheduled( 'rcp_stripe_sepa_purge_webhook_events' ) ) {
+			wp_schedule_event( time() + HOUR_IN_SECONDS, 'daily', 'rcp_stripe_sepa_purge_webhook_events' );
+		}
+
 		/**
 		 * Se déclenche lorsque le plugin a démarré dans un environnement compatible.
 		 *
@@ -122,6 +132,15 @@ final class Plugin {
 			false,
 			dirname( plugin_basename( RCP_SEPA_PLUGIN_FILE ) ) . '/languages'
 		);
+	}
+
+	/**
+	 * Purge les événements de webhook au-delà de la durée de conservation.
+	 *
+	 * @return void
+	 */
+	public function purge_webhook_events(): void {
+		EventStore::purge();
 	}
 
 	/**

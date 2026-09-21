@@ -5,10 +5,12 @@
 Plugin WordPress ajoutant le prélèvement automatique SEPA comme moyen de paiement dans Restrict
 Content Pro, qui n'intègre nativement que la carte bancaire via Stripe.
 
-> **État du projet : jalon J1 — socle technique livré.**
-> L'environnement Docker démarre, le plugin s'active, la détection de compatibilité RCP est
-> implémentée et testée (54 tests, 90 % de couverture). La passerelle SEPA elle-même arrive au
-> jalon J3 ; la suite de tests « webhooks » au jalon J4.
+> **État du projet : jalons J1 et J4 livrés.**
+> L'environnement Docker démarre, le plugin s'active, la compatibilité RCP est détectée, et le
+> point de terminaison des webhooks est opérationnel : signature vérifiée, idempotence, machine à
+> états du cycle de vie des adhésions. 151 tests, 86 % de couverture.
+> La passerelle de paiement elle-même — formulaire SEPA et création des intentions — arrive au
+> jalon J3.
 
 ## Documentation
 
@@ -19,6 +21,7 @@ Content Pro, qui n'intègre nativement que la carte bancaire via Stripe.
 | [Compatibilité RCP](docs/compatibilite-rcp.md) | Variante libre / variante commerciale, détection, tests de contrat |
 | [Webhooks en local](docs/webhooks-en-local.md) | Rejouer des événements signés, hors ligne ou via la CLI Stripe |
 | [Environnement Stripe de test](docs/environnement-stripe-test.md) | Ce qui est nécessaire, ce qui ne l'est pas, et les pièges constatés |
+| [Traitement des webhooks](docs/webhooks-traitement.md) | Chemin d'une requête, codes de réponse, idempotence, machine à états |
 | [SECURITY.md](SECURITY.md) | Politique de sécurité et checklist de revue |
 
 ## Fonctionnalités visées
@@ -71,11 +74,11 @@ make webhook-capture EVENT_ID=evt_xxx NAME=mon-cas
 ## Tests
 
 ```bash
-make test              # unitaires + intégration + contrat
+make test              # unitaires + intégration + contrat + webhooks
 make test-unit         # rapide, WordPress mocké, sans base
 make test-integration  # WordPress et RCP réels
 make test-contract     # contrat RCP et SDK Stripe
-make test-webhooks     # à partir du jalon J4
+make test-webhooks     # signature, idempotence, désordre, charges utiles réelles
 make coverage          # couverture fusionnée, rapport HTML
 make lint              # PHPCS + PHPStan
 make matrix            # rejoue la suite sur la matrice PHP × WP × RCP

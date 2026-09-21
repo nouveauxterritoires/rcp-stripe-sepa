@@ -4,6 +4,7 @@ on:
   push:
     branches: [main, develop]
   pull_request:
+  workflow_dispatch:
   schedule:
     # Détecte une rupture de contrat amont (RCP / Stripe) avant les utilisateurs.
     - cron: '0 4 * * *'
@@ -65,7 +66,7 @@ jobs:
       - run: vendor/bin/phpunit --testsuite unit
 
   integration:
-    name: Intégration — WP ${{ matrix.wp }} / RCP ${{ matrix.rcp }}
+    name: Intégration — WP ${{ matrix.wp }} / RCP ${{ matrix.rcp }} (libre)
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -97,6 +98,7 @@ jobs:
         env:
           WP_VERSION: ${{ matrix.wp }}
           RCP_VERSION: ${{ matrix.rcp }}
+          RCP_VARIANT: free
           WP_TESTS_DB_HOST: 127.0.0.1
           WP_TESTS_DB_USER: root
           WP_TESTS_DB_PASSWORD: root
@@ -105,23 +107,89 @@ jobs:
       - run: vendor/bin/phpunit --testsuite contract
         env:
           STRIPE_MOCK_HOST: 127.0.0.1
-      - run: vendor/bin/phpunit --testsuite webhooks
+      # La couverture agrège toutes les suites : elle exige WordPress et RCP,
+      # et n'est donc mesurée qu'ici, sur la combinaison principale.
+      - name: Couverture fusionnée
+        if: matrix.wp == 'latest'
+        env:
+          STRIPE_MOCK_HOST: 127.0.0.1
+        run: bash bin/coverage.sh
+      - name: Contrôle du seuil (80 %)
+        if: matrix.wp == 'latest'
+        run: bash bin/check-coverage.sh tests/coverage/clover.xml 80
+      - name: Publier le rapport de couverture
+        if: matrix.wp == 'latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: tests/coverage/html
 
-  coverage:
-    name: Couverture (seuil 80 %)
+  integration-pro:
+    name: Intégration — Restrict Content Pro
     runs-on: ubuntu-latest
-    needs: [unit]
+    # L'archive de RCP Pro est un produit commercial : elle ne peut pas être
+    # versionnée. Ce job ne s'exécute que si l'URL de téléchargement est
+    # configurée en secret de dépôt, et il n'est jamais bloquant pour une
+    # contribution externe.
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    continue-on-error: true
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: wordpress_test
+        ports: ['3306:3306']
+        options: >-
+          --health-cmd="mysqladmin ping -proot"
+          --health-interval=5s --health-timeout=5s --health-retries=20
+      stripe-mock:
+        image: stripe/stripe-mock:latest
+        ports: ['12111:12111']
     steps:
       - uses: actions/checkout@v4
+      - name: Vérifier la présence du secret
+        id: guard
+        run: |
+          if [ -z "${{ secrets.RCP_PRO_ARCHIVE_URL }}" ]; then
+            echo "Secret RCP_PRO_ARCHIVE_URL absent — job ignoré."
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          fi
       - uses: shivammathur/setup-php@v2
+        if: steps.guard.outputs.run == 'true'
         with:
           php-version: '8.2'
-          coverage: xdebug
+          coverage: none
           tools: composer:v2
-      - run: composer install --no-interaction --prefer-dist
-      - run: XDEBUG_MODE=coverage vendor/bin/phpunit --testsuite unit --coverage-clover tests/coverage/clover.xml
-      - name: Contrôle du seuil
-        run: bash bin/check-coverage.sh tests/coverage/clover.xml 80
+      - if: steps.guard.outputs.run == 'true'
+        run: composer install --no-interaction --prefer-dist
+      - name: Récupérer l'archive Restrict Content Pro
+        if: steps.guard.outputs.run == 'true'
+        run: |
+          mkdir -p vendor-plugins
+          curl -sSLf "${{ secrets.RCP_PRO_ARCHIVE_URL }}" -o vendor-plugins/restrict-content-pro.zip
+      - name: Installer la bibliothèque de tests WordPress
+        if: steps.guard.outputs.run == 'true'
+        env:
+          WP_VERSION: latest
+          RCP_VARIANT: pro
+          VENDOR_PLUGINS_DIR: ${{ github.workspace }}/vendor-plugins
+          WP_TESTS_DB_HOST: 127.0.0.1
+          WP_TESTS_DB_USER: root
+          WP_TESTS_DB_PASSWORD: root
+        run: bash bin/install-wp-tests.sh
+      - name: Tests d'intégration et de contrat
+        if: steps.guard.outputs.run == 'true'
+        env:
+          STRIPE_MOCK_HOST: 127.0.0.1
+        run: |
+          vendor/bin/phpunit --testsuite integration
+          vendor/bin/phpunit --testsuite contract
+      - name: Purger l'archive commerciale
+        if: always()
+        run: rm -rf vendor-plugins
 
   i18n:
     name: Fichier .pot à jour

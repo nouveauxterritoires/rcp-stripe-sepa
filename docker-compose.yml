@@ -80,7 +80,14 @@ services:
       WP_TESTS_DB_NAME: wordpress_test
       WP_TESTS_DB_USER: root
       WP_TESTS_DB_PASSWORD: root
-      WP_URL: http://wordpress
+      # Volume persistant : chaque `docker compose run` crée un conteneur neuf,
+      # /tmp ne survivrait pas d'une commande à l'autre.
+      WP_TESTS_DIR: /wp-tests/lib
+      WP_CORE_DIR: /wp-tests/core
+      RCP_VARIANT: ${RCP_VARIANT:-free}
+      VENDOR_PLUGINS_DIR: /vendor-plugins
+      # URL publique, telle qu'atteinte depuis le navigateur de l'hôte.
+      WP_URL: http://localhost:${WP_PORT:-8080}
       RCP_VERSION: ${RCP_VERSION:-latest}
       WP_VERSION: ${WP_VERSION:-latest}
       STRIPE_TEST_SECRET_KEY: ${STRIPE_TEST_SECRET_KEY:-}
@@ -89,6 +96,7 @@ services:
       STRIPE_MOCK_HOST: stripe-mock
     volumes:
       - wp-data:/var/www/html
+      - test-data:/wp-tests
       - ./:/var/www/html/wp-content/plugins/rcp-stripe-sepa
       - ./vendor-plugins:/vendor-plugins:ro
     entrypoint: ["/bin/bash", "-c"]
@@ -126,3 +134,4 @@ services:
 volumes:
   db-data:
   wp-data:
+  test-data:

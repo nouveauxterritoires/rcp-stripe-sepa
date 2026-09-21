@@ -29,18 +29,17 @@
         </testsuite>
     </testsuites>
 
+    <!-- Les rapports sont demandés explicitement en ligne de commande
+         (`make coverage`), afin qu'une suite ciblée n'affiche pas un taux
+         partiel trompeur. -->
     <coverage processUncoveredFiles="true">
         <include>
             <directory suffix=".php">src</directory>
         </include>
-        <report>
-            <text outputFile="php://stdout" showOnlySummary="true"/>
-            <clover outputFile="tests/coverage/clover.xml"/>
-        </report>
     </coverage>
 
     <php>
-        <env name="WP_TESTS_DIR" value="/tmp/wordpress-tests-lib"/>
+        <env name="WP_TESTS_DIR" value="/wp-tests/lib"/>
         <env name="STRIPE_MOCK_HOST" value="stripe-mock"/>
         <env name="STRIPE_MOCK_PORT" value="12111"/>
     </php>

@@ -17,12 +17,34 @@ wp() { command wp --path="$WP_PATH" --allow-root "$@"; }
 
 log() { printf '\033[1;34m==>\033[0m %s\n' "$*"; }
 
+# Le client MariaDB embarqué dans l'image WordPress vérifie par défaut le
+# certificat TLS du serveur ; MySQL 8 en présente un auto-signé, ce qui fait
+# échouer la connexion. La communication reste interne au réseau Docker de
+# développement : la vérification est désactivée pour le client en ligne de
+# commande uniquement (PHP/mysqli n'est pas concerné).
+MYSQL_CLIENT_OPTS="${MYSQL_CLIENT_OPTS:---skip-ssl}"
+
 log "Attente de la base de données"
-until mysqladmin ping -h"${WORDPRESS_DB_HOST:-db}" \
+for _ in $(seq 1 60); do
+  mysqladmin ping $MYSQL_CLIENT_OPTS \
+    -h"${WORDPRESS_DB_HOST:-db}" \
     -u"${WORDPRESS_DB_USER:-wordpress}" \
-    -p"${WORDPRESS_DB_PASSWORD:-wordpress}" --silent 2>/dev/null; do
+    -p"${WORDPRESS_DB_PASSWORD:-wordpress}" --silent 2>/dev/null && break
   sleep 2
 done
+
+mysqladmin ping $MYSQL_CLIENT_OPTS \
+  -h"${WORDPRESS_DB_HOST:-db}" \
+  -u"${WORDPRESS_DB_USER:-wordpress}" \
+  -p"${WORDPRESS_DB_PASSWORD:-wordpress}" --silent 2>/dev/null \
+  || { echo "Base de données injoignable après 120 s." >&2; exit 1; }
+
+log "Attente des fichiers du cœur WordPress"
+for _ in $(seq 1 60); do
+  [ -f "$WP_PATH/wp-settings.php" ] && break
+  sleep 2
+done
+[ -f "$WP_PATH/wp-settings.php" ] || { echo "Cœur WordPress absent de $WP_PATH"; exit 1; }
 
 if ! wp core is-installed 2>/dev/null; then
   log "Installation de WordPress"
@@ -37,6 +59,9 @@ else
   log "WordPress déjà installé"
 fi
 
+# Le port publié peut changer d'un poste à l'autre : on réaligne les URL.
+wp option update siteurl "$WP_URL"
+wp option update home "$WP_URL"
 wp option update timezone_string 'Europe/Paris'
 wp rewrite structure '/%postname%/' --hard
 
@@ -66,6 +91,19 @@ log "Activation de rcp-stripe-sepa"
 wp plugin activate rcp-stripe-sepa 2>/dev/null \
   || log "rcp-stripe-sepa pas encore implémenté — activation ignorée"
 
+# --- Tables de RCP ------------------------------------------------------------
+# RCP crée ses tables sur le hook `admin_init` (priorité -99999). WP-CLI ne
+# passant pas par l'administration, on déclenche le hook explicitement,
+# faute de quoi tout appel à rcp_add_membership_level() échoue.
+log "Création des tables de RCP"
+wp eval '
+if ( function_exists( "rcp_setup_components" ) ) {
+    rcp_setup_components();
+}
+do_action( "admin_init" );
+echo "tables RCP initialisees\n";
+' --allow-root
+
 # --- Configuration RCP --------------------------------------------------------
 log "Configuration de RCP en mode test"
 wp eval '
@@ -83,20 +121,31 @@ echo "reglages RCP mis a jour\n";
 # --- Jeux de données de test --------------------------------------------------
 log "Création des niveaux d'adhésion de test"
 wp eval '
-if ( ! function_exists( "rcp_add_membership_level" ) ) {
+if ( ! function_exists( "rcp_add_membership_level" ) || ! function_exists( "rcp_get_membership_levels" ) ) {
     echo "RCP indisponible — niveaux non crees\n";
     return;
 }
+
+$existing = wp_list_pluck( rcp_get_membership_levels( array( "number" => 100 ) ), "name" );
+
 $levels = array(
-    array( "name" => "Mensuel",  "price" => 10, "duration" => 1, "duration_unit" => "month" ),
-    array( "name" => "Annuel",   "price" => 99, "duration" => 1, "duration_unit" => "year"  ),
-    array( "name" => "A vie",    "price" => 299, "duration" => 0, "duration_unit" => "day"  ),
-    array( "name" => "Gratuit",  "price" => 0,  "duration" => 1, "duration_unit" => "month" ),
+    array( "name" => "Mensuel", "price" => 10,  "duration" => 1, "duration_unit" => "month" ),
+    array( "name" => "Annuel",  "price" => 99,  "duration" => 1, "duration_unit" => "year"  ),
+    array( "name" => "A vie",   "price" => 299, "duration" => 0, "duration_unit" => "day"   ),
+    array( "name" => "Gratuit", "price" => 0,   "duration" => 1, "duration_unit" => "month" ),
 );
+
+$created = 0;
 foreach ( $levels as $level ) {
-    rcp_add_membership_level( wp_parse_args( $level, array( "status" => "active" ) ) );
+    if ( in_array( $level["name"], $existing, true ) ) {
+        continue;
+    }
+    if ( rcp_add_membership_level( wp_parse_args( $level, array( "status" => "active" ) ) ) ) {
+        $created++;
+    }
 }
-echo "niveaux crees\n";
+
+printf( "%d niveau(x) cree(s), %d deja present(s)\n", $created, count( $existing ) );
 ' --allow-root || log "Création des niveaux ignorée"
 
 log "Création des utilisateurs de test"

@@ -47,7 +47,9 @@ logs: ## Suit les journaux
 prepare-tests: ## Installe la bibliothèque de tests WordPress
 	$(CLI) "bash /var/www/html/wp-content/plugins/rcp-stripe-sepa/bin/install-wp-tests.sh"
 
-test: test-unit test-integration test-contract test-webhooks ## Exécute toute la suite PHP
+# La suite « webhooks » est livrée au jalon J4 ; elle est exclue de la cible
+# par défaut tant qu'elle est vide, une suite sans test faisant échouer PHPUnit.
+test: test-unit test-integration test-contract ## Exécute les suites PHP disponibles
 
 test-unit: ## Tests unitaires (WordPress mocké, sans base)
 	$(CLI) "cd /var/www/html/wp-content/plugins/rcp-stripe-sepa && composer install --no-interaction && vendor/bin/phpunit --testsuite unit"
@@ -64,8 +66,8 @@ test-webhooks: ## Tests des webhooks (signature, idempotence, désordre)
 test-e2e: ## Tests de bout en bout (Playwright)
 	npx playwright test
 
-coverage: ## Rapport de couverture HTML (tests/coverage/)
-	$(CLI) "cd /var/www/html/wp-content/plugins/rcp-stripe-sepa && XDEBUG_MODE=coverage vendor/bin/phpunit --coverage-html tests/coverage --coverage-text"
+coverage: prepare-tests ## Couverture fusionnée de toutes les suites (tests/coverage/)
+	$(CLI) "cd /var/www/html/wp-content/plugins/rcp-stripe-sepa && bash bin/coverage.sh"
 
 # --- Qualité ------------------------------------------------------------------
 

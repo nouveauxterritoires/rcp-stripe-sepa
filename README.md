@@ -5,10 +5,10 @@
 Plugin WordPress ajoutant le prélèvement automatique SEPA comme moyen de paiement dans Restrict
 Content Pro, qui n'intègre nativement que la carte bancaire via Stripe.
 
-> **État du projet : jalon J0 — cadrage.**
-> Le cahier des charges, les décisions d'architecture, l'environnement de développement et
-> l'outillage de test sont en place. Le code du plugin n'est pas encore écrit : les suites de tests
-> sont volontairement vides jusqu'au jalon J1.
+> **État du projet : jalon J1 — socle technique livré.**
+> L'environnement Docker démarre, le plugin s'active, la détection de compatibilité RCP est
+> implémentée et testée (54 tests, 90 % de couverture). La passerelle SEPA elle-même arrive au
+> jalon J3 ; la suite de tests « webhooks » au jalon J4.
 
 ## Documentation
 
@@ -16,6 +16,7 @@ Content Pro, qui n'intègre nativement que la carte bancaire via Stripe.
 |---|---|
 | [Cahier des charges](docs/cahier-des-charges.md) | Périmètre, contraintes, spécifications, sécurité, tests, jalons |
 | [ADR-0001](docs/adr/0001-strategie-integration-rcp.md) | Pourquoi étendre la passerelle Stripe de RCP par héritage |
+| [Compatibilité RCP](docs/compatibilite-rcp.md) | Variante libre / variante commerciale, détection, tests de contrat |
 | [SECURITY.md](SECURITY.md) | Politique de sécurité et checklist de revue |
 
 ## Fonctionnalités visées
@@ -39,6 +40,9 @@ make up
 - Site : http://localhost:8080 — administration `admin` / `admin`
 - E-mails capturés : http://localhost:8025
 
+Si l'un de ces ports est déjà pris sur votre poste, changez `WP_PORT` ou `MAILPIT_PORT` dans `.env`
+et relancez `make up` : le provisionnement réaligne les URL du site.
+
 Pour recevoir les webhooks Stripe en local, dans un second terminal :
 
 ```bash
@@ -50,27 +54,36 @@ Reporter le secret `whsec_…` affiché dans `.env` (`STRIPE_WEBHOOK_SECRET`), p
 ## Tests
 
 ```bash
-make test              # unitaires + intégration + contrat + webhooks
+make test              # unitaires + intégration + contrat
 make test-unit         # rapide, WordPress mocké, sans base
 make test-integration  # WordPress et RCP réels
-make test-contract     # schéma Stripe (stripe-mock) et contrat RCP
-make test-webhooks     # signature, idempotence, désordre, livemode
-make test-e2e          # Playwright, parcours de bout en bout
-make coverage          # rapport HTML, seuil 80 %
+make test-contract     # contrat RCP et SDK Stripe
+make test-webhooks     # à partir du jalon J4
+make coverage          # couverture fusionnée, rapport HTML
 make lint              # PHPCS + PHPStan
 make matrix            # rejoue la suite sur la matrice PHP × WP × RCP
 ```
 
 `make help` liste toutes les commandes.
 
+Les suites **ne peuvent pas** être lancées dans une même invocation de PHPUnit : la suite `unit`
+remplace les fonctions de WordPress via Brain Monkey, les autres les chargent réellement. Un
+`vendor/bin/phpunit` sans `--testsuite` s'arrête avec un message explicite.
+
 ## Restrict Content Pro
 
 L'environnement installe automatiquement **Restrict Content** (le socle libre publié sur
 WordPress.org), qui contient la passerelle Stripe et suffit à l'essentiel des tests.
 
-Pour tester contre **Restrict Content Pro**, déposez l'archive dans `vendor-plugins/` puis relancez
-`make setup`. Ce répertoire est ignoré par Git : l'archive est un produit commercial et ne doit
-jamais être versionnée.
+Pour tester contre **Restrict Content Pro**, déposez l'archive dans `vendor-plugins/` puis :
+
+```bash
+RCP_VARIANT=pro make prepare-tests && make test
+```
+
+Ce répertoire est ignoré par Git : l'archive est un produit commercial et ne doit jamais être
+versionnée. Le plugin ne distingue jamais les deux variantes pour décider de son comportement — il
+vérifie les capacités réellement présentes. Voir [docs/compatibilite-rcp.md](docs/compatibilite-rcp.md).
 
 ## Sécurité
 

@@ -14,9 +14,19 @@ for p in "${scan_paths[@]}"; do [ -e "$p" ] && existing+=("$p"); done
 fail() { printf '\033[0;31mÉCHEC\033[0m %s\n' "$1"; status=1; }
 pass() { printf '\033[0;32mOK\033[0m    %s\n' "$1"; }
 
+# Les lignes de commentaire sont écartées : la documentation du code cite
+# légitimement les motifs recherchés (par exemple l'explication de la raison
+# pour laquelle setApiVersion() ne doit jamais être appelée).
+strip_comments() {
+  grep -vE '^[^:]+:[0-9]+:[[:space:]]*(\*|//|#)'
+}
+
 check() { # libellé, motif
-  local label="$1" pattern="$2"
-  if grep -rInE --binary-files=without-match "$pattern" "${existing[@]}" 2>/dev/null; then
+  local label="$1" pattern="$2" hits
+  hits="$( grep -rInE --binary-files=without-match "$pattern" "${existing[@]}" 2>/dev/null | strip_comments )"
+
+  if [ -n "$hits" ]; then
+    printf '%s\n' "$hits"
     fail "$label"
   else
     pass "$label"

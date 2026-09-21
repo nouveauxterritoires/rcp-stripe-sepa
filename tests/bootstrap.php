@@ -21,32 +21,55 @@ if ( ! file_exists( $autoloader ) ) {
 require_once $autoloader;
 
 /**
- * Détermine si la suite en cours nécessite un WordPress réel.
+ * Suite demandée en ligne de commande, ou null si aucune.
  *
- * @return bool
+ * @return string|null
  */
-function rcp_stripe_sepa_tests_need_wordpress(): bool {
+function rcp_stripe_sepa_tests_requested_suite(): ?string {
 	$argv = $_SERVER['argv'] ?? array();
 
 	foreach ( $argv as $index => $arg ) {
 		if ( '--testsuite' === $arg ) {
-			return 'unit' !== ( $argv[ $index + 1 ] ?? '' );
+			return (string) ( $argv[ $index + 1 ] ?? '' );
 		}
 
 		if ( 0 === strpos( $arg, '--testsuite=' ) ) {
-			return 'unit' !== substr( $arg, strlen( '--testsuite=' ) );
+			return substr( $arg, strlen( '--testsuite=' ) );
 		}
 	}
 
-	// Sans précision, on exécute tout : WordPress est nécessaire.
-	return true;
+	return null;
 }
 
-if ( ! rcp_stripe_sepa_tests_need_wordpress() ) {
+$rcp_sepa_suite = rcp_stripe_sepa_tests_requested_suite();
+
+/*
+ * Les suites ne peuvent pas partager un même processus.
+ *
+ * La suite « unit » remplace les fonctions de WordPress via Brain Monkey
+ * (Patchwork), ce qui exige qu'aucune d'elles ne soit déjà définie. Les autres
+ * suites chargent au contraire un WordPress complet. Exécuter les deux dans la
+ * même invocation fait échouer Patchwork avec « DefinedTooEarly ».
+ *
+ * Chaque suite doit donc être lancée séparément — ce que font `make test` et
+ * l'intégration continue.
+ */
+if ( null === $rcp_sepa_suite ) {
+	fwrite(
+		STDERR,
+		"Les suites de tests ne peuvent pas être exécutées dans une même invocation.\n"
+		. "Les tests unitaires remplacent les fonctions de WordPress ; les autres suites les chargent.\n\n"
+		. "Utilisez : make test\n"
+		. "Ou une suite à la fois : vendor/bin/phpunit --testsuite unit|integration|contract|webhooks\n"
+	);
+	exit( 1 );
+}
+
+if ( 'unit' === $rcp_sepa_suite ) {
 	return;
 }
 
-$tests_dir = getenv( 'WP_TESTS_DIR' ) ?: '/tmp/wordpress-tests-lib';
+$tests_dir = getenv( 'WP_TESTS_DIR' ) ?: '/wp-tests/lib';
 
 if ( ! file_exists( $tests_dir . '/includes/functions.php' ) ) {
 	fwrite(
@@ -60,23 +83,50 @@ if ( ! file_exists( $tests_dir . '/includes/functions.php' ) ) {
 require_once $tests_dir . '/includes/functions.php';
 
 /**
- * Active Restrict Content puis le plugin avant le chargement de WordPress.
+ * Localise le fichier principal de Restrict Content Pro, quelle que soit la
+ * variante installée.
+ *
+ * L'ordre reflète la priorité : si les deux sont présentes, la variante
+ * commerciale est testée.
+ *
+ * @return string|null Chemin absolu, ou null si aucune variante n'est présente.
+ */
+function rcp_stripe_sepa_tests_locate_rcp(): ?string {
+	$candidates = array(
+		'restrict-content-pro/restrict-content-pro.php',
+		'restrict-content/restrictcontent.php',
+	);
+
+	foreach ( $candidates as $candidate ) {
+		$path = WP_PLUGIN_DIR . '/' . $candidate;
+
+		if ( file_exists( $path ) ) {
+			return $path;
+		}
+	}
+
+	return null;
+}
+
+/**
+ * Charge Restrict Content Pro puis le plugin avant l'amorçage de WordPress.
  */
 tests_add_filter(
 	'muplugins_loaded',
 	static function () {
-		$plugins = array(
-			'restrict-content/restrictcontent.php',
-			'rcp-stripe-sepa/rcp-stripe-sepa.php',
-		);
+		$rcp = rcp_stripe_sepa_tests_locate_rcp();
 
-		foreach ( $plugins as $plugin ) {
-			$path = WP_PLUGIN_DIR . '/' . $plugin;
-
-			if ( file_exists( $path ) ) {
-				require_once $path;
-			}
+		if ( null === $rcp ) {
+			fwrite(
+				STDERR,
+				"Aucune variante de Restrict Content Pro trouvée dans " . WP_PLUGIN_DIR . ".\n"
+				. "Exécutez : make prepare-tests (RCP_VARIANT=free ou pro)\n"
+			);
+			exit( 1 );
 		}
+
+		require_once $rcp;
+		require_once dirname( __DIR__ ) . '/rcp-stripe-sepa.php';
 	}
 );
 

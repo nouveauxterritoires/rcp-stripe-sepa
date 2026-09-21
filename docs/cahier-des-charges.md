@@ -106,7 +106,7 @@ prélèvement SEPA Stripe comme moyen de paiement disponible dans RCP, pour :
 
 | Composant | Version constatée | Remarque |
 |---|---|---|
-| Restrict Content / RCP (socle StellarWP) | `4.0.4` (socle RCP 3.5.x) | Dépôt `stellarwp/restrict-content`, branche `master` |
+| Restrict Content / RCP (socle StellarWP) | `4.0.4`, affiché « Kadence Memberships » | Dépôt `stellarwp/restrict-content`. Le noyau embarqué déclare `RCP_PLUGIN_VERSION = 4.0.7` : les numéros de version des deux variantes ne sont pas comparables (§4.1) |
 | SDK Stripe PHP embarqué dans RCP | `10.3.0` | `core/includes/libraries/stripe/` |
 | Version d'API par défaut du SDK embarqué | `2022-11-15` | `\Stripe\Util\ApiVersion::CURRENT` |
 | Version d'API **forcée globalement** par RCP | `2020-08-27` | `\Stripe\Stripe::setApiVersion()` dans `init()` |
@@ -188,6 +188,25 @@ script de confirmation (`confirmSepaDebitPayment` / `confirmSepaDebitSetup`).
 
 **Conclusion architecturale :** la surcharge par héritage (§5.1) est nécessaire ; les filtres seuls
 ne suffisent pas.
+
+### 3.7 Contrainte majeure n°5 — deux variantes du produit
+
+Deux plugins distincts exposent le même noyau : la variante libre publiée sur WordPress.org et la
+variante commerciale. Le plugin doit fonctionner avec les deux sans branche conditionnelle.
+
+**Règle d'implémentation (R-VAR-1).** Le démarrage n'est jamais décidé sur un nom de plugin ni sur
+un numéro de version, mais sur la **présence effective des capacités utilisées**.
+
+**Règle d'implémentation (R-VAR-2).** La variante libre peut tourner en « mode legacy »
+(option `restrict_content_chosen_version`), sans aucun noyau RCP ni passerelle de paiement. Ce cas
+doit produire un message dédié, et non une énumération de classes absentes.
+
+**Règle d'implémentation (R-VAR-3).** RCP ne charge son SDK Stripe qu'au premier appel de
+`RCP_Payment_Gateway_Stripe::init()`. La présence du **fichier** suffit au démarrage ; la version
+est contrôlée à l'initialisation de la passerelle.
+
+Le détail de la stratégie et les points restant à vérifier sur la variante commerciale sont
+consignés dans `docs/compatibilite-rcp.md`.
 
 ---
 
@@ -727,7 +746,7 @@ Tout autre événement est enregistré au statut `skipped` et renvoie `200`.
 | **Unitaire** | PHPUnit + Brain Monkey (WP mocké) | Construction des arguments d'intention, machine à états, expurgation des journaux, validation IBAN, correspondance des codes d'erreur | ≥ 80 % de lignes, exécution < 10 s |
 | **Intégration WP** | PHPUnit + `wordpress-tests-lib`, WP réel + RCP réel, API Stripe **bouchonnée** | Enregistrement de la passerelle, cycle de vie d'adhésion, persistance des métadonnées, idempotence des webhooks, RGPD | Tous les parcours §6 |
 | **Contrat Stripe** | PHPUnit + `stripe-mock` (serveur officiel) | Conformité des charges utiles envoyées au schéma OpenAPI de l'API | Toutes les requêtes du plugin |
-| **Contrat RCP** | PHPUnit | Existence et signature des méthodes/propriétés de RCP utilisées par héritage | Exécuté sur chaque version de RCP de la matrice |
+| **Contrat RCP** | PHPUnit | Existence et signature des méthodes/propriétés de RCP utilisées par héritage ; classe non finale ; capacités déclarées ; compatibilité de la version d'API avec le SDK embarqué | Exécuté sur chaque version **et chaque variante** de RCP de la matrice |
 | **Webhook** | PHPUnit + charges utiles enregistrées (fixtures) | Chaque événement §8.2 : nominal, rejeu, désordre, signature invalide, `livemode` incohérent | 100 % des événements |
 | **E2E** | Playwright + WordPress Docker + Stripe en mode test réel | Parcours §6.1 à §6.3 de bout en bout avec les IBAN de test | 3 parcours critiques |
 | **Sécurité** | Tests dédiés + analyse statique | Chaque exigence SEC-xx testable | 100 % des SEC-xx testables |
@@ -770,6 +789,10 @@ Tout autre événement est enregistré au statut `skipped` et renvoie `200`.
   blocage, détectés par un contrôle automatisé en CI.
 - **NR-06** : les tests E2E enregistrent capture d'écran, vidéo et trace en cas d'échec, publiées
   comme artefacts de CI.
+- **NR-07** : les suites ne partagent pas de processus. La suite unitaire remplace les fonctions de
+  WordPress (Brain Monkey / Patchwork), les autres les chargent réellement : les exécuter ensemble
+  fait échouer Patchwork. Le fichier d'amorçage refuse explicitement une invocation combinée, et la
+  couverture est fusionnée a posteriori par `phpcov` (`bin/coverage.sh`).
 
 ---
 
@@ -787,6 +810,7 @@ les tests automatisés soient exécutables à l'identique en local et en CI.
 |---|---|---|
 | `db` | `mysql:8.0` | Base WordPress |
 | `db-tests` | `mysql:8.0` (tmpfs) | Base dédiée à la suite d'intégration, réinitialisée à chaque exécution |
+| volume `test-data` | — | Cœur WordPress et bibliothèque de tests, persistés entre deux conteneurs éphémères |
 | `wordpress` | `wordpress:php8.2-apache` (image dérivée avec Xdebug, WP-CLI, Composer) | Site de développement, `http://localhost:8080` |
 | `wpcli` | même image dérivée | Installation, configuration, exécution des tests |
 | `mailpit` | `axllent/mailpit` | Capture des e-mails transactionnels, `http://localhost:8025` |
@@ -802,6 +826,8 @@ Le script `bin/setup.sh` (idempotent) exécute :
 2. `wp core install` avec des identifiants de développement ;
 3. installation et activation de **Restrict Content** (socle libre, contenant la passerelle Stripe)
    depuis le dépôt WordPress.org — version épinglée par variable d'environnement ;
+3 bis. déclenchement du hook `admin_init`, que RCP utilise pour créer ses tables : sans lui, aucun
+   niveau d'adhésion ne peut être créé en ligne de commande ;
 4. installation de **Restrict Content Pro** si une archive est déposée dans `vendor-plugins/`
    (répertoire ignoré par Git — voir §14.5) ;
 5. activation du plugin `rcp-stripe-sepa` (monté en volume depuis le dépôt) ;

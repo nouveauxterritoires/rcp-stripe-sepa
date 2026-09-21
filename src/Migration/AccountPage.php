@@ -56,7 +56,7 @@ final class AccountPage {
 		printf(
 			'<br/><button type="button" class="rcp-stripe-sepa-migrate-toggle" data-membership="%1$d" aria-expanded="false" aria-controls="rcp-stripe-sepa-migration-%1$d">%2$s</button>',
 			(int) $membership->get_id(),
-			esc_html__( 'Passer au prélèvement SEPA', 'rcp-stripe-sepa' )
+			esc_html__( 'Switch to SEPA Direct Debit', 'rcp-stripe-sepa' )
 		);
 	}
 
@@ -140,10 +140,10 @@ final class AccountPage {
 				'publishableKey' => $publishable,
 				'locale'         => substr( (string) get_locale(), 0, 2 ),
 				'strings'        => array(
-					'missingName' => __( 'Renseignez le nom du titulaire du compte.', 'rcp-stripe-sepa' ),
-					'working'     => __( 'Enregistrement du mandat en cours…', 'rcp-stripe-sepa' ),
-					'success'     => __( 'Votre adhésion est désormais réglée par prélèvement SEPA. Le prix et la date de prochaine échéance sont inchangés.', 'rcp-stripe-sepa' ),
-					'failure'     => __( 'La bascule vers le prélèvement SEPA a échoué. Réessayez, ou contactez-nous si le problème persiste.', 'rcp-stripe-sepa' ),
+					'missingName' => __( 'Please enter the account holder’s name.', 'rcp-stripe-sepa' ),
+					'working'     => __( 'Saving your mandate…', 'rcp-stripe-sepa' ),
+					'success'     => __( 'Your membership is now paid by SEPA Direct Debit. The price and next renewal date are unchanged.', 'rcp-stripe-sepa' ),
+					'failure'     => __( 'Switching to SEPA Direct Debit failed. Please try again, or contact us if the problem persists.', 'rcp-stripe-sepa' ),
 				),
 			)
 		);

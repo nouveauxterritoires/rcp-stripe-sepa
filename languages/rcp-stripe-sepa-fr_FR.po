@@ -1,0 +1,589 @@
+# Traduction française de rcp-stripe-sepa.
+# Les chaînes source sont en anglais, conformément aux usages de WordPress.
+msgid ""
+msgstr ""
+"Project-Id-Version: rcp-stripe-sepa\n"
+"Language: fr_FR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"PO-Revision-Date: 2026-09-21\n"
+
+#. Plugin Name of the plugin
+#: rcp-stripe-sepa.php
+msgid "SEPA Direct Debit for Restrict Content Pro"
+msgstr "Prélèvement SEPA pour Restrict Content Pro"
+
+#. Description of the plugin
+#: rcp-stripe-sepa.php
+msgid "Adds SEPA Direct Debit (Stripe) to the payment methods available in Restrict Content Pro: recurring memberships, one-off payments and card-to-SEPA migration."
+msgstr "Ajoute le prélèvement automatique SEPA (Stripe) aux moyens de paiement de Restrict Content Pro : adhésions récurrentes, paiements uniques et migration carte vers SEPA."
+
+#: src/Admin/Diagnostics.php:111
+#: src/Admin/Diagnostics.php:116
+msgid "Restrict Content Pro"
+msgstr "Restrict Content Pro"
+
+#: src/Admin/Diagnostics.php:111
+msgid "Compatible."
+msgstr "Compatible."
+
+#. translators: %s: list of detected problems.
+#: src/Admin/Diagnostics.php:119
+#, php-format
+msgid "Incompatible environment: %s."
+msgstr "Environnement incompatible : %s."
+
+#: src/Admin/Diagnostics.php:132
+msgid "Gateway"
+msgstr "Passerelle"
+
+#: src/Admin/Diagnostics.php:135
+msgid "Enabled in the Restrict Content Pro settings."
+msgstr "Activée dans les réglages de RCP."
+
+#: src/Admin/Diagnostics.php:141
+msgid "Disabled: SEPA Direct Debit is not offered at registration."
+msgstr "Désactivée : le prélèvement SEPA n'est pas proposé à l'inscription."
+
+#: src/Admin/Diagnostics.php:153
+msgid "Currency"
+msgstr "Devise"
+
+#. translators: %s: configured currency code.
+#: src/Admin/Diagnostics.php:164
+#, php-format
+msgid "SEPA Direct Debit requires euros; this site uses %s."
+msgstr "Le prélèvement SEPA exige l'euro ; la devise du site est %s."
+
+#: src/Admin/Diagnostics.php:177
+msgid "HTTPS"
+msgstr "HTTPS"
+
+#: src/Admin/Diagnostics.php:180
+msgid "Enabled."
+msgstr "Actif."
+
+#: src/Admin/Diagnostics.php:189
+msgid "Missing. Acceptable in development, required in production."
+msgstr "Absent. Acceptable en développement, indispensable en production."
+
+#: src/Admin/Diagnostics.php:196
+msgid "Missing. Stripe.js and mandate collection both require it."
+msgstr "Absent. Stripe.js et la collecte de mandat l'exigent."
+
+#: src/Admin/Diagnostics.php:207
+msgid "Webhook secret"
+msgstr "Secret de webhook"
+
+#: src/Admin/Diagnostics.php:213
+msgid "Missing: no webhook can be authenticated, and memberships will stay pending."
+msgstr "Absent : aucun webhook ne peut être authentifié, les adhésions resteront en attente."
+
+#: src/Admin/Diagnostics.php:221
+msgid "Stored in the database. Prefer a constant in wp-config.php, which leaks neither through an export nor through a backup."
+msgstr "Stocké en base. Préférez une constante dans wp-config.php, qui ne fuite ni dans un export ni dans une sauvegarde."
+
+#: src/Admin/Diagnostics.php:225
+msgid "Defined as a constant."
+msgstr "Défini par constante."
+
+#: src/Admin/Diagnostics.php:235
+msgid "Webhooks"
+msgstr "Webhooks"
+
+#. translators: %d: number of abandoned events.
+#: src/Admin/Diagnostics.php:245
+#, php-format
+msgid "%d event abandoned after several attempts."
+msgid_plural "%d events abandoned after several attempts."
+msgstr[0] "%d événement abandonné après plusieurs tentatives."
+msgstr[1] "%d événements abandonnés après plusieurs tentatives."
+
+#: src/Admin/Diagnostics.php:260
+msgid "No event received. Check the endpoint declared in Stripe."
+msgstr "Aucun événement reçu. Vérifiez le point de terminaison déclaré chez Stripe."
+
+#. translators: %d: number of processed events.
+#: src/Admin/Diagnostics.php:269
+#, php-format
+msgid "%d event processed."
+msgid_plural "%d events processed."
+msgstr[0] "%d événement traité."
+msgstr[1] "%d événements traités."
+
+#: src/Admin/Diagnostics.php:282
+msgid "Pending debits"
+msgstr "Prélèvements en attente"
+
+#: src/Admin/Diagnostics.php:287
+msgid "Nothing overdue."
+msgstr "Aucun retard."
+
+#. translators: 1: number of payments, 2: number of days.
+#: src/Admin/Diagnostics.php:295
+#, php-format
+msgid "%1$d debit pending for more than %2$d days: a webhook may not be arriving."
+msgid_plural "%1$d debits pending for more than %2$d days: a webhook may not be arriving."
+msgstr[0] "%1$d prélèvement en attente depuis plus de %2$d jours : un webhook n'arrive peut-être pas."
+msgstr[1] "%1$d prélèvements en attente depuis plus de %2$d jours : un webhook n'arrive peut-être pas."
+
+#: src/Admin/DiagnosticsPage.php:48
+#: src/Admin/DiagnosticsPage.php:49
+#: src/Admin/SiteHealth.php:42
+#: src/Gateway/GatewayDefinition.php:63
+#: src/Gateway/SignupProcessor.php:185
+#: src/Privacy/Registry.php:96
+#: templates/admin-diagnostics.php:55
+msgid "SEPA Direct Debit"
+msgstr "Prélèvement SEPA"
+
+#: src/Admin/DiagnosticsPage.php:73
+#: src/Admin/DiagnosticsPage.php:93
+msgid "You do not have permission to do this."
+msgstr "Vous n'avez pas les droits nécessaires."
+
+#: src/Admin/EventReplay.php:44
+msgid "Invalid event identifier."
+msgstr "Identifiant d'événement invalide."
+
+#: src/Admin/EventReplay.php:51
+msgid "The Stripe SDK is unavailable."
+msgstr "Le SDK Stripe est indisponible."
+
+#: src/Admin/EventReplay.php:62
+msgid "This event could not be found in Stripe."
+msgstr "Cet événement est introuvable chez Stripe."
+
+#: src/Admin/EventReplay.php:71
+msgid "This event belongs to the other mode: replay refused."
+msgstr "Cet événement appartient à l'autre mode : rejeu refusé."
+
+#: src/Admin/MembershipMandate.php:72
+#: templates/migration-form.php:54
+#: templates/sepa-fields.php:38
+msgid "IBAN"
+msgstr "IBAN"
+
+#: src/Admin/MembershipMandate.php:73
+#: src/Privacy/PersonalData.php:41
+#: templates/account-mandate.php:27
+msgid "Account holder"
+msgstr "Titulaire du compte"
+
+#: src/Admin/MembershipMandate.php:74
+#: src/Privacy/PersonalData.php:43
+#: templates/account-mandate.php:32
+msgid "Mandate reference"
+msgstr "Référence du mandat"
+
+#: src/Admin/MembershipMandate.php:75
+#: src/Privacy/PersonalData.php:44
+msgid "Mandate status"
+msgstr "Statut du mandat"
+
+#: src/Admin/MembershipMandate.php:76
+msgid "Accepted on"
+msgstr "Accepté le"
+
+#: src/Admin/MembershipMandate.php:97
+msgid "Stripe customer"
+msgstr "Client Stripe"
+
+#: src/Admin/MembershipMandate.php:101
+msgid "Stripe subscription"
+msgstr "Abonnement Stripe"
+
+#: src/Admin/MembershipMandate.php:105
+msgid "Signed mandate"
+msgstr "Mandat signé"
+
+#: src/Admin/SiteHealth.php:58
+msgid "SEPA Direct Debit is fully configured"
+msgstr "La configuration du prélèvement SEPA est complète"
+
+#: src/Admin/SiteHealth.php:61
+msgid "Payments"
+msgstr "Paiements"
+
+#: src/Admin/SiteHealth.php:64
+msgid "Every check passed."
+msgstr "Tous les contrôles sont au vert."
+
+#: src/Admin/SiteHealth.php:68
+msgid "Open the detailed diagnostics"
+msgstr "Ouvrir le diagnostic détaillé"
+
+#: src/Admin/SiteHealth.php:79
+msgid "SEPA Direct Debit is not operational"
+msgstr "Le prélèvement SEPA n'est pas opérationnel"
+
+#: src/Admin/SiteHealth.php:80
+msgid "The SEPA Direct Debit configuration needs attention"
+msgstr "La configuration du prélèvement SEPA mérite un contrôle"
+
+#: src/Compat/RequirementsNotice.php:90
+msgid "SEPA Direct Debit for Restrict Content Pro: the plugin is inactive."
+msgstr "Prélèvement SEPA pour Restrict Content Pro : le plugin est inactif."
+
+#: src/Compat/RequirementsNotice.php:103
+msgid "Restrict Content is running in legacy mode, which has no payment gateway at all. Switch to the full version in the Restrict Content settings to enable SEPA Direct Debit."
+msgstr "Restrict Content fonctionne en mode « legacy », qui ne comporte aucune passerelle de paiement. Basculez sur la version complète dans les réglages de Restrict Content pour activer le prélèvement SEPA."
+
+#: src/Compat/RequirementsNotice.php:115
+msgid "Restrict Content Pro (or Restrict Content) must be installed and active to use SEPA Direct Debit."
+msgstr "Restrict Content Pro (ou Restrict Content) doit être installé et actif pour utiliser le prélèvement SEPA."
+
+#. translators: 1: required version, 2: detected version.
+#: src/Compat/RequirementsNotice.php:134
+#, php-format
+msgid "Restrict Content Pro %1$s or later is required; version %2$s is installed."
+msgstr "Restrict Content Pro %1$s ou supérieur est requis ; la version %2$s est installée."
+
+#. translators: %s: minimum Stripe SDK version.
+#: src/Compat/RequirementsNotice.php:157
+#, php-format
+msgid "The Stripe SDK shipped with Restrict Content Pro could not be found. Version %s or later is required."
+msgstr "Le SDK Stripe fourni par Restrict Content Pro est introuvable. La version %s ou supérieure est requise."
+
+#. translators: 1: required version, 2: detected version.
+#: src/Compat/RequirementsNotice.php:164
+#, php-format
+msgid "The Stripe SDK shipped with Restrict Content Pro is too old: version %1$s or later is required, %2$s was found. Please update Restrict Content Pro."
+msgstr "Le SDK Stripe fourni par Restrict Content Pro est trop ancien : version %1$s ou supérieure requise, %2$s détectée. Mettez Restrict Content Pro à jour."
+
+#. translators: %s: comma-separated list of missing items.
+#: src/Compat/RequirementsNotice.php:193
+#, php-format
+msgid "This version of Restrict Content Pro no longer exposes what the plugin relies on: %s. Please report this incompatibility to the plugin maintainer."
+msgstr "Cette version de Restrict Content Pro n'expose plus les éléments attendus par le plugin : %s. Signalez cette incompatibilité au mainteneur du plugin."
+
+#. translators: %s: membership level name.
+#: src/Email/MessageFactory.php:89
+#, php-format
+msgid "Your SEPA Direct Debit for “%s” is under way"
+msgstr "Votre prélèvement SEPA pour « %s » est en cours"
+
+#. translators: 1: membership level, 2: number of days, 3: site name.
+#: src/Email/MessageFactory.php:94
+#, php-format
+msgid "We have saved your mandate for the “%1$s” membership.\\n\\nA SEPA Direct Debit takes up to %2$d working days for your bank to settle. Your membership will be activated as soon as we receive confirmation of the payment — there is nothing else for you to do.\\n\\nThe %3$s team"
+msgstr "Nous avons bien enregistré votre mandat pour l'adhésion « %1$s ».\\n\\nUn prélèvement SEPA demande jusqu'à %2$d jours ouvrés pour être encaissé par votre banque. Votre adhésion sera activée dès que nous aurons reçu la confirmation du paiement — vous n'avez rien d'autre à faire.\\n\\nL'équipe de %3$s"
+
+#. translators: %s: membership level name.
+#: src/Email/MessageFactory.php:108
+#, php-format
+msgid "Your SEPA Direct Debit for “%s” was declined"
+msgstr "Votre prélèvement SEPA pour « %s » a été refusé"
+
+#. translators: 1: membership level, 2: decline reason, 3: site name.
+#: src/Email/MessageFactory.php:114
+#, php-format
+msgid "The debit for your “%1$s” membership could not be collected. %2$s\\n\\nYou can start your registration again, or contact us if you believe this is a mistake.\\n\\nThe %3$s team"
+msgstr "Le prélèvement pour votre adhésion « %1$s » n'a pas pu être encaissé. %2$s\\n\\nVous pouvez reprendre votre inscription ou nous contacter si vous pensez qu'il s'agit d'une erreur.\\n\\nL'équipe de %3$s"
+
+#: src/Email/MessageFactory.php:127
+msgid "Your new SEPA mandate has been saved"
+msgstr "Votre nouveau mandat SEPA est enregistré"
+
+#. translators: 1: membership level, 2: site name.
+#: src/Email/MessageFactory.php:130
+#, php-format
+msgid "Your “%1$s” membership is now paid by SEPA Direct Debit.\\n\\nThe amount and date of your next renewal are unchanged.\\n\\nThe %2$s team"
+msgstr "Votre adhésion « %1$s » est désormais réglée par prélèvement SEPA.\\n\\nLe montant et la date de votre prochaine échéance sont inchangés.\\n\\nL'équipe de %2$s"
+
+#: src/Email/MessageFactory.php:141
+msgid "SEPA dispute opened on a membership"
+msgstr "Litige SEPA ouvert sur une adhésion"
+
+#. translators: %d: membership identifier.
+#: src/Email/MessageFactory.php:144
+#, php-format
+msgid "A debtor has disputed a debit. The membership concerned has the identifier #%d.\\n\\nOpen your Stripe dashboard to respond to the dispute within the allotted time."
+msgstr "Un débiteur a contesté un prélèvement. L'adhésion concernée porte l'identifiant #%d.\\n\\nConsultez votre tableau de bord Stripe pour répondre au litige dans les délais impartis."
+
+#: src/Email/MessageFactory.php:154
+msgid "A Stripe event could not be processed"
+msgstr "Un événement Stripe n'a pas pu être traité"
+
+#. translators: 1: event identifier, 2: event type.
+#: src/Email/MessageFactory.php:157
+#, php-format
+msgid "Event %1$s (%2$s) was abandoned after several attempts.\\n\\nOpen the “SEPA Direct Debit” admin screen to review it and replay it."
+msgstr "L'événement %1$s (%2$s) a été abandonné après plusieurs tentatives.\\n\\nOuvrez l'écran « Prélèvement SEPA » de l'administration pour en consulter le détail et le rejouer."
+
+#. translators: %s: error message returned by Stripe.
+#: src/Gateway/Gateway.php:109
+#, php-format
+msgid "Error while creating the Stripe customer: %s"
+msgstr "Erreur lors de la création du client Stripe : %s"
+
+#: src/Gateway/Gateway.php:153
+msgid "Stripe intent not found. Please start the registration again, or contact support."
+msgstr "Intention Stripe introuvable. Reprenez l'inscription ou contactez le support."
+
+#: src/Gateway/Gateway.php:288
+msgid "SEPA Direct Debit is not configured. Please contact the site administrator."
+msgstr "Le prélèvement SEPA n'est pas configuré. Contactez l'administrateur du site."
+
+#: src/Gateway/Gateway.php:341
+#: src/Migration/AccountPage.php:143
+msgid "Please enter the account holder’s name."
+msgstr "Renseignez le nom du titulaire du compte."
+
+#: src/Gateway/Gateway.php:342
+msgid "Please enter a valid IBAN."
+msgstr "Renseignez un IBAN valide."
+
+#: src/Gateway/Gateway.php:343
+msgid "The mandate could not be saved. Please check your bank details."
+msgstr "Le mandat n'a pas pu être enregistré. Vérifiez vos informations bancaires."
+
+#. translators: %s: configured currency code.
+#: src/Gateway/Gateway.php:448
+#, php-format
+msgid "SEPA Direct Debit requires payments in euros; this site uses %s."
+msgstr "Le prélèvement SEPA exige des paiements en euros ; la devise du site est %s."
+
+#: src/Gateway/GatewayDefinition.php:64
+msgid "Stripe — SEPA Direct Debit"
+msgstr "Stripe — Prélèvement SEPA"
+
+#. translators: %s: error message returned by Stripe.
+#: src/Gateway/SignupProcessor.php:328
+#, php-format
+msgid "SEPA Direct Debit — the subscription could not be created: %s"
+msgstr "Prélèvement SEPA — création de l'abonnement impossible : %s"
+
+#. translators: 1: reason for the transition, 2: Stripe event type.
+#: src/Membership/TransitionApplier.php:45
+#, php-format
+msgid "SEPA Direct Debit — %1$s (event %2$s)"
+msgstr "Prélèvement SEPA — %1$s (événement %2$s)"
+
+#: src/Migration/AccountPage.php:59
+#: templates/migration-form.php:26
+msgid "Switch to SEPA Direct Debit"
+msgstr "Passer au prélèvement SEPA"
+
+#: src/Migration/AccountPage.php:144
+msgid "Saving your mandate…"
+msgstr "Enregistrement du mandat en cours…"
+
+#: src/Migration/AccountPage.php:145
+msgid "Your membership is now paid by SEPA Direct Debit. The price and next renewal date are unchanged."
+msgstr "Votre adhésion est désormais réglée par prélèvement SEPA. Le prix et la date de prochaine échéance sont inchangés."
+
+#: src/Migration/AccountPage.php:146
+#: src/Migration/ReasonPresenter.php:51
+msgid "Switching to SEPA Direct Debit failed. Please try again, or contact us if the problem persists."
+msgstr "La bascule vers le prélèvement SEPA a échoué. Réessayez, ou contactez-nous si le problème persiste."
+
+#: src/Migration/AjaxController.php:99
+msgid "Your membership is now paid by SEPA Direct Debit."
+msgstr "Votre adhésion est désormais réglée par prélèvement SEPA."
+
+#. translators: %s: previous gateway identifier.
+#: src/Migration/Migrator.php:308
+#, php-format
+msgid "SEPA Direct Debit — payment method migrated from “%s”. Price and next renewal date unchanged."
+msgstr "Prélèvement SEPA — moyen de paiement migré depuis « %s ». Prix et date de prochaine échéance inchangés."
+
+#: src/Migration/ReasonPresenter.php:30
+msgid "Only an active membership can switch to SEPA Direct Debit."
+msgstr "Seule une adhésion active peut basculer sur le prélèvement SEPA."
+
+#: src/Migration/ReasonPresenter.php:33
+msgid "This membership has no upcoming renewal, so changing the payment method would have no effect."
+msgstr "Cette adhésion n'a pas d'échéance à venir : changer de moyen de paiement serait sans effet."
+
+#: src/Migration/ReasonPresenter.php:36
+msgid "SEPA Direct Debit is only available for payments in euros."
+msgstr "Le prélèvement SEPA n'est possible que pour les paiements en euros."
+
+#: src/Migration/ReasonPresenter.php:41
+msgid "SEPA Direct Debit is not available for this membership."
+msgstr "Le prélèvement SEPA n'est pas disponible pour cette adhésion."
+
+#: src/Migration/ReasonPresenter.php:60
+msgid "The mandate was not confirmed. Please enter your bank details again."
+msgstr "Le mandat n'a pas été confirmé. Reprenez la saisie de vos coordonnées bancaires."
+
+#: src/Privacy/PersonalData.php:40
+msgid "Bank account debited"
+msgstr "Compte bancaire débité"
+
+#: src/Privacy/PersonalData.php:42
+msgid "Account country"
+msgstr "Pays du compte"
+
+#: src/Privacy/PersonalData.php:45
+#: templates/account-mandate.php:37
+msgid "Mandate signed on"
+msgstr "Mandat signé le"
+
+#: src/Privacy/PersonalData.php:46
+msgid "Signature IP address"
+msgstr "Adresse IP de signature"
+
+#: src/Privacy/PersonalData.php:73
+msgid "When you pay for your membership by SEPA Direct Debit, your bank details are entered directly with Stripe, our payment provider, and never pass through this site. We store neither your full IBAN nor anything else that would allow your account to be debited."
+msgstr "Lorsque vous réglez votre adhésion par prélèvement SEPA, vos coordonnées bancaires sont saisies directement chez Stripe, notre prestataire de paiement, et ne transitent jamais par ce site. Nous ne conservons ni votre IBAN complet ni aucune donnée permettant de débiter votre compte."
+
+#: src/Privacy/PersonalData.php:77
+msgid "For as long as your membership lasts, we keep the last four characters of your IBAN, the country of the account, the account holder’s name, your mandate reference and its status. These let you recognise the debit on your bank statement."
+msgstr "Nous conservons, pour la durée de votre adhésion : les quatre derniers caractères de votre IBAN, le pays du compte, le nom du titulaire, la référence de votre mandat et son statut. Ces informations vous permettent de reconnaître le prélèvement sur votre relevé bancaire."
+
+#: src/Privacy/PersonalData.php:81
+msgid "The date and IP address recorded when you signed the mandate are the evidence of your consent. The IP address is deleted after 13 months, beyond which a debit can no longer be disputed."
+msgstr "La date et l'adresse IP de signature du mandat constituent la preuve de votre consentement. L'adresse IP est supprimée au bout de 13 mois, durée au-delà de laquelle un prélèvement ne peut plus être contesté."
+
+#: src/Privacy/Registry.php:61
+#: src/Privacy/Registry.php:78
+#: src/Privacy/Registry.php:125
+msgid "SEPA Direct Debit mandates"
+msgstr "Mandats de prélèvement SEPA"
+
+#: src/Privacy/Registry.php:165
+msgid "The mandates held on this site have been deleted. Data held by Stripe falls under your accounting obligations and must be handled from your Stripe dashboard."
+msgstr "Les mandats conservés sur ce site ont été supprimés. Les données détenues par Stripe relèvent de vos obligations comptables et doivent être traitées depuis votre tableau de bord Stripe."
+
+#: templates/account-mandate.php:18
+msgid "Active SEPA Direct Debit"
+msgstr "Prélèvement SEPA en vigueur"
+
+#: templates/account-mandate.php:22
+msgid "Account debited"
+msgstr "Compte débité"
+
+#: templates/account-mandate.php:54
+msgid "View the signed mandate"
+msgstr "Consulter le mandat signé"
+
+#: templates/admin-diagnostics.php:45
+msgid "Passed"
+msgstr "Conforme"
+
+#: templates/admin-diagnostics.php:46
+msgid "Needs attention"
+msgstr "À vérifier"
+
+#: templates/admin-diagnostics.php:47
+msgid "Blocking"
+msgstr "Bloquant"
+
+#: templates/admin-diagnostics.php:66
+msgid "Stripe test mode."
+msgstr "Mode test Stripe."
+
+#: templates/admin-diagnostics.php:67
+msgid "No real debit is taken."
+msgstr "Aucun prélèvement réel n'est effectué."
+
+#: templates/admin-diagnostics.php:72
+msgid "Configuration status"
+msgstr "État de la configuration"
+
+#: templates/admin-diagnostics.php:76
+msgid "SEPA Direct Debit configuration checks"
+msgstr "Contrôles de configuration du prélèvement SEPA"
+
+#: templates/admin-diagnostics.php:80
+msgid "Check"
+msgstr "Contrôle"
+
+#: templates/admin-diagnostics.php:81
+msgid "Status"
+msgstr "État"
+
+#: templates/admin-diagnostics.php:82
+msgid "Details"
+msgstr "Détail"
+
+#: templates/admin-diagnostics.php:99
+msgid "Endpoint"
+msgstr "Point de terminaison"
+
+#: templates/admin-diagnostics.php:102
+msgid "Declare this URL as a webhook endpoint in your Stripe dashboard:"
+msgstr "Déclarez cette URL comme point de terminaison de webhook dans votre tableau de bord Stripe :"
+
+#: templates/admin-diagnostics.php:106
+msgid "Most recent events"
+msgstr "Derniers événements reçus"
+
+#: templates/admin-diagnostics.php:109
+msgid "No event received yet."
+msgstr "Aucun événement reçu pour l'instant."
+
+#: templates/admin-diagnostics.php:113
+msgid "The twenty most recent webhook events received"
+msgstr "Vingt derniers événements de webhook reçus"
+
+#: templates/admin-diagnostics.php:117
+msgid "Received"
+msgstr "Reçu le"
+
+#: templates/admin-diagnostics.php:118
+msgid "Type"
+msgstr "Type"
+
+#: templates/admin-diagnostics.php:119
+msgid "Outcome"
+msgstr "Issue"
+
+#: templates/admin-diagnostics.php:120
+msgid "Attempts"
+msgstr "Tentatives"
+
+#: templates/admin-diagnostics.php:121
+msgid "Note"
+msgstr "Note"
+
+#: templates/admin-diagnostics.php:122
+msgid "Action"
+msgstr "Action"
+
+#: templates/admin-diagnostics.php:152
+msgid "Replay"
+msgstr "Rejouer"
+
+#: templates/admin-membership-mandate.php:16
+msgid "SEPA Direct Debit mandate"
+msgstr "Mandat de prélèvement SEPA"
+
+#: templates/admin-membership-mandate.php:29
+msgid "In Stripe"
+msgstr "Chez Stripe"
+
+#. translators: %s: membership level name.
+#: templates/migration-form.php:32
+#, php-format
+msgid "Membership concerned: %s. The price and next renewal date stay the same."
+msgstr "Adhésion concernée : %s. Le prix et la date de prochaine échéance restent inchangés."
+
+#: templates/migration-form.php:40
+#: templates/sepa-fields.php:23
+msgid "Account holder’s name"
+msgstr "Nom du titulaire du compte"
+
+#. translators: %s: site name, acting as the creditor.
+#: templates/migration-form.php:69
+#, php-format
+msgid "By providing your IBAN and confirming this mandate, you authorise %s and Stripe, our payment provider, to send instructions to your bank to debit your account, and your bank to debit your account in accordance with those instructions. You are entitled to a refund from your bank under the terms of your agreement with it. A refund must be claimed within 8 weeks of the date on which your account was debited."
+msgstr "En fournissant votre IBAN et en confirmant ce mandat, vous autorisez %s et Stripe, notre prestataire de paiement, à envoyer des instructions à votre banque pour débiter votre compte, et votre banque à débiter votre compte conformément à ces instructions. Vous bénéficiez d'un droit à remboursement par votre banque selon les conditions décrites dans la convention que vous avez passée avec elle. Toute demande de remboursement doit être présentée dans les 8 semaines suivant la date de débit de votre compte."
+
+#: templates/migration-form.php:83
+msgid "Confirm the mandate"
+msgstr "Confirmer le mandat"
+
+#: templates/sepa-fields.php:19
+msgid "Bank details"
+msgstr "Coordonnées bancaires"
+
+#. translators: %s: site name, acting as the creditor.
+#: templates/sepa-fields.php:60
+#, php-format
+msgid "By providing your IBAN and confirming this payment, you authorise %s and Stripe, our payment provider, to send instructions to your bank to debit your account, and your bank to debit your account in accordance with those instructions. You are entitled to a refund from your bank under the terms of your agreement with it. A refund must be claimed within 8 weeks of the date on which your account was debited."
+msgstr "En fournissant votre IBAN et en confirmant ce paiement, vous autorisez %s et Stripe, notre prestataire de paiement, à envoyer des instructions à votre banque pour débiter votre compte, et votre banque à débiter votre compte conformément à ces instructions. Vous bénéficiez d'un droit à remboursement par votre banque selon les conditions décrites dans la convention que vous avez passée avec elle. Toute demande de remboursement doit être présentée dans les 8 semaines suivant la date de débit de votre compte."

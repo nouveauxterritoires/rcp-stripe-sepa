@@ -87,7 +87,7 @@ final class RequirementsNotice {
 
 		return sprintf(
 			'<div class="notice notice-error rcp-stripe-sepa-requirements"><p><strong>%s</strong></p><ul>%s</ul></div>',
-			esc_html__( 'Prélèvement SEPA pour Restrict Content Pro : le plugin est inactif.', 'rcp-stripe-sepa' ),
+			esc_html__( 'SEPA Direct Debit for Restrict Content Pro: the plugin is inactive.', 'rcp-stripe-sepa' ),
 			$items
 		);
 	}
@@ -101,7 +101,7 @@ final class RequirementsNotice {
 	 */
 	private function legacy_message(): string {
 		return __(
-			'Restrict Content fonctionne en mode « legacy », qui ne comporte aucune passerelle de paiement. Basculez sur la version complète dans les réglages de Restrict Content pour activer le prélèvement SEPA.',
+			'Restrict Content is running in legacy mode, which has no payment gateway at all. Switch to the full version in the Restrict Content settings to enable SEPA Direct Debit.',
 			'rcp-stripe-sepa'
 		);
 	}
@@ -113,7 +113,7 @@ final class RequirementsNotice {
 	 */
 	private function missing_message(): string {
 		return __(
-			'Restrict Content Pro (ou Restrict Content) doit être installé et actif pour utiliser le prélèvement SEPA.',
+			'Restrict Content Pro (or Restrict Content) must be installed and active to use SEPA Direct Debit.',
 			'rcp-stripe-sepa'
 		);
 	}
@@ -130,8 +130,8 @@ final class RequirementsNotice {
 		}
 
 		return sprintf(
-			/* translators: 1: version requise, 2: version détectée. */
-			__( 'Restrict Content Pro %1$s ou supérieur est requis ; la version %2$s est installée.', 'rcp-stripe-sepa' ),
+			/* translators: 1: required version, 2: detected version. */
+			__( 'Restrict Content Pro %1$s or later is required; version %2$s is installed.', 'rcp-stripe-sepa' ),
 			RcpEnvironment::MINIMUM_CORE_VERSION,
 			(string) $this->environment->core_version()
 		);
@@ -153,15 +153,15 @@ final class RequirementsNotice {
 
 		if ( $missing ) {
 			return sprintf(
-				/* translators: %s: version minimale du SDK Stripe. */
-				__( 'Le SDK Stripe fourni par Restrict Content Pro est introuvable. La version %s ou supérieure est requise.', 'rcp-stripe-sepa' ),
+				/* translators: %s: minimum Stripe SDK version. */
+				__( 'The Stripe SDK shipped with Restrict Content Pro could not be found. Version %s or later is required.', 'rcp-stripe-sepa' ),
 				RcpEnvironment::MINIMUM_STRIPE_SDK_VERSION
 			);
 		}
 
 		return sprintf(
-			/* translators: 1: version requise, 2: version détectée. */
-			__( 'Le SDK Stripe fourni par Restrict Content Pro est trop ancien : version %1$s ou supérieure requise, %2$s détectée. Mettez Restrict Content Pro à jour.', 'rcp-stripe-sepa' ),
+			/* translators: 1: required version, 2: detected version. */
+			__( 'The Stripe SDK shipped with Restrict Content Pro is too old: version %1$s or later is required, %2$s was found. Please update Restrict Content Pro.', 'rcp-stripe-sepa' ),
 			RcpEnvironment::MINIMUM_STRIPE_SDK_VERSION,
 			(string) $this->environment->stripe_sdk_version()
 		);
@@ -189,8 +189,8 @@ final class RequirementsNotice {
 		}
 
 		return sprintf(
-			/* translators: %s: liste d'éléments manquants, séparés par des virgules. */
-			__( 'Cette version de Restrict Content Pro n\'expose plus les éléments attendus par le plugin : %s. Signalez cette incompatibilité au mainteneur du plugin.', 'rcp-stripe-sepa' ),
+			/* translators: %s: comma-separated list of missing items. */
+			__( 'This version of Restrict Content Pro no longer exposes what the plugin relies on: %s. Please report this incompatibility to the plugin maintainer.', 'rcp-stripe-sepa' ),
 			implode( ', ', $names )
 		);
 	}

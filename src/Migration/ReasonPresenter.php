@@ -27,18 +27,18 @@ final class ReasonPresenter {
 	public static function message( string $reason ): string {
 		switch ( $reason ) {
 			case Eligibility::REASON_NOT_ACTIVE:
-				return __( 'Seule une adhésion active peut basculer sur le prélèvement SEPA.', 'rcp-stripe-sepa' );
+				return __( 'Only an active membership can switch to SEPA Direct Debit.', 'rcp-stripe-sepa' );
 
 			case Eligibility::REASON_NOT_RECURRING:
-				return __( 'Cette adhésion n\'a pas d\'échéance à venir : changer de moyen de paiement serait sans effet.', 'rcp-stripe-sepa' );
+				return __( 'This membership has no upcoming renewal, so changing the payment method would have no effect.', 'rcp-stripe-sepa' );
 
 			case Eligibility::REASON_CURRENCY:
-				return __( 'Le prélèvement SEPA n\'est possible que pour les paiements en euros.', 'rcp-stripe-sepa' );
+				return __( 'SEPA Direct Debit is only available for payments in euros.', 'rcp-stripe-sepa' );
 
 			case Eligibility::REASON_UNSUPPORTED_GATEWAY:
 			case Eligibility::REASON_NO_CUSTOMER:
 			default:
-				return __( 'Le prélèvement SEPA n\'est pas disponible pour cette adhésion.', 'rcp-stripe-sepa' );
+				return __( 'SEPA Direct Debit is not available for this membership.', 'rcp-stripe-sepa' );
 		}
 	}
 
@@ -48,7 +48,7 @@ final class ReasonPresenter {
 	 * @return string
 	 */
 	public static function generic_failure(): string {
-		return __( 'La bascule vers le prélèvement SEPA a échoué. Réessayez, ou contactez-nous si le problème persiste.', 'rcp-stripe-sepa' );
+		return __( 'Switching to SEPA Direct Debit failed. Please try again, or contact us if the problem persists.', 'rcp-stripe-sepa' );
 	}
 
 	/**
@@ -57,6 +57,6 @@ final class ReasonPresenter {
 	 * @return string
 	 */
 	public static function not_confirmed(): string {
-		return __( 'Le mandat n\'a pas été confirmé. Reprenez la saisie de vos coordonnées bancaires.', 'rcp-stripe-sepa' );
+		return __( 'The mandate was not confirmed. Please enter your bank details again.', 'rcp-stripe-sepa' );
 	}
 }

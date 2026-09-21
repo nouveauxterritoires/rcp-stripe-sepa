@@ -245,7 +245,7 @@ final class MembershipLifecycleTest extends WP_UnitTestCase {
 
 		$notes = $this->reload_membership( $membership_id )->get_notes();
 
-		$this->assertStringContainsString( 'Prélèvement SEPA', $notes );
+		$this->assertStringContainsString( 'SEPA Direct Debit', $notes );
 		$this->assertStringContainsString( 'payment_intent.succeeded', $notes );
 	}
 }

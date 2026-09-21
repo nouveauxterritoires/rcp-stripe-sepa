@@ -146,14 +146,14 @@ final class AdminScreensTest extends WP_UnitTestCase {
 		DiagnosticsPage::render();
 		$html = (string) ob_get_clean();
 
-		$this->assertStringContainsString( 'Prélèvement SEPA', $html );
+		$this->assertStringContainsString( 'SEPA Direct Debit', $html );
 		$this->assertStringContainsString( 'rcp-stripe-sepa/v1/webhook', $html, 'L\'URL du point de terminaison doit être rappelée.' );
-		$this->assertStringContainsString( 'Mode test Stripe', $html );
+		$this->assertStringContainsString( 'Stripe test mode', $html );
 	}
 
 	public function test_l_ecran_liste_les_evenements_recus(): void {
 		EventStore::claim( 'evt_ecran_1', 'payment_intent.succeeded', false, '{}' );
-		EventStore::resolve( 'evt_ecran_1', EventStore::STATUS_PROCESSED, 'adhésion activée' );
+		EventStore::resolve( 'evt_ecran_1', EventStore::STATUS_PROCESSED, 'membership activated' );
 
 		wp_set_current_user( $this->create_rcp_admin() );
 
@@ -162,8 +162,8 @@ final class AdminScreensTest extends WP_UnitTestCase {
 		$html = (string) ob_get_clean();
 
 		$this->assertStringContainsString( 'payment_intent.succeeded', $html );
-		$this->assertStringContainsString( 'adhésion activée', $html );
-		$this->assertStringContainsString( 'Rejouer', $html );
+		$this->assertStringContainsString( 'membership activated', $html );
+		$this->assertStringContainsString( 'Replay', $html );
 	}
 
 	public function test_le_rejeu_exige_un_nonce(): void {
@@ -267,7 +267,7 @@ final class AdminScreensTest extends WP_UnitTestCase {
 		do_action( 'rcp_subscription_details_bottom' );
 		$html = (string) ob_get_clean();
 
-		$this->assertStringContainsString( 'Prélèvement SEPA en vigueur', $html );
+		$this->assertStringContainsString( 'Active SEPA Direct Debit', $html );
 		$this->assertStringContainsString( 'FR•• •••• •••• 2606', $html );
 		$this->assertStringContainsString( 'RUM123456', $html );
 	}

@@ -197,7 +197,7 @@ final class EventStore {
 	}
 
 	/**
-	 * Derniers événements reçus, pour l'écran de diagnostic.
+	 * Most recent events, pour l'écran de diagnostic.
 	 *
 	 * @param int $limit Nombre de lignes.
 	 * @return array[]

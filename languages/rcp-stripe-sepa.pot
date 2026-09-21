@@ -1,0 +1,624 @@
+# Copyright (C) 2026 Nouveaux Territoires
+# This file is distributed under the GPL-2.0-or-later.
+msgid ""
+msgstr ""
+"Project-Id-Version: SEPA Direct Debit for Restrict Content Pro 0.1.0-dev\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/rcp-stripe-sepa\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-09-21T18:23:09+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: rcp-stripe-sepa\n"
+
+#. Plugin Name of the plugin
+#: rcp-stripe-sepa.php
+msgid "SEPA Direct Debit for Restrict Content Pro"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: rcp-stripe-sepa.php
+msgid "https://github.com/nouveaux-territoires/rcp-stripe-sepa"
+msgstr ""
+
+#. Description of the plugin
+#: rcp-stripe-sepa.php
+msgid "Adds SEPA Direct Debit (Stripe) to the payment methods available in Restrict Content Pro: recurring memberships, one-off payments and card-to-SEPA migration."
+msgstr ""
+
+#. Author of the plugin
+#: rcp-stripe-sepa.php
+msgid "Nouveaux Territoires"
+msgstr ""
+
+#: src/Admin/Diagnostics.php:111
+#: src/Admin/Diagnostics.php:116
+msgid "Restrict Content Pro"
+msgstr ""
+
+#: src/Admin/Diagnostics.php:111
+msgid "Compatible."
+msgstr ""
+
+#. translators: %s: list of detected problems.
+#: src/Admin/Diagnostics.php:119
+#, php-format
+msgid "Incompatible environment: %s."
+msgstr ""
+
+#: src/Admin/Diagnostics.php:132
+msgid "Gateway"
+msgstr ""
+
+#: src/Admin/Diagnostics.php:135
+msgid "Enabled in the Restrict Content Pro settings."
+msgstr ""
+
+#: src/Admin/Diagnostics.php:141
+msgid "Disabled: SEPA Direct Debit is not offered at registration."
+msgstr ""
+
+#: src/Admin/Diagnostics.php:153
+msgid "Currency"
+msgstr ""
+
+#. translators: %s: configured currency code.
+#: src/Admin/Diagnostics.php:164
+#, php-format
+msgid "SEPA Direct Debit requires euros; this site uses %s."
+msgstr ""
+
+#: src/Admin/Diagnostics.php:177
+msgid "HTTPS"
+msgstr ""
+
+#: src/Admin/Diagnostics.php:180
+msgid "Enabled."
+msgstr ""
+
+#: src/Admin/Diagnostics.php:189
+msgid "Missing. Acceptable in development, required in production."
+msgstr ""
+
+#: src/Admin/Diagnostics.php:196
+msgid "Missing. Stripe.js and mandate collection both require it."
+msgstr ""
+
+#: src/Admin/Diagnostics.php:207
+msgid "Webhook secret"
+msgstr ""
+
+#: src/Admin/Diagnostics.php:213
+msgid "Missing: no webhook can be authenticated, and memberships will stay pending."
+msgstr ""
+
+#: src/Admin/Diagnostics.php:221
+msgid "Stored in the database. Prefer a constant in wp-config.php, which leaks neither through an export nor through a backup."
+msgstr ""
+
+#: src/Admin/Diagnostics.php:225
+msgid "Defined as a constant."
+msgstr ""
+
+#: src/Admin/Diagnostics.php:235
+msgid "Webhooks"
+msgstr ""
+
+#. translators: %d: number of abandoned events.
+#: src/Admin/Diagnostics.php:245
+#, php-format
+msgid "%d event abandoned after several attempts."
+msgid_plural "%d events abandoned after several attempts."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Admin/Diagnostics.php:260
+msgid "No event received. Check the endpoint declared in Stripe."
+msgstr ""
+
+#. translators: %d: number of processed events.
+#: src/Admin/Diagnostics.php:269
+#, php-format
+msgid "%d event processed."
+msgid_plural "%d events processed."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Admin/Diagnostics.php:282
+msgid "Pending debits"
+msgstr ""
+
+#: src/Admin/Diagnostics.php:287
+msgid "Nothing overdue."
+msgstr ""
+
+#. translators: 1: number of payments, 2: number of days.
+#: src/Admin/Diagnostics.php:295
+#, php-format
+msgid "%1$d debit pending for more than %2$d days: a webhook may not be arriving."
+msgid_plural "%1$d debits pending for more than %2$d days: a webhook may not be arriving."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Admin/DiagnosticsPage.php:48
+#: src/Admin/DiagnosticsPage.php:49
+#: src/Admin/SiteHealth.php:42
+#: src/Gateway/GatewayDefinition.php:63
+#: src/Gateway/SignupProcessor.php:185
+#: src/Privacy/Registry.php:96
+#: templates/admin-diagnostics.php:55
+msgid "SEPA Direct Debit"
+msgstr ""
+
+#: src/Admin/DiagnosticsPage.php:73
+#: src/Admin/DiagnosticsPage.php:93
+msgid "You do not have permission to do this."
+msgstr ""
+
+#: src/Admin/EventReplay.php:44
+msgid "Invalid event identifier."
+msgstr ""
+
+#: src/Admin/EventReplay.php:51
+msgid "The Stripe SDK is unavailable."
+msgstr ""
+
+#: src/Admin/EventReplay.php:62
+msgid "This event could not be found in Stripe."
+msgstr ""
+
+#: src/Admin/EventReplay.php:71
+msgid "This event belongs to the other mode: replay refused."
+msgstr ""
+
+#: src/Admin/MembershipMandate.php:72
+#: templates/migration-form.php:54
+#: templates/sepa-fields.php:38
+msgid "IBAN"
+msgstr ""
+
+#: src/Admin/MembershipMandate.php:73
+#: src/Privacy/PersonalData.php:41
+#: templates/account-mandate.php:27
+msgid "Account holder"
+msgstr ""
+
+#: src/Admin/MembershipMandate.php:74
+#: src/Privacy/PersonalData.php:43
+#: templates/account-mandate.php:32
+msgid "Mandate reference"
+msgstr ""
+
+#: src/Admin/MembershipMandate.php:75
+#: src/Privacy/PersonalData.php:44
+msgid "Mandate status"
+msgstr ""
+
+#: src/Admin/MembershipMandate.php:76
+msgid "Accepted on"
+msgstr ""
+
+#: src/Admin/MembershipMandate.php:97
+msgid "Stripe customer"
+msgstr ""
+
+#: src/Admin/MembershipMandate.php:101
+msgid "Stripe subscription"
+msgstr ""
+
+#: src/Admin/MembershipMandate.php:105
+msgid "Signed mandate"
+msgstr ""
+
+#: src/Admin/SiteHealth.php:58
+msgid "SEPA Direct Debit is fully configured"
+msgstr ""
+
+#: src/Admin/SiteHealth.php:61
+msgid "Payments"
+msgstr ""
+
+#: src/Admin/SiteHealth.php:64
+msgid "Every check passed."
+msgstr ""
+
+#: src/Admin/SiteHealth.php:68
+msgid "Open the detailed diagnostics"
+msgstr ""
+
+#: src/Admin/SiteHealth.php:79
+msgid "SEPA Direct Debit is not operational"
+msgstr ""
+
+#: src/Admin/SiteHealth.php:80
+msgid "The SEPA Direct Debit configuration needs attention"
+msgstr ""
+
+#: src/Compat/RequirementsNotice.php:90
+msgid "SEPA Direct Debit for Restrict Content Pro: the plugin is inactive."
+msgstr ""
+
+#: src/Compat/RequirementsNotice.php:103
+msgid "Restrict Content is running in legacy mode, which has no payment gateway at all. Switch to the full version in the Restrict Content settings to enable SEPA Direct Debit."
+msgstr ""
+
+#: src/Compat/RequirementsNotice.php:115
+msgid "Restrict Content Pro (or Restrict Content) must be installed and active to use SEPA Direct Debit."
+msgstr ""
+
+#. translators: 1: required version, 2: detected version.
+#: src/Compat/RequirementsNotice.php:134
+#, php-format
+msgid "Restrict Content Pro %1$s or later is required; version %2$s is installed."
+msgstr ""
+
+#. translators: %s: minimum Stripe SDK version.
+#: src/Compat/RequirementsNotice.php:157
+#, php-format
+msgid "The Stripe SDK shipped with Restrict Content Pro could not be found. Version %s or later is required."
+msgstr ""
+
+#. translators: 1: required version, 2: detected version.
+#: src/Compat/RequirementsNotice.php:164
+#, php-format
+msgid "The Stripe SDK shipped with Restrict Content Pro is too old: version %1$s or later is required, %2$s was found. Please update Restrict Content Pro."
+msgstr ""
+
+#. translators: %s: comma-separated list of missing items.
+#: src/Compat/RequirementsNotice.php:193
+#, php-format
+msgid "This version of Restrict Content Pro no longer exposes what the plugin relies on: %s. Please report this incompatibility to the plugin maintainer."
+msgstr ""
+
+#. translators: %s: membership level name.
+#: src/Email/MessageFactory.php:89
+#, php-format
+msgid "Your SEPA Direct Debit for “%s” is under way"
+msgstr ""
+
+#. translators: 1: membership level, 2: number of days, 3: site name.
+#: src/Email/MessageFactory.php:94
+#, php-format
+msgid ""
+"We have saved your mandate for the “%1$s” membership.\n"
+"\n"
+"A SEPA Direct Debit takes up to %2$d working days for your bank to settle. Your membership will be activated as soon as we receive confirmation of the payment — there is nothing else for you to do.\n"
+"\n"
+"The %3$s team"
+msgstr ""
+
+#. translators: %s: membership level name.
+#: src/Email/MessageFactory.php:108
+#, php-format
+msgid "Your SEPA Direct Debit for “%s” was declined"
+msgstr ""
+
+#. translators: 1: membership level, 2: decline reason, 3: site name.
+#: src/Email/MessageFactory.php:114
+#, php-format
+msgid ""
+"The debit for your “%1$s” membership could not be collected. %2$s\n"
+"\n"
+"You can start your registration again, or contact us if you believe this is a mistake.\n"
+"\n"
+"The %3$s team"
+msgstr ""
+
+#: src/Email/MessageFactory.php:127
+msgid "Your new SEPA mandate has been saved"
+msgstr ""
+
+#. translators: 1: membership level, 2: site name.
+#: src/Email/MessageFactory.php:130
+#, php-format
+msgid ""
+"Your “%1$s” membership is now paid by SEPA Direct Debit.\n"
+"\n"
+"The amount and date of your next renewal are unchanged.\n"
+"\n"
+"The %2$s team"
+msgstr ""
+
+#: src/Email/MessageFactory.php:141
+msgid "SEPA dispute opened on a membership"
+msgstr ""
+
+#. translators: %d: membership identifier.
+#: src/Email/MessageFactory.php:144
+#, php-format
+msgid ""
+"A debtor has disputed a debit. The membership concerned has the identifier #%d.\n"
+"\n"
+"Open your Stripe dashboard to respond to the dispute within the allotted time."
+msgstr ""
+
+#: src/Email/MessageFactory.php:154
+msgid "A Stripe event could not be processed"
+msgstr ""
+
+#. translators: 1: event identifier, 2: event type.
+#: src/Email/MessageFactory.php:157
+#, php-format
+msgid ""
+"Event %1$s (%2$s) was abandoned after several attempts.\n"
+"\n"
+"Open the “SEPA Direct Debit” admin screen to review it and replay it."
+msgstr ""
+
+#. translators: %s: error message returned by Stripe.
+#: src/Gateway/Gateway.php:109
+#, php-format
+msgid "Error while creating the Stripe customer: %s"
+msgstr ""
+
+#: src/Gateway/Gateway.php:153
+msgid "Stripe intent not found. Please start the registration again, or contact support."
+msgstr ""
+
+#: src/Gateway/Gateway.php:288
+msgid "SEPA Direct Debit is not configured. Please contact the site administrator."
+msgstr ""
+
+#: src/Gateway/Gateway.php:341
+#: src/Migration/AccountPage.php:143
+msgid "Please enter the account holder’s name."
+msgstr ""
+
+#: src/Gateway/Gateway.php:342
+msgid "Please enter a valid IBAN."
+msgstr ""
+
+#: src/Gateway/Gateway.php:343
+msgid "The mandate could not be saved. Please check your bank details."
+msgstr ""
+
+#. translators: %s: configured currency code.
+#: src/Gateway/Gateway.php:448
+#, php-format
+msgid "SEPA Direct Debit requires payments in euros; this site uses %s."
+msgstr ""
+
+#: src/Gateway/GatewayDefinition.php:64
+msgid "Stripe — SEPA Direct Debit"
+msgstr ""
+
+#. translators: %s: error message returned by Stripe.
+#: src/Gateway/SignupProcessor.php:328
+#, php-format
+msgid "SEPA Direct Debit — the subscription could not be created: %s"
+msgstr ""
+
+#. translators: 1: reason for the transition, 2: Stripe event type.
+#: src/Membership/TransitionApplier.php:45
+#, php-format
+msgid "SEPA Direct Debit — %1$s (event %2$s)"
+msgstr ""
+
+#: src/Migration/AccountPage.php:59
+#: templates/migration-form.php:26
+msgid "Switch to SEPA Direct Debit"
+msgstr ""
+
+#: src/Migration/AccountPage.php:144
+msgid "Saving your mandate…"
+msgstr ""
+
+#: src/Migration/AccountPage.php:145
+msgid "Your membership is now paid by SEPA Direct Debit. The price and next renewal date are unchanged."
+msgstr ""
+
+#: src/Migration/AccountPage.php:146
+#: src/Migration/ReasonPresenter.php:51
+msgid "Switching to SEPA Direct Debit failed. Please try again, or contact us if the problem persists."
+msgstr ""
+
+#: src/Migration/AjaxController.php:99
+msgid "Your membership is now paid by SEPA Direct Debit."
+msgstr ""
+
+#. translators: %s: previous gateway identifier.
+#: src/Migration/Migrator.php:308
+#, php-format
+msgid "SEPA Direct Debit — payment method migrated from “%s”. Price and next renewal date unchanged."
+msgstr ""
+
+#: src/Migration/ReasonPresenter.php:30
+msgid "Only an active membership can switch to SEPA Direct Debit."
+msgstr ""
+
+#: src/Migration/ReasonPresenter.php:33
+msgid "This membership has no upcoming renewal, so changing the payment method would have no effect."
+msgstr ""
+
+#: src/Migration/ReasonPresenter.php:36
+msgid "SEPA Direct Debit is only available for payments in euros."
+msgstr ""
+
+#: src/Migration/ReasonPresenter.php:41
+msgid "SEPA Direct Debit is not available for this membership."
+msgstr ""
+
+#: src/Migration/ReasonPresenter.php:60
+msgid "The mandate was not confirmed. Please enter your bank details again."
+msgstr ""
+
+#: src/Privacy/PersonalData.php:40
+msgid "Bank account debited"
+msgstr ""
+
+#: src/Privacy/PersonalData.php:42
+msgid "Account country"
+msgstr ""
+
+#: src/Privacy/PersonalData.php:45
+#: templates/account-mandate.php:37
+msgid "Mandate signed on"
+msgstr ""
+
+#: src/Privacy/PersonalData.php:46
+msgid "Signature IP address"
+msgstr ""
+
+#: src/Privacy/PersonalData.php:73
+msgid "When you pay for your membership by SEPA Direct Debit, your bank details are entered directly with Stripe, our payment provider, and never pass through this site. We store neither your full IBAN nor anything else that would allow your account to be debited."
+msgstr ""
+
+#: src/Privacy/PersonalData.php:77
+msgid "For as long as your membership lasts, we keep the last four characters of your IBAN, the country of the account, the account holder’s name, your mandate reference and its status. These let you recognise the debit on your bank statement."
+msgstr ""
+
+#: src/Privacy/PersonalData.php:81
+msgid "The date and IP address recorded when you signed the mandate are the evidence of your consent. The IP address is deleted after 13 months, beyond which a debit can no longer be disputed."
+msgstr ""
+
+#: src/Privacy/Registry.php:61
+#: src/Privacy/Registry.php:78
+#: src/Privacy/Registry.php:125
+msgid "SEPA Direct Debit mandates"
+msgstr ""
+
+#: src/Privacy/Registry.php:165
+msgid "The mandates held on this site have been deleted. Data held by Stripe falls under your accounting obligations and must be handled from your Stripe dashboard."
+msgstr ""
+
+#: templates/account-mandate.php:18
+msgid "Active SEPA Direct Debit"
+msgstr ""
+
+#: templates/account-mandate.php:22
+msgid "Account debited"
+msgstr ""
+
+#: templates/account-mandate.php:54
+msgid "View the signed mandate"
+msgstr ""
+
+#: templates/admin-diagnostics.php:45
+msgid "Passed"
+msgstr ""
+
+#: templates/admin-diagnostics.php:46
+msgid "Needs attention"
+msgstr ""
+
+#: templates/admin-diagnostics.php:47
+msgid "Blocking"
+msgstr ""
+
+#: templates/admin-diagnostics.php:66
+msgid "Stripe test mode."
+msgstr ""
+
+#: templates/admin-diagnostics.php:67
+msgid "No real debit is taken."
+msgstr ""
+
+#: templates/admin-diagnostics.php:72
+msgid "Configuration status"
+msgstr ""
+
+#: templates/admin-diagnostics.php:76
+msgid "SEPA Direct Debit configuration checks"
+msgstr ""
+
+#: templates/admin-diagnostics.php:80
+msgid "Check"
+msgstr ""
+
+#: templates/admin-diagnostics.php:81
+msgid "Status"
+msgstr ""
+
+#: templates/admin-diagnostics.php:82
+msgid "Details"
+msgstr ""
+
+#: templates/admin-diagnostics.php:99
+msgid "Endpoint"
+msgstr ""
+
+#: templates/admin-diagnostics.php:102
+msgid "Declare this URL as a webhook endpoint in your Stripe dashboard:"
+msgstr ""
+
+#: templates/admin-diagnostics.php:106
+msgid "Most recent events"
+msgstr ""
+
+#: templates/admin-diagnostics.php:109
+msgid "No event received yet."
+msgstr ""
+
+#: templates/admin-diagnostics.php:113
+msgid "The twenty most recent webhook events received"
+msgstr ""
+
+#: templates/admin-diagnostics.php:117
+msgid "Received"
+msgstr ""
+
+#: templates/admin-diagnostics.php:118
+msgid "Type"
+msgstr ""
+
+#: templates/admin-diagnostics.php:119
+msgid "Outcome"
+msgstr ""
+
+#: templates/admin-diagnostics.php:120
+msgid "Attempts"
+msgstr ""
+
+#: templates/admin-diagnostics.php:121
+msgid "Note"
+msgstr ""
+
+#: templates/admin-diagnostics.php:122
+msgid "Action"
+msgstr ""
+
+#: templates/admin-diagnostics.php:152
+msgid "Replay"
+msgstr ""
+
+#: templates/admin-membership-mandate.php:16
+msgid "SEPA Direct Debit mandate"
+msgstr ""
+
+#: templates/admin-membership-mandate.php:29
+msgid "In Stripe"
+msgstr ""
+
+#. translators: %s: membership level name.
+#: templates/migration-form.php:32
+#, php-format
+msgid "Membership concerned: %s. The price and next renewal date stay the same."
+msgstr ""
+
+#: templates/migration-form.php:40
+#: templates/sepa-fields.php:23
+msgid "Account holder’s name"
+msgstr ""
+
+#. translators: %s: site name, acting as the creditor.
+#: templates/migration-form.php:69
+#, php-format
+msgid "By providing your IBAN and confirming this mandate, you authorise %s and Stripe, our payment provider, to send instructions to your bank to debit your account, and your bank to debit your account in accordance with those instructions. You are entitled to a refund from your bank under the terms of your agreement with it. A refund must be claimed within 8 weeks of the date on which your account was debited."
+msgstr ""
+
+#: templates/migration-form.php:83
+msgid "Confirm the mandate"
+msgstr ""
+
+#: templates/sepa-fields.php:19
+msgid "Bank details"
+msgstr ""
+
+#. translators: %s: site name, acting as the creditor.
+#: templates/sepa-fields.php:60
+#, php-format
+msgid "By providing your IBAN and confirming this payment, you authorise %s and Stripe, our payment provider, to send instructions to your bank to debit your account, and your bank to debit your account in accordance with those instructions. You are entitled to a refund from your bank under the terms of your agreement with it. A refund must be claimed within 8 weeks of the date on which your account was debited."
+msgstr ""

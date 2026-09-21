@@ -95,7 +95,7 @@ final class MigrationAccountPageTest extends WP_UnitTestCase {
 	public function test_le_bouton_est_propose_pour_une_adhesion_eligible(): void {
 		$html = $this->render_actions( $this->card_membership() );
 
-		$this->assertStringContainsString( 'Passer au prélèvement SEPA', $html );
+		$this->assertStringContainsString( 'Switch to SEPA Direct Debit', $html );
 		$this->assertStringContainsString( 'rcp-stripe-sepa-migrate-toggle', $html );
 	}
 
@@ -141,7 +141,7 @@ final class MigrationAccountPageTest extends WP_UnitTestCase {
 		$html = (string) ob_get_clean();
 
 		$this->assertStringContainsString( 'rcp-stripe-sepa-migration', $html );
-		$this->assertStringContainsString( '8 semaines', $html, 'Mentions du mandat absentes.' );
+		$this->assertStringContainsString( '8 weeks', $html, 'Mentions du mandat absentes.' );
 		$this->assertStringContainsString( 'hidden', $html, 'Le formulaire doit être masqué au départ.' );
 	}
 

@@ -6,6 +6,8 @@ Versionnement : [SemVer](https://semver.org/lang/fr/).
 ## [Non publié]
 
 ### Ajouté
+- Internationalisation complète : modèle `.pot`, traduction française compilée, et tests vérifiant
+  la couverture de la traduction ainsi que l'intégrité des marqueurs de substitution.
 - Exportateur et effaceur de données personnelles branchés sur les outils de WordPress : un adhérent
   obtient son mandat par la procédure standard, et sa suppression efface les métadonnées locales.
 - L'effacement signale explicitement que les données détenues par Stripe ne sont pas supprimées,
@@ -81,6 +83,9 @@ Versionnement : [SemVer](https://semver.org/lang/fr/).
 - Chaîne d'intégration continue GitHub Actions (matrice PHP 7.4 → 8.3, WordPress, RCP).
 
 ### Modifié
+- Les chaînes visibles par l'utilisateur passent du français à l'anglais, conformément aux usages de
+  WordPress ; le français d'origine devient la traduction `fr_FR`. Le code, les commentaires et la
+  documentation restent en français (ADR-0002).
 - Le contrôle statique des IBAN distingue le code livré, où aucun IBAN n'est toléré, et le reste du
   dépôt, où seuls les IBAN de test publiés par Stripe sont admis. Les contrôles de secrets couvrent
   désormais l'outillage et les tests.

@@ -41,8 +41,8 @@ final class TransitionApplier {
 
 		$membership->add_note(
 			sprintf(
-				/* translators: 1: raison de la transition, 2: type d'événement Stripe. */
-				__( 'Prélèvement SEPA — %1$s (événement %2$s)', 'rcp-stripe-sepa' ),
+				/* translators: 1: reason for the transition, 2: Stripe event type. */
+				__( 'SEPA Direct Debit — %1$s (event %2$s)', 'rcp-stripe-sepa' ),
 				$transition->reason(),
 				(string) ( $event['type'] ?? '?' )
 			)

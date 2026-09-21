@@ -154,7 +154,7 @@ final class IntentFactory {
 	}
 
 	/**
-	 * Devise, normalisée.
+	 * Currency, normalisée.
 	 *
 	 * @param array $context Contexte d'inscription.
 	 * @return string

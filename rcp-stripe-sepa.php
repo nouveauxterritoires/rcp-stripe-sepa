@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name:       Prélèvement SEPA pour Restrict Content Pro
+ * Plugin Name:       SEPA Direct Debit for Restrict Content Pro
  * Plugin URI:        https://github.com/nouveaux-territoires/rcp-stripe-sepa
- * Description:       Ajoute le prélèvement automatique SEPA (Stripe) aux moyens de paiement de Restrict Content Pro : adhésions récurrentes, paiements uniques et migration carte vers SEPA.
+ * Description:       Adds SEPA Direct Debit (Stripe) to the payment methods available in Restrict Content Pro: recurring memberships, one-off payments and card-to-SEPA migration.
  * Version:           0.1.0-dev
  * Requires at least: 6.0
  * Requires PHP:      7.4

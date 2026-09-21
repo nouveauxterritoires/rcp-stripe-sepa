@@ -270,7 +270,7 @@ final class MigrationStripeTest extends WP_UnitTestCase {
 
 		$notes = rcp_get_membership( $membership_id )->get_notes();
 
-		$this->assertStringContainsString( 'migré', $notes );
+		$this->assertStringContainsString( 'migrated', $notes );
 	}
 
 	public function test_la_bascule_declenche_une_action(): void {

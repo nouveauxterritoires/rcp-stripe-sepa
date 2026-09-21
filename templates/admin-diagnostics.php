@@ -5,7 +5,7 @@
  * @package RCP_Stripe_Sepa
  *
  * @var array        $report   Rapport de diagnostic.
- * @var array[]      $events   Derniers événements reçus.
+ * @var array[]      $events   Most recent events.
  * @var string       $endpoint URL du point de terminaison.
  * @var array|false  $notice   Message à afficher, le cas échéant.
  */
@@ -42,9 +42,9 @@ $rcp_sepa_badge = static function ( string $status ): string {
  */
 $rcp_sepa_status_label = static function ( string $status ): string {
 	$labels = array(
-		Diagnostics::STATUS_OK      => __( 'Conforme', 'rcp-stripe-sepa' ),
-		Diagnostics::STATUS_WARNING => __( 'À vérifier', 'rcp-stripe-sepa' ),
-		Diagnostics::STATUS_ERROR   => __( 'Bloquant', 'rcp-stripe-sepa' ),
+		Diagnostics::STATUS_OK      => __( 'Passed', 'rcp-stripe-sepa' ),
+		Diagnostics::STATUS_WARNING => __( 'Needs attention', 'rcp-stripe-sepa' ),
+		Diagnostics::STATUS_ERROR   => __( 'Blocking', 'rcp-stripe-sepa' ),
 	);
 
 	return $labels[ $status ] ?? '';
@@ -52,7 +52,7 @@ $rcp_sepa_status_label = static function ( string $status ): string {
 
 ?>
 <div class="wrap rcp-stripe-sepa-diagnostics">
-	<h1><?php esc_html_e( 'Prélèvement SEPA', 'rcp-stripe-sepa' ); ?></h1>
+	<h1><?php esc_html_e( 'SEPA Direct Debit', 'rcp-stripe-sepa' ); ?></h1>
 
 	<?php if ( is_array( $notice ) ) : ?>
 		<div class="notice notice-<?php echo esc_attr( 'error' === $notice['type'] ? 'error' : 'success' ); ?> is-dismissible">
@@ -63,23 +63,23 @@ $rcp_sepa_status_label = static function ( string $status ): string {
 	<?php if ( $report['test_mode'] ) : ?>
 		<div class="notice notice-warning inline">
 			<p>
-				<strong><?php esc_html_e( 'Mode test Stripe.', 'rcp-stripe-sepa' ); ?></strong>
-				<?php esc_html_e( 'Aucun prélèvement réel n\'est effectué.', 'rcp-stripe-sepa' ); ?>
+				<strong><?php esc_html_e( 'Stripe test mode.', 'rcp-stripe-sepa' ); ?></strong>
+				<?php esc_html_e( 'No real debit is taken.', 'rcp-stripe-sepa' ); ?>
 			</p>
 		</div>
 	<?php endif; ?>
 
-	<h2><?php esc_html_e( 'État de la configuration', 'rcp-stripe-sepa' ); ?></h2>
+	<h2><?php esc_html_e( 'Configuration status', 'rcp-stripe-sepa' ); ?></h2>
 
 	<table class="widefat striped">
 		<caption class="screen-reader-text">
-			<?php esc_html_e( 'Contrôles de configuration du prélèvement SEPA', 'rcp-stripe-sepa' ); ?>
+			<?php esc_html_e( 'SEPA Direct Debit configuration checks', 'rcp-stripe-sepa' ); ?>
 		</caption>
 		<thead>
 			<tr>
-				<th scope="col"><?php esc_html_e( 'Contrôle', 'rcp-stripe-sepa' ); ?></th>
-				<th scope="col"><?php esc_html_e( 'État', 'rcp-stripe-sepa' ); ?></th>
-				<th scope="col"><?php esc_html_e( 'Détail', 'rcp-stripe-sepa' ); ?></th>
+				<th scope="col"><?php esc_html_e( 'Check', 'rcp-stripe-sepa' ); ?></th>
+				<th scope="col"><?php esc_html_e( 'Status', 'rcp-stripe-sepa' ); ?></th>
+				<th scope="col"><?php esc_html_e( 'Details', 'rcp-stripe-sepa' ); ?></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -96,28 +96,28 @@ $rcp_sepa_status_label = static function ( string $status ): string {
 		</tbody>
 	</table>
 
-	<h2><?php esc_html_e( 'Point de terminaison', 'rcp-stripe-sepa' ); ?></h2>
+	<h2><?php esc_html_e( 'Endpoint', 'rcp-stripe-sepa' ); ?></h2>
 
 	<p>
-		<?php esc_html_e( 'Déclarez cette URL comme point de terminaison de webhook dans votre tableau de bord Stripe :', 'rcp-stripe-sepa' ); ?>
+		<?php esc_html_e( 'Declare this URL as a webhook endpoint in your Stripe dashboard:', 'rcp-stripe-sepa' ); ?>
 	</p>
 	<p><code><?php echo esc_html( $endpoint ); ?></code></p>
 
-	<h2><?php esc_html_e( 'Derniers événements reçus', 'rcp-stripe-sepa' ); ?></h2>
+	<h2><?php esc_html_e( 'Most recent events', 'rcp-stripe-sepa' ); ?></h2>
 
 	<?php if ( empty( $events ) ) : ?>
-		<p><?php esc_html_e( 'Aucun événement reçu pour l\'instant.', 'rcp-stripe-sepa' ); ?></p>
+		<p><?php esc_html_e( 'No event received yet.', 'rcp-stripe-sepa' ); ?></p>
 	<?php else : ?>
 		<table class="widefat striped">
 			<caption class="screen-reader-text">
-				<?php esc_html_e( 'Vingt derniers événements de webhook reçus', 'rcp-stripe-sepa' ); ?>
+				<?php esc_html_e( 'The twenty most recent webhook events received', 'rcp-stripe-sepa' ); ?>
 			</caption>
 			<thead>
 				<tr>
-					<th scope="col"><?php esc_html_e( 'Reçu le', 'rcp-stripe-sepa' ); ?></th>
+					<th scope="col"><?php esc_html_e( 'Received', 'rcp-stripe-sepa' ); ?></th>
 					<th scope="col"><?php esc_html_e( 'Type', 'rcp-stripe-sepa' ); ?></th>
-					<th scope="col"><?php esc_html_e( 'Issue', 'rcp-stripe-sepa' ); ?></th>
-					<th scope="col"><?php esc_html_e( 'Tentatives', 'rcp-stripe-sepa' ); ?></th>
+					<th scope="col"><?php esc_html_e( 'Outcome', 'rcp-stripe-sepa' ); ?></th>
+					<th scope="col"><?php esc_html_e( 'Attempts', 'rcp-stripe-sepa' ); ?></th>
 					<th scope="col"><?php esc_html_e( 'Note', 'rcp-stripe-sepa' ); ?></th>
 					<th scope="col"><?php esc_html_e( 'Action', 'rcp-stripe-sepa' ); ?></th>
 				</tr>
@@ -149,7 +149,7 @@ $rcp_sepa_status_label = static function ( string $status ): string {
 								<input type="hidden" name="action" value="<?php echo esc_attr( DiagnosticsPage::REPLAY_ACTION ); ?>" />
 								<input type="hidden" name="event_id" value="<?php echo esc_attr( (string) $rcp_sepa_event['event_id'] ); ?>" />
 								<button type="submit" class="button button-secondary">
-									<?php esc_html_e( 'Rejouer', 'rcp-stripe-sepa' ); ?>
+									<?php esc_html_e( 'Replay', 'rcp-stripe-sepa' ); ?>
 								</button>
 							</form>
 						</td>

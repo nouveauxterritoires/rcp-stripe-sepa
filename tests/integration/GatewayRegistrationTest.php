@@ -172,7 +172,7 @@ final class GatewayRegistrationTest extends WP_UnitTestCase {
 	public function test_le_formulaire_presente_le_mandat(): void {
 		$html = ( new Gateway() )->fields();
 
-		$this->assertStringContainsString( '8 semaines', $html, 'Droit au remboursement absent du mandat.' );
+		$this->assertStringContainsString( '8 weeks', $html, 'Droit au remboursement absent du mandat.' );
 		$this->assertStringContainsString( get_bloginfo( 'name' ), $html, 'Créancier non identifié.' );
 	}
 

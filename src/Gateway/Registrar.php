@@ -31,7 +31,7 @@ final class Registrar {
 	/**
 	 * Ajoute la passerelle au registre de RCP.
 	 *
-	 * @param array $gateways Passerelles déclarées.
+	 * @param array $gateways Gateways déclarées.
 	 * @return array
 	 */
 	public static function add_gateway( $gateways ): array {
@@ -50,7 +50,7 @@ final class Registrar {
 	 * abonnements par carte du même site.
 	 *
 	 * @param array  $args    Arguments construits par RCP.
-	 * @param object $gateway Passerelle à l'origine de l'appel.
+	 * @param object $gateway Gateway à l'origine de l'appel.
 	 * @return array
 	 */
 	public static function adapt_subscription_args( $args, $gateway = null ): array {

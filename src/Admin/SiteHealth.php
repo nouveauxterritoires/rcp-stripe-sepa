@@ -39,7 +39,7 @@ final class SiteHealth {
 		$tests = is_array( $tests ) ? $tests : array();
 
 		$tests['direct'][ self::TEST_ID ] = array(
-			'label' => __( 'Prélèvement SEPA', 'rcp-stripe-sepa' ),
+			'label' => __( 'SEPA Direct Debit', 'rcp-stripe-sepa' ),
 			'test'  => array( self::class, 'run_test' ),
 		);
 
@@ -55,17 +55,17 @@ final class SiteHealth {
 		$report = Diagnostics::report();
 
 		$result = array(
-			'label'       => __( 'La configuration du prélèvement SEPA est complète', 'rcp-stripe-sepa' ),
+			'label'       => __( 'SEPA Direct Debit is fully configured', 'rcp-stripe-sepa' ),
 			'status'      => 'good',
 			'badge'       => array(
-				'label' => __( 'Paiements', 'rcp-stripe-sepa' ),
+				'label' => __( 'Payments', 'rcp-stripe-sepa' ),
 				'color' => 'blue',
 			),
-			'description' => '<p>' . esc_html__( 'Tous les contrôles sont au vert.', 'rcp-stripe-sepa' ) . '</p>',
+			'description' => '<p>' . esc_html__( 'Every check passed.', 'rcp-stripe-sepa' ) . '</p>',
 			'actions'     => sprintf(
 				'<p><a href="%s">%s</a></p>',
 				esc_url( DiagnosticsPage::url() ),
-				esc_html__( 'Ouvrir le diagnostic détaillé', 'rcp-stripe-sepa' )
+				esc_html__( 'Open the detailed diagnostics', 'rcp-stripe-sepa' )
 			),
 			'test'        => self::TEST_ID,
 		);
@@ -76,8 +76,8 @@ final class SiteHealth {
 
 		$result['status'] = Diagnostics::STATUS_ERROR === $report['status'] ? 'critical' : 'recommended';
 		$result['label']  = Diagnostics::STATUS_ERROR === $report['status']
-			? __( 'Le prélèvement SEPA n\'est pas opérationnel', 'rcp-stripe-sepa' )
-			: __( 'La configuration du prélèvement SEPA mérite un contrôle', 'rcp-stripe-sepa' );
+			? __( 'SEPA Direct Debit is not operational', 'rcp-stripe-sepa' )
+			: __( 'The SEPA Direct Debit configuration needs attention', 'rcp-stripe-sepa' );
 
 		$items = '';
 

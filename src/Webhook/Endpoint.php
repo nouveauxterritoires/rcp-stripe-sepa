@@ -1,6 +1,6 @@
 <?php
 /**
- * Point de terminaison REST des webhooks Stripe.
+ * Endpoint REST des webhooks Stripe.
  *
  * @package RCP_Stripe_Sepa
  */
@@ -156,7 +156,7 @@ final class Endpoint {
 		 * @since 0.1.0
 		 *
 		 * @param array       $event  Événement Stripe décodé.
-		 * @param EventResult $result Issue du traitement.
+		 * @param EventResult $result Outcome du traitement.
 		 */
 		do_action( 'rcp_stripe_sepa_webhook_processed', $event, $result );
 

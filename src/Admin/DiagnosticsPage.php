@@ -13,7 +13,7 @@ use RCP_Stripe_Sepa\Webhook\Endpoint;
 use RCP_Stripe_Sepa\Webhook\EventStore;
 
 /**
- * Ajoute un écran « Prélèvement SEPA » au menu de Restrict Content Pro.
+ * Ajoute un écran « SEPA Direct Debit » au menu de Restrict Content Pro.
  *
  * L'écran rassemble l'état de la configuration, les derniers événements reçus
  * et de quoi en rejouer un. C'est le premier endroit où regarder lorsqu'une
@@ -45,8 +45,8 @@ final class DiagnosticsPage {
 	public static function add_page(): void {
 		add_submenu_page(
 			self::PARENT_SLUG,
-			__( 'Prélèvement SEPA', 'rcp-stripe-sepa' ),
-			__( 'Prélèvement SEPA', 'rcp-stripe-sepa' ),
+			__( 'SEPA Direct Debit', 'rcp-stripe-sepa' ),
+			__( 'SEPA Direct Debit', 'rcp-stripe-sepa' ),
 			self::CAPABILITY,
 			self::PAGE_SLUG,
 			array( self::class, 'render' ),
@@ -70,7 +70,7 @@ final class DiagnosticsPage {
 	 */
 	public static function render(): void {
 		if ( ! current_user_can( self::CAPABILITY ) ) {
-			wp_die( esc_html__( 'Vous n\'avez pas les droits nécessaires.', 'rcp-stripe-sepa' ) );
+			wp_die( esc_html__( 'You do not have permission to do this.', 'rcp-stripe-sepa' ) );
 		}
 
 		$report   = Diagnostics::report();
@@ -90,7 +90,7 @@ final class DiagnosticsPage {
 	 */
 	public static function handle_replay(): void {
 		if ( ! current_user_can( self::CAPABILITY ) ) {
-			wp_die( esc_html__( 'Vous n\'avez pas les droits nécessaires.', 'rcp-stripe-sepa' ), '', array( 'response' => 403 ) );
+			wp_die( esc_html__( 'You do not have permission to do this.', 'rcp-stripe-sepa' ), '', array( 'response' => 403 ) );
 		}
 
 		check_admin_referer( self::REPLAY_ACTION );

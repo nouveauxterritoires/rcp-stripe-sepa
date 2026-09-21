@@ -37,13 +37,13 @@ final class PersonalData {
 		}
 
 		$fields = array(
-			__( 'Compte bancaire débité', 'rcp-stripe-sepa' )  => MandateData::masked_iban( $mandate ),
-			__( 'Titulaire du compte', 'rcp-stripe-sepa' )     => (string) ( $mandate['account_holder_name'] ?? '' ),
-			__( 'Pays du compte', 'rcp-stripe-sepa' )          => (string) ( $mandate['country'] ?? '' ),
-			__( 'Référence du mandat', 'rcp-stripe-sepa' )     => (string) ( $mandate['mandate_reference'] ?? '' ),
-			__( 'Statut du mandat', 'rcp-stripe-sepa' )        => (string) ( $mandate['mandate_status'] ?? '' ),
-			__( 'Mandat signé le', 'rcp-stripe-sepa' )         => (string) ( $mandate['accepted_at'] ?? '' ),
-			__( 'Adresse IP de signature', 'rcp-stripe-sepa' ) => (string) ( $mandate['accepted_ip'] ?? '' ),
+			__( 'Bank account debited', 'rcp-stripe-sepa' )  => MandateData::masked_iban( $mandate ),
+			__( 'Account holder', 'rcp-stripe-sepa' )     => (string) ( $mandate['account_holder_name'] ?? '' ),
+			__( 'Account country', 'rcp-stripe-sepa' )          => (string) ( $mandate['country'] ?? '' ),
+			__( 'Mandate reference', 'rcp-stripe-sepa' )     => (string) ( $mandate['mandate_reference'] ?? '' ),
+			__( 'Mandate status', 'rcp-stripe-sepa' )        => (string) ( $mandate['mandate_status'] ?? '' ),
+			__( 'Mandate signed on', 'rcp-stripe-sepa' )         => (string) ( $mandate['accepted_at'] ?? '' ),
+			__( 'Signature IP address', 'rcp-stripe-sepa' ) => (string) ( $mandate['accepted_ip'] ?? '' ),
 		);
 
 		$items = array();
@@ -71,15 +71,15 @@ final class PersonalData {
 		return sprintf(
 			'<p>%s</p><p>%s</p><p>%s</p>',
 			__(
-				'Lorsque vous réglez votre adhésion par prélèvement SEPA, vos coordonnées bancaires sont saisies directement chez Stripe, notre prestataire de paiement, et ne transitent jamais par ce site. Nous ne conservons ni votre IBAN complet ni aucune donnée permettant de débiter votre compte.',
+				'When you pay for your membership by SEPA Direct Debit, your bank details are entered directly with Stripe, our payment provider, and never pass through this site. We store neither your full IBAN nor anything else that would allow your account to be debited.',
 				'rcp-stripe-sepa'
 			),
 			__(
-				'Nous conservons, pour la durée de votre adhésion : les quatre derniers caractères de votre IBAN, le pays du compte, le nom du titulaire, la référence de votre mandat et son statut. Ces informations vous permettent de reconnaître le prélèvement sur votre relevé bancaire.',
+				'For as long as your membership lasts, we keep the last four characters of your IBAN, the country of the account, the account holder’s name, your mandate reference and its status. These let you recognise the debit on your bank statement.',
 				'rcp-stripe-sepa'
 			),
 			__(
-				'La date et l\'adresse IP de signature du mandat constituent la preuve de votre consentement. L\'adresse IP est supprimée au bout de 13 mois, durée au-delà de laquelle un prélèvement ne peut plus être contesté.',
+				'The date and IP address recorded when you signed the mandate are the evidence of your consent. The IP address is deleted after 13 months, beyond which a debit can no longer be disputed.',
 				'rcp-stripe-sepa'
 			)
 		);

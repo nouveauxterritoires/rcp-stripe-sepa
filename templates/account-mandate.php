@@ -15,26 +15,26 @@ defined( 'ABSPATH' ) || exit;
 
 ?>
 <section class="rcp-stripe-sepa-mandate-details">
-	<h3><?php esc_html_e( 'Prélèvement SEPA en vigueur', 'rcp-stripe-sepa' ); ?></h3>
+	<h3><?php esc_html_e( 'Active SEPA Direct Debit', 'rcp-stripe-sepa' ); ?></h3>
 
 	<dl>
 		<?php if ( '' !== $masked_iban ) : ?>
-			<dt><?php esc_html_e( 'Compte débité', 'rcp-stripe-sepa' ); ?></dt>
+			<dt><?php esc_html_e( 'Account debited', 'rcp-stripe-sepa' ); ?></dt>
 			<dd><?php echo esc_html( $masked_iban ); ?></dd>
 		<?php endif; ?>
 
 		<?php if ( '' !== (string) $mandate['account_holder_name'] ) : ?>
-			<dt><?php esc_html_e( 'Titulaire', 'rcp-stripe-sepa' ); ?></dt>
+			<dt><?php esc_html_e( 'Account holder', 'rcp-stripe-sepa' ); ?></dt>
 			<dd><?php echo esc_html( (string) $mandate['account_holder_name'] ); ?></dd>
 		<?php endif; ?>
 
 		<?php if ( '' !== (string) $mandate['mandate_reference'] ) : ?>
-			<dt><?php esc_html_e( 'Référence du mandat', 'rcp-stripe-sepa' ); ?></dt>
+			<dt><?php esc_html_e( 'Mandate reference', 'rcp-stripe-sepa' ); ?></dt>
 			<dd><?php echo esc_html( (string) $mandate['mandate_reference'] ); ?></dd>
 		<?php endif; ?>
 
 		<?php if ( '' !== (string) $mandate['accepted_at'] ) : ?>
-			<dt><?php esc_html_e( 'Mandat signé le', 'rcp-stripe-sepa' ); ?></dt>
+			<dt><?php esc_html_e( 'Mandate signed on', 'rcp-stripe-sepa' ); ?></dt>
 			<dd>
 				<?php
 				echo esc_html(
@@ -51,7 +51,7 @@ defined( 'ABSPATH' ) || exit;
 	<?php if ( '' !== (string) $mandate['mandate_url'] ) : ?>
 		<p>
 			<a href="<?php echo esc_url( (string) $mandate['mandate_url'] ); ?>" target="_blank" rel="noopener noreferrer">
-				<?php esc_html_e( 'Consulter le mandat signé', 'rcp-stripe-sepa' ); ?>
+				<?php esc_html_e( 'View the signed mandate', 'rcp-stripe-sepa' ); ?>
 			</a>
 		</p>
 	<?php endif; ?>

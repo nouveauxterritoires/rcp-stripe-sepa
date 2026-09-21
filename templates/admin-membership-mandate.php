@@ -13,7 +13,7 @@ declare( strict_types = 1 );
 defined( 'ABSPATH' ) || exit;
 
 ?>
-<h3><?php esc_html_e( 'Mandat de prélèvement SEPA', 'rcp-stripe-sepa' ); ?></h3>
+<h3><?php esc_html_e( 'SEPA Direct Debit mandate', 'rcp-stripe-sepa' ); ?></h3>
 
 <table class="form-table rcp-stripe-sepa-mandate-table">
 	<tbody>
@@ -26,7 +26,7 @@ defined( 'ABSPATH' ) || exit;
 
 		<?php if ( ! empty( $links ) ) : ?>
 			<tr>
-				<th scope="row"><?php esc_html_e( 'Chez Stripe', 'rcp-stripe-sepa' ); ?></th>
+				<th scope="row"><?php esc_html_e( 'In Stripe', 'rcp-stripe-sepa' ); ?></th>
 				<td>
 					<?php foreach ( $links as $rcp_sepa_label => $rcp_sepa_url ) : ?>
 						<a href="<?php echo esc_url( $rcp_sepa_url ); ?>" target="_blank" rel="noopener noreferrer">

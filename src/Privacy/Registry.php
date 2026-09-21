@@ -58,7 +58,7 @@ final class Registry {
 		$exporters = is_array( $exporters ) ? $exporters : array();
 
 		$exporters[ self::EXPORTER_ID ] = array(
-			'exporter_friendly_name' => __( 'Mandats de prélèvement SEPA', 'rcp-stripe-sepa' ),
+			'exporter_friendly_name' => __( 'SEPA Direct Debit mandates', 'rcp-stripe-sepa' ),
 			'callback'               => array( self::class, 'export' ),
 		);
 
@@ -75,7 +75,7 @@ final class Registry {
 		$erasers = is_array( $erasers ) ? $erasers : array();
 
 		$erasers[ self::ERASER_ID ] = array(
-			'eraser_friendly_name' => __( 'Mandats de prélèvement SEPA', 'rcp-stripe-sepa' ),
+			'eraser_friendly_name' => __( 'SEPA Direct Debit mandates', 'rcp-stripe-sepa' ),
 			'callback'             => array( self::class, 'erase' ),
 		);
 
@@ -93,7 +93,7 @@ final class Registry {
 		}
 
 		wp_add_privacy_policy_content(
-			__( 'Prélèvement SEPA', 'rcp-stripe-sepa' ),
+			__( 'SEPA Direct Debit', 'rcp-stripe-sepa' ),
 			wp_kses_post( PersonalData::privacy_policy_content() )
 		);
 	}
@@ -122,7 +122,7 @@ final class Registry {
 
 			$export['data'][] = array(
 				'group_id'    => 'rcp-stripe-sepa',
-				'group_label' => __( 'Mandats de prélèvement SEPA', 'rcp-stripe-sepa' ),
+				'group_label' => __( 'SEPA Direct Debit mandates', 'rcp-stripe-sepa' ),
 				'item_id'     => 'mandate-' . (int) $membership->get_id(),
 				'data'        => $items,
 			);
@@ -163,7 +163,7 @@ final class Registry {
 			 * l'effacement complet.
 			 */
 			$messages[] = __(
-				'Les mandats conservés sur ce site ont été supprimés. Les données détenues par Stripe relèvent de vos obligations comptables et doivent être traitées depuis votre tableau de bord Stripe.',
+				'The mandates held on this site have been deleted. Data held by Stripe falls under your accounting obligations and must be handled from your Stripe dashboard.',
 				'rcp-stripe-sepa'
 			);
 		}

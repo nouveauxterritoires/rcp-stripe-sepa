@@ -14,8 +14,9 @@ Content Pro, qui n'intègre nativement que la carte bancaire via Stripe.
 > sans changement de prix ni de date d'échéance. 305 tests, 85 % de couverture.
 > Un écran de diagnostic, l'affichage des mandats et les e-mails transactionnels complètent
 > l'ensemble. 378 tests, 84 % de couverture.
-> Restent à livrer : l'internationalisation complète et les tests de bout en bout.
-> Les demandes d'accès et d'effacement passent par les outils de confidentialité de WordPress.
+> Les demandes d'accès et d'effacement passent par les outils de confidentialité de WordPress, et
+> l'interface est traduite en français.
+> Reste à livrer : les tests de bout en bout.
 
 ## Documentation
 
@@ -23,6 +24,7 @@ Content Pro, qui n'intègre nativement que la carte bancaire via Stripe.
 |---|---|
 | [Cahier des charges](docs/cahier-des-charges.md) | Périmètre, contraintes, spécifications, sécurité, tests, jalons |
 | [ADR-0001](docs/adr/0001-strategie-integration-rcp.md) | Pourquoi étendre la passerelle Stripe de RCP par héritage |
+| [ADR-0002](docs/adr/0002-langue-source-des-chaines.md) | Chaînes source en anglais, code et documentation en français |
 | [Compatibilité RCP](docs/compatibilite-rcp.md) | Variante libre / variante commerciale, détection, tests de contrat |
 | [Webhooks en local](docs/webhooks-en-local.md) | Rejouer des événements signés, hors ligne ou via la CLI Stripe |
 | [Environnement Stripe de test](docs/environnement-stripe-test.md) | Ce qui est nécessaire, ce qui ne l'est pas, et les pièges constatés |

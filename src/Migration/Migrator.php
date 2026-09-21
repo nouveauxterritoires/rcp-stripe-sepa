@@ -169,7 +169,7 @@ final class Migrator {
 		return true;
 	}
 
-	// -- Contrôles ---------------------------------------------------------------
+	// -- Checks ---------------------------------------------------------------
 
 	/**
 	 * Vérifie que l'intention appartient bien à cette adhésion.
@@ -304,8 +304,8 @@ final class Migrator {
 
 		$membership->add_note(
 			sprintf(
-				/* translators: %s: identifiant de la passerelle précédente. */
-				__( 'Prélèvement SEPA — moyen de paiement migré depuis « %s ». Prix et date de prochaine échéance inchangés.', 'rcp-stripe-sepa' ),
+				/* translators: %s: previous gateway identifier. */
+				__( 'SEPA Direct Debit — payment method migrated from “%s”. Price and next renewal date unchanged.', 'rcp-stripe-sepa' ),
 				$previous
 			)
 		);

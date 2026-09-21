@@ -95,7 +95,7 @@ final class StateMachine {
 				return Transition::to(
 					self::MEMBERSHIP_ACTIVE,
 					self::PAYMENT_COMPLETE,
-					'Prélèvement SEPA encaissé.'
+					'SEPA Direct Debit encaissé.'
 				);
 
 			case 'payment_intent.payment_failed':
@@ -124,7 +124,7 @@ final class StateMachine {
 				return Transition::to(
 					self::MEMBERSHIP_CANCELLED,
 					null,
-					'Abonnement Stripe résilié.'
+					'Stripe subscription résilié.'
 				);
 
 			default:
@@ -146,7 +146,7 @@ final class StateMachine {
 			return Transition::to(
 				self::MEMBERSHIP_ACTIVE,
 				self::PAYMENT_PENDING,
-				'Prélèvement SEPA engagé, accès ouvert par anticipation.'
+				'SEPA Direct Debit engagé, accès ouvert par anticipation.'
 			);
 		}
 
@@ -158,7 +158,7 @@ final class StateMachine {
 		return Transition::to(
 			$target,
 			self::PAYMENT_PENDING,
-			'Prélèvement SEPA engagé, encaissement en attente.'
+			'SEPA Direct Debit engagé, encaissement en attente.'
 		);
 	}
 
@@ -251,10 +251,10 @@ final class StateMachine {
 			return Transition::to(
 				self::MEMBERSHIP_CANCELLED,
 				self::PAYMENT_REFUNDED,
-				'Prélèvement SEPA intégralement remboursé.'
+				'SEPA Direct Debit intégralement remboursé.'
 			);
 		}
 
-		return Transition::to( null, self::PAYMENT_REFUNDED, 'Prélèvement SEPA partiellement remboursé.' );
+		return Transition::to( null, self::PAYMENT_REFUNDED, 'SEPA Direct Debit partiellement remboursé.' );
 	}
 }

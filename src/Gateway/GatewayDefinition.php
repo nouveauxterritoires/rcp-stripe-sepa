@@ -60,8 +60,8 @@ final class GatewayDefinition {
 	 */
 	public static function registry_entry(): array {
 		return array(
-			'label'       => __( 'Prélèvement SEPA', 'rcp-stripe-sepa' ),
-			'admin_label' => __( 'Stripe — Prélèvement SEPA', 'rcp-stripe-sepa' ),
+			'label'       => __( 'SEPA Direct Debit', 'rcp-stripe-sepa' ),
+			'admin_label' => __( 'Stripe — SEPA Direct Debit', 'rcp-stripe-sepa' ),
 			'class'       => Gateway::class,
 		);
 	}

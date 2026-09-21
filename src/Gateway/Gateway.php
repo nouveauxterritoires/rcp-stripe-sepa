@@ -1,6 +1,6 @@
 <?php
 /**
- * Passerelle de paiement par prélèvement SEPA.
+ * Gateway de paiement par prélèvement SEPA.
  *
  * @package RCP_Stripe_Sepa
  */
@@ -16,7 +16,7 @@ use RCP_Stripe_Sepa\Support\StripeSdk;
 use WP_Error;
 
 /**
- * Passerelle `stripe_sepa`, dérivée de la passerelle Stripe de RCP.
+ * Gateway `stripe_sepa`, dérivée de la passerelle Stripe de RCP.
  *
  * L'héritage permet de réutiliser la gestion des clés, la création des clients
  * Stripe, la fabrication des plans, l'idempotence et le journal. Seuls les
@@ -105,8 +105,8 @@ class Gateway extends RCP_Payment_Gateway_Stripe {
 			return new WP_Error(
 				$stripe_customer->get_error_code(),
 				sprintf(
-					/* translators: %s: message d'erreur renvoyé par Stripe. */
-					__( 'Erreur lors de la création du client Stripe : %s', 'rcp-stripe-sepa' ),
+					/* translators: %s: error message returned by Stripe. */
+					__( 'Error while creating the Stripe customer: %s', 'rcp-stripe-sepa' ),
 					$stripe_customer->get_error_message()
 				)
 			);
@@ -150,7 +150,7 @@ class Gateway extends RCP_Payment_Gateway_Stripe {
 			$this->handle_processing_error(
 				new WP_Error(
 					'rcp_stripe_sepa_missing_intent',
-					__( 'Intention Stripe introuvable. Reprenez l\'inscription ou contactez le support.', 'rcp-stripe-sepa' )
+					__( 'Stripe intent not found. Please start the registration again, or contact support.', 'rcp-stripe-sepa' )
 				)
 			);
 
@@ -177,7 +177,7 @@ class Gateway extends RCP_Payment_Gateway_Stripe {
 		 * @since 0.1.0
 		 *
 		 * @param int     $user_id Identifiant de l'utilisateur.
-		 * @param Gateway $gateway Passerelle.
+		 * @param Gateway $gateway Gateway.
 		 */
 		do_action( 'rcp_stripe_sepa_signup', $this->user_id, $this );
 
@@ -210,7 +210,7 @@ class Gateway extends RCP_Payment_Gateway_Stripe {
 	// -- Accès aux données de l'inscription ---------------------------------------
 
 	/**
-	 * Client Stripe associé à l'adhésion.
+	 * Stripe customer associé à l'adhésion.
 	 *
 	 * @param string $customer_id Identifiant connu, le cas échéant.
 	 * @return \Stripe\Customer|\WP_Error
@@ -285,7 +285,7 @@ class Gateway extends RCP_Payment_Gateway_Stripe {
 		if ( empty( $this->secret_key ) || empty( $this->publishable_key ) ) {
 			$this->add_error(
 				'rcp_stripe_sepa_missing_keys',
-				__( 'Le prélèvement SEPA n\'est pas configuré. Contactez l\'administrateur du site.', 'rcp-stripe-sepa' )
+				__( 'SEPA Direct Debit is not configured. Please contact the site administrator.', 'rcp-stripe-sepa' )
 			);
 		}
 	}
@@ -338,9 +338,9 @@ class Gateway extends RCP_Payment_Gateway_Stripe {
 				'gateway'        => self::GATEWAY_ID,
 				'locale'         => substr( (string) get_locale(), 0, 2 ),
 				'strings'        => array(
-					'missingName'  => __( 'Renseignez le nom du titulaire du compte.', 'rcp-stripe-sepa' ),
-					'missingIban'  => __( 'Renseignez un IBAN valide.', 'rcp-stripe-sepa' ),
-					'genericError' => __( 'Le mandat n\'a pas pu être enregistré. Vérifiez vos informations bancaires.', 'rcp-stripe-sepa' ),
+					'missingName'  => __( 'Please enter the account holder’s name.', 'rcp-stripe-sepa' ),
+					'missingIban'  => __( 'Please enter a valid IBAN.', 'rcp-stripe-sepa' ),
+					'genericError' => __( 'The mandate could not be saved. Please check your bank details.', 'rcp-stripe-sepa' ),
 				),
 			)
 		);
@@ -444,8 +444,8 @@ class Gateway extends RCP_Payment_Gateway_Stripe {
 		return new WP_Error(
 			'rcp_stripe_sepa_invalid_currency',
 			sprintf(
-				/* translators: %s: code de la devise configurée. */
-				__( 'Le prélèvement SEPA exige des paiements en euros ; la devise du site est %s.', 'rcp-stripe-sepa' ),
+				/* translators: %s: configured currency code. */
+				__( 'SEPA Direct Debit requires payments in euros; this site uses %s.', 'rcp-stripe-sepa' ),
 				strtoupper( (string) rcp_get_currency() )
 			)
 		);
@@ -459,6 +459,6 @@ class Gateway extends RCP_Payment_Gateway_Stripe {
 	 * @return void
 	 */
 	public function log( string $message, bool $error = false ): void {
-		rcp_log( 'Passerelle SEPA : ' . Redactor::redact( $message ), $error );
+		rcp_log( 'Gateway SEPA : ' . Redactor::redact( $message ), $error );
 	}
 }

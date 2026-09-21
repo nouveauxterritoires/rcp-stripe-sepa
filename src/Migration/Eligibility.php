@@ -33,7 +33,7 @@ final class Eligibility {
 	public const REASON_CURRENCY            = 'currency';
 
 	/**
-	 * Passerelles depuis lesquelles une migration a un sens.
+	 * Gateways depuis lesquelles une migration a un sens.
 	 *
 	 * La passerelle SEPA figure dans la liste : un adhérent qui change de
 	 * banque doit pouvoir fournir un nouvel IBAN sans résilier son adhésion.

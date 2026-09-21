@@ -85,14 +85,14 @@ final class MessageFactory {
 			case self::DEBIT_INITIATED:
 				return array(
 					'subject' => sprintf(
-						/* translators: %s: nom du niveau d'adhésion. */
-						__( 'Votre prélèvement SEPA pour « %s » est en cours', 'rcp-stripe-sepa' ),
+						/* translators: %s: membership level name. */
+						__( 'Your SEPA Direct Debit for “%s” is under way', 'rcp-stripe-sepa' ),
 						$level
 					),
 					'body'    => sprintf(
-						/* translators: 1: niveau d'adhésion, 2: nombre de jours, 3: nom du site. */
+						/* translators: 1: membership level, 2: number of days, 3: site name. */
 						__(
-							"Nous avons bien enregistré votre mandat pour l'adhésion « %1\$s ».\n\nUn prélèvement SEPA demande jusqu'à %2\$d jours ouvrés pour être encaissé par votre banque. Votre adhésion sera activée dès que nous aurons reçu la confirmation du paiement — vous n'avez rien d'autre à faire.\n\nL'équipe de %3\$s",
+							"We have saved your mandate for the “%1\$s” membership.\n\nA SEPA Direct Debit takes up to %2\$d working days for your bank to settle. Your membership will be activated as soon as we receive confirmation of the payment — there is nothing else for you to do.\n\nThe %3\$s team",
 							'rcp-stripe-sepa'
 						),
 						$level,
@@ -104,15 +104,15 @@ final class MessageFactory {
 			case self::DEBIT_FAILED:
 				return array(
 					'subject' => sprintf(
-						/* translators: %s: nom du niveau d'adhésion. */
-						__( 'Votre prélèvement SEPA pour « %s » a été refusé', 'rcp-stripe-sepa' ),
+						/* translators: %s: membership level name. */
+						__( 'Your SEPA Direct Debit for “%s” was declined', 'rcp-stripe-sepa' ),
 						$level
 					),
 					'body'    => self::squeeze(
 						sprintf(
-							/* translators: 1: niveau d'adhésion, 2: motif du refus, 3: nom du site. */
+							/* translators: 1: membership level, 2: decline reason, 3: site name. */
 							__(
-								"Le prélèvement pour votre adhésion « %1\$s » n'a pas pu être encaissé. %2\$s\n\nVous pouvez reprendre votre inscription ou nous contacter si vous pensez qu'il s'agit d'une erreur.\n\nL'équipe de %3\$s",
+								"The debit for your “%1\$s” membership could not be collected. %2\$s\n\nYou can start your registration again, or contact us if you believe this is a mistake.\n\nThe %3\$s team",
 								'rcp-stripe-sepa'
 							),
 							$level,
@@ -124,11 +124,11 @@ final class MessageFactory {
 
 			case self::MANDATE_UPDATED:
 				return array(
-					'subject' => __( 'Votre nouveau mandat SEPA est enregistré', 'rcp-stripe-sepa' ),
+					'subject' => __( 'Your new SEPA mandate has been saved', 'rcp-stripe-sepa' ),
 					'body'    => sprintf(
-						/* translators: 1: niveau d'adhésion, 2: nom du site. */
+						/* translators: 1: membership level, 2: site name. */
 						__(
-							"Votre adhésion « %1\$s » est désormais réglée par prélèvement SEPA.\n\nLe montant et la date de votre prochaine échéance sont inchangés.\n\nL'équipe de %2\$s",
+							"Your “%1\$s” membership is now paid by SEPA Direct Debit.\n\nThe amount and date of your next renewal are unchanged.\n\nThe %2\$s team",
 							'rcp-stripe-sepa'
 						),
 						$level,
@@ -138,11 +138,11 @@ final class MessageFactory {
 
 			case self::DISPUTE_OPENED:
 				return array(
-					'subject' => __( 'Litige SEPA ouvert sur une adhésion', 'rcp-stripe-sepa' ),
+					'subject' => __( 'SEPA dispute opened on a membership', 'rcp-stripe-sepa' ),
 					'body'    => sprintf(
-						/* translators: %d: identifiant de l'adhésion. */
+						/* translators: %d: membership identifier. */
 						__(
-							"Un débiteur a contesté un prélèvement. L'adhésion concernée porte l'identifiant #%d.\n\nConsultez votre tableau de bord Stripe pour répondre au litige dans les délais impartis.",
+							"A debtor has disputed a debit. The membership concerned has the identifier #%d.\n\nOpen your Stripe dashboard to respond to the dispute within the allotted time.",
 							'rcp-stripe-sepa'
 						),
 						(int) ( $context['membership_id'] ?? 0 )
@@ -151,11 +151,11 @@ final class MessageFactory {
 
 			case self::EVENT_ABANDONED:
 				return array(
-					'subject' => __( 'Un événement Stripe n\'a pas pu être traité', 'rcp-stripe-sepa' ),
+					'subject' => __( 'A Stripe event could not be processed', 'rcp-stripe-sepa' ),
 					'body'    => sprintf(
-						/* translators: 1: identifiant de l'événement, 2: type d'événement. */
+						/* translators: 1: event identifier, 2: event type. */
 						__(
-							"L'événement %1\$s (%2\$s) a été abandonné après plusieurs tentatives.\n\nOuvrez l'écran « Prélèvement SEPA » de l'administration pour en consulter le détail et le rejouer.",
+							"Event %1\$s (%2\$s) was abandoned after several attempts.\n\nOpen the “SEPA Direct Debit” admin screen to review it and replay it.",
 							'rcp-stripe-sepa'
 						),
 						(string) ( $context['event_id'] ?? '' ),

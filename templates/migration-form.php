@@ -23,13 +23,13 @@ $rcp_sepa_form_id = 'rcp-stripe-sepa-migration-' . (int) $membership->get_id();
 	data-membership="<?php echo esc_attr( (string) $membership->get_id() ); ?>"
 	hidden
 >
-	<h3><?php esc_html_e( 'Passer au prélèvement SEPA', 'rcp-stripe-sepa' ); ?></h3>
+	<h3><?php esc_html_e( 'Switch to SEPA Direct Debit', 'rcp-stripe-sepa' ); ?></h3>
 
 	<p class="rcp-stripe-sepa-migration-intro">
 		<?php
 		printf(
-			/* translators: %s: nom du niveau d'adhésion. */
-			esc_html__( 'Adhésion concernée : %s. Le prix et la date de prochaine échéance restent inchangés.', 'rcp-stripe-sepa' ),
+			/* translators: %s: membership level name. */
+			esc_html__( 'Membership concerned: %s. The price and next renewal date stay the same.', 'rcp-stripe-sepa' ),
 			esc_html( $membership->get_membership_level_name() )
 		);
 		?>
@@ -37,7 +37,7 @@ $rcp_sepa_form_id = 'rcp-stripe-sepa-migration-' . (int) $membership->get_id();
 
 	<p class="rcp-stripe-sepa-holder">
 		<label for="<?php echo esc_attr( $rcp_sepa_form_id ); ?>-holder">
-			<?php esc_html_e( 'Nom du titulaire du compte', 'rcp-stripe-sepa' ); ?>
+			<?php esc_html_e( 'Account holder’s name', 'rcp-stripe-sepa' ); ?>
 			<span class="rcp-required" aria-hidden="true">*</span>
 		</label>
 		<input
@@ -65,9 +65,9 @@ $rcp_sepa_form_id = 'rcp-stripe-sepa-migration-' . (int) $membership->get_id();
 	<div class="rcp-stripe-sepa-mandate">
 		<?php
 		$rcp_sepa_mandate_text = sprintf(
-			/* translators: %s: nom du site, agissant comme créancier. */
+			/* translators: %s: site name, acting as the creditor. */
 			__(
-				'En fournissant votre IBAN et en confirmant ce mandat, vous autorisez %s et Stripe, notre prestataire de paiement, à envoyer des instructions à votre banque pour débiter votre compte, et votre banque à débiter votre compte conformément à ces instructions. Vous bénéficiez d\'un droit à remboursement par votre banque selon les conditions décrites dans la convention que vous avez passée avec elle. Toute demande de remboursement doit être présentée dans les 8 semaines suivant la date de débit de votre compte.',
+				'By providing your IBAN and confirming this mandate, you authorise %s and Stripe, our payment provider, to send instructions to your bank to debit your account, and your bank to debit your account in accordance with those instructions. You are entitled to a refund from your bank under the terms of your agreement with it. A refund must be claimed within 8 weeks of the date on which your account was debited.',
 				'rcp-stripe-sepa'
 			),
 			esc_html( get_bloginfo( 'name' ) )
@@ -80,7 +80,7 @@ $rcp_sepa_form_id = 'rcp-stripe-sepa-migration-' . (int) $membership->get_id();
 
 	<p>
 		<button type="button" class="rcp-stripe-sepa-migrate-submit">
-			<?php esc_html_e( 'Confirmer le mandat', 'rcp-stripe-sepa' ); ?>
+			<?php esc_html_e( 'Confirm the mandate', 'rcp-stripe-sepa' ); ?>
 		</button>
 	</p>
 </section>

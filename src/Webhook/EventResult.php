@@ -1,6 +1,6 @@
 <?php
 /**
- * Issue du traitement d'un événement.
+ * Outcome du traitement d'un événement.
  *
  * @package RCP_Stripe_Sepa
  */

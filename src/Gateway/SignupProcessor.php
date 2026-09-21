@@ -36,7 +36,7 @@ use RCP_Stripe_Sepa\Support\StripeSdk;
 final class SignupProcessor {
 
 	/**
-	 * Passerelle appelante.
+	 * Gateway appelante.
 	 *
 	 * @var Gateway
 	 */
@@ -45,7 +45,7 @@ final class SignupProcessor {
 	/**
 	 * Construit le processeur pour une passerelle donnée.
 	 *
-	 * @param Gateway $gateway Passerelle appelante.
+	 * @param Gateway $gateway Gateway appelante.
 	 */
 	public function __construct( Gateway $gateway ) {
 		$this->gateway = $gateway;
@@ -89,7 +89,7 @@ final class SignupProcessor {
 	 * restent deux autorisations distinctes qu'il serait abusif de fusionner.
 	 *
 	 * @param object $intent   Intention Stripe.
-	 * @param object $customer Client Stripe.
+	 * @param object $customer Stripe customer.
 	 * @return object|null
 	 */
 	private function attach_payment_method( $intent, $customer ) {
@@ -182,7 +182,7 @@ final class SignupProcessor {
 		global $rcp_payments_db;
 
 		$data = array(
-			'payment_type' => __( 'Prélèvement SEPA', 'rcp-stripe-sepa' ),
+			'payment_type' => __( 'SEPA Direct Debit', 'rcp-stripe-sepa' ),
 			'status'       => StateMachine::PAYMENT_PENDING,
 		);
 
@@ -238,7 +238,7 @@ final class SignupProcessor {
 	 * `requires_confirmation`, faute de mandat confirmé pour sa facture
 	 * initiale.
 	 *
-	 * @param object $customer       Client Stripe.
+	 * @param object $customer       Stripe customer.
 	 * @param object $payment_method Moyen de paiement Stripe.
 	 * @param object $membership     Adhésion RCP.
 	 * @return void
@@ -304,7 +304,7 @@ final class SignupProcessor {
 			 * @since 0.1.0
 			 *
 			 * @param array   $args    Arguments d'abonnement.
-			 * @param Gateway $gateway Passerelle à l'origine de l'appel.
+			 * @param Gateway $gateway Gateway à l'origine de l'appel.
 			 */
 			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 			$args = apply_filters( 'rcp_stripe_create_subscription_args', $args, $this->gateway );
@@ -324,8 +324,8 @@ final class SignupProcessor {
 
 			$membership->add_note(
 				sprintf(
-					/* translators: %s: message d'erreur renvoyé par Stripe. */
-					__( 'Prélèvement SEPA — création de l\'abonnement impossible : %s', 'rcp-stripe-sepa' ),
+					/* translators: %s: error message returned by Stripe. */
+					__( 'SEPA Direct Debit — the subscription could not be created: %s', 'rcp-stripe-sepa' ),
 					$exception->getMessage()
 				)
 			);

@@ -41,14 +41,14 @@ final class EventReplay {
 		if ( '' === $event_id || 0 !== strpos( $event_id, 'evt_' ) ) {
 			return new WP_Error(
 				'rcp_stripe_sepa_invalid_event',
-				__( 'Identifiant d\'événement invalide.', 'rcp-stripe-sepa' )
+				__( 'Invalid event identifier.', 'rcp-stripe-sepa' )
 			);
 		}
 
 		if ( ! StripeSdk::ensure_loaded() ) {
 			return new WP_Error(
 				'rcp_stripe_sepa_sdk_missing',
-				__( 'Le SDK Stripe est indisponible.', 'rcp-stripe-sepa' )
+				__( 'The Stripe SDK is unavailable.', 'rcp-stripe-sepa' )
 			);
 		}
 
@@ -59,7 +59,7 @@ final class EventReplay {
 
 			return new WP_Error(
 				'rcp_stripe_sepa_event_unreadable',
-				__( 'Cet événement est introuvable chez Stripe.', 'rcp-stripe-sepa' )
+				__( 'This event could not be found in Stripe.', 'rcp-stripe-sepa' )
 			);
 		}
 
@@ -68,7 +68,7 @@ final class EventReplay {
 		if ( WebhookSecret::is_test_mode() === $livemode ) {
 			return new WP_Error(
 				'rcp_stripe_sepa_mode_mismatch',
-				__( 'Cet événement appartient à l\'autre mode : rejeu refusé.', 'rcp-stripe-sepa' )
+				__( 'This event belongs to the other mode: replay refused.', 'rcp-stripe-sepa' )
 			);
 		}
 

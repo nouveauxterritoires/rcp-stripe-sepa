@@ -202,7 +202,7 @@ jobs:
         with:
           php-version: '8.2'
           tools: wp-cli
-      - run: wp i18n make-pot . languages/rcp-stripe-sepa.pot --slug=rcp-stripe-sepa
+      - run: wp i18n make-pot . languages/rcp-stripe-sepa.pot --slug=rcp-stripe-sepa --exclude=vendor,tests,ressources,node_modules,stubs
       - name: Échouer si le .pot a changé
         run: |
           git diff --quiet -- languages/rcp-stripe-sepa.pot \

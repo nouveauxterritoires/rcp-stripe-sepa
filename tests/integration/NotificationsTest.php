@@ -120,7 +120,7 @@ final class NotificationsTest extends WP_UnitTestCase {
 		);
 
 		$this->assertCount( 1, $this->sent );
-		$this->assertStringContainsString( 'jours ouvrés', $this->all_text() );
+		$this->assertStringContainsString( 'working days', $this->all_text() );
 	}
 
 	public function test_un_prelevement_refuse_previent_l_adherent(): void {
@@ -130,7 +130,7 @@ final class NotificationsTest extends WP_UnitTestCase {
 		);
 
 		$this->assertCount( 1, $this->sent );
-		$this->assertStringContainsString( 'refusé', $this->all_text() );
+		$this->assertStringContainsString( 'declined', $this->all_text() );
 		$this->assertStringContainsString( 'Prélèvement refusé.', $this->all_text(), 'Le motif doit être repris.' );
 	}
 
@@ -161,7 +161,7 @@ final class NotificationsTest extends WP_UnitTestCase {
 		do_action( 'rcp_stripe_sepa_migrated', rcp_get_membership( $this->membership_id ), 'pm_123' );
 
 		$this->assertCount( 1, $this->sent );
-		$this->assertStringContainsString( 'inchangé', $this->all_text() );
+		$this->assertStringContainsString( 'unchanged', $this->all_text() );
 	}
 
 	// -- Alertes à l'administrateur -------------------------------------------------

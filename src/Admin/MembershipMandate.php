@@ -70,10 +70,10 @@ final class MembershipMandate {
 		return array_filter(
 			array(
 				__( 'IBAN', 'rcp-stripe-sepa' )       => MandateData::masked_iban( $mandate ),
-				__( 'Titulaire', 'rcp-stripe-sepa' )  => (string) $mandate['account_holder_name'],
-				__( 'Référence du mandat', 'rcp-stripe-sepa' ) => (string) $mandate['mandate_reference'],
-				__( 'Statut du mandat', 'rcp-stripe-sepa' ) => (string) $mandate['mandate_status'],
-				__( 'Accepté le', 'rcp-stripe-sepa' ) => (string) $mandate['accepted_at'],
+				__( 'Account holder', 'rcp-stripe-sepa' )  => (string) $mandate['account_holder_name'],
+				__( 'Mandate reference', 'rcp-stripe-sepa' ) => (string) $mandate['mandate_reference'],
+				__( 'Mandate status', 'rcp-stripe-sepa' ) => (string) $mandate['mandate_status'],
+				__( 'Accepted on', 'rcp-stripe-sepa' ) => (string) $mandate['accepted_at'],
 			),
 			static function ( string $value ): bool {
 				return '' !== $value;
@@ -94,15 +94,15 @@ final class MembershipMandate {
 		$links = array();
 
 		if ( '' !== (string) $membership->get_gateway_customer_id() ) {
-			$links[ __( 'Client Stripe', 'rcp-stripe-sepa' ) ] = $base . 'customers/' . $membership->get_gateway_customer_id();
+			$links[ __( 'Stripe customer', 'rcp-stripe-sepa' ) ] = $base . 'customers/' . $membership->get_gateway_customer_id();
 		}
 
 		if ( '' !== (string) $membership->get_gateway_subscription_id() ) {
-			$links[ __( 'Abonnement Stripe', 'rcp-stripe-sepa' ) ] = $base . 'subscriptions/' . $membership->get_gateway_subscription_id();
+			$links[ __( 'Stripe subscription', 'rcp-stripe-sepa' ) ] = $base . 'subscriptions/' . $membership->get_gateway_subscription_id();
 		}
 
 		if ( '' !== (string) $mandate['mandate_url'] ) {
-			$links[ __( 'Mandat signé', 'rcp-stripe-sepa' ) ] = (string) $mandate['mandate_url'];
+			$links[ __( 'Signed mandate', 'rcp-stripe-sepa' ) ] = (string) $mandate['mandate_url'];
 		}
 
 		return $links;

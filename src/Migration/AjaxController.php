@@ -96,7 +96,7 @@ final class AjaxController {
 
 		wp_send_json_success(
 			array(
-				'message' => __( 'Votre adhésion est désormais réglée par prélèvement SEPA.', 'rcp-stripe-sepa' ),
+				'message' => __( 'Your membership is now paid by SEPA Direct Debit.', 'rcp-stripe-sepa' ),
 			)
 		);
 	}
@@ -124,7 +124,7 @@ final class AjaxController {
 		}
 
 		/*
-		 * Contrôle de propriété. Le message renvoyé est le même que pour une
+		 * Check de propriété. Le message renvoyé est le même que pour une
 		 * adhésion inexistante : distinguer les deux cas permettrait d'énumérer
 		 * les identifiants d'adhésion existants.
 		 */

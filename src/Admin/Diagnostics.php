@@ -60,7 +60,7 @@ final class Diagnostics {
 	 *
 	 * Le contexte fourni n'est jamais modifié.
 	 *
-	 * @param array $context État de l'installation.
+	 * @param array $context Status de l'installation.
 	 * @return array
 	 */
 	public static function build( array $context ): array {
@@ -98,12 +98,12 @@ final class Diagnostics {
 		);
 	}
 
-	// -- Contrôles ---------------------------------------------------------------
+	// -- Checks ---------------------------------------------------------------
 
 	/**
 	 * Compatibilité avec Restrict Content Pro.
 	 *
-	 * @param array $context État de l'installation.
+	 * @param array $context Status de l'installation.
 	 * @return array
 	 */
 	private static function check_rcp( array $context ): array {
@@ -115,8 +115,8 @@ final class Diagnostics {
 			'rcp',
 			__( 'Restrict Content Pro', 'rcp-stripe-sepa' ),
 			sprintf(
-				/* translators: %s: liste des anomalies détectées. */
-				__( 'Environnement incompatible : %s.', 'rcp-stripe-sepa' ),
+				/* translators: %s: list of detected problems. */
+				__( 'Incompatible environment: %s.', 'rcp-stripe-sepa' ),
 				implode( ', ', (array) ( $context['rcp_issues'] ?? array() ) )
 			)
 		);
@@ -125,32 +125,32 @@ final class Diagnostics {
 	/**
 	 * Activation de la passerelle dans les réglages de RCP.
 	 *
-	 * @param array $context État de l'installation.
+	 * @param array $context Status de l'installation.
 	 * @return array
 	 */
 	private static function check_gateway( array $context ): array {
-		$label = __( 'Passerelle', 'rcp-stripe-sepa' );
+		$label = __( 'Gateway', 'rcp-stripe-sepa' );
 
 		if ( ! empty( $context['gateway_enabled'] ) ) {
-			return self::ok( 'gateway', $label, __( 'Activée dans les réglages de RCP.', 'rcp-stripe-sepa' ) );
+			return self::ok( 'gateway', $label, __( 'Enabled in the Restrict Content Pro settings.', 'rcp-stripe-sepa' ) );
 		}
 
 		return self::warning(
 			'gateway',
 			$label,
-			__( 'Désactivée : le prélèvement SEPA n\'est pas proposé à l\'inscription.', 'rcp-stripe-sepa' )
+			__( 'Disabled: SEPA Direct Debit is not offered at registration.', 'rcp-stripe-sepa' )
 		);
 	}
 
 	/**
-	 * Devise du site.
+	 * Currency du site.
 	 *
-	 * @param array $context État de l'installation.
+	 * @param array $context Status de l'installation.
 	 * @return array
 	 */
 	private static function check_currency( array $context ): array {
 		$currency = strtoupper( (string) ( $context['currency'] ?? '' ) );
-		$label    = __( 'Devise', 'rcp-stripe-sepa' );
+		$label    = __( 'Currency', 'rcp-stripe-sepa' );
 
 		if ( GatewayDefinition::CURRENCY === $currency ) {
 			return self::ok( 'currency', $label, $currency );
@@ -160,8 +160,8 @@ final class Diagnostics {
 			'currency',
 			$label,
 			sprintf(
-				/* translators: %s: code de la devise configurée. */
-				__( 'Le prélèvement SEPA exige l\'euro ; la devise du site est %s.', 'rcp-stripe-sepa' ),
+				/* translators: %s: configured currency code. */
+				__( 'SEPA Direct Debit requires euros; this site uses %s.', 'rcp-stripe-sepa' ),
 				$currency
 			)
 		);
@@ -170,14 +170,14 @@ final class Diagnostics {
 	/**
 	 * Chiffrement du site.
 	 *
-	 * @param array $context État de l'installation.
+	 * @param array $context Status de l'installation.
 	 * @return array
 	 */
 	private static function check_https( array $context ): array {
 		$label = __( 'HTTPS', 'rcp-stripe-sepa' );
 
 		if ( ! empty( $context['is_https'] ) ) {
-			return self::ok( 'https', $label, __( 'Actif.', 'rcp-stripe-sepa' ) );
+			return self::ok( 'https', $label, __( 'Enabled.', 'rcp-stripe-sepa' ) );
 		}
 
 		// Un environnement local en HTTP est la norme : le signaler comme une
@@ -186,31 +186,31 @@ final class Diagnostics {
 			return self::warning(
 				'https',
 				$label,
-				__( 'Absent. Acceptable en développement, indispensable en production.', 'rcp-stripe-sepa' )
+				__( 'Missing. Acceptable in development, required in production.', 'rcp-stripe-sepa' )
 			);
 		}
 
 		return self::error(
 			'https',
 			$label,
-			__( 'Absent. Stripe.js et la collecte de mandat l\'exigent.', 'rcp-stripe-sepa' )
+			__( 'Missing. Stripe.js and mandate collection both require it.', 'rcp-stripe-sepa' )
 		);
 	}
 
 	/**
 	 * Secret de signature des webhooks.
 	 *
-	 * @param array $context État de l'installation.
+	 * @param array $context Status de l'installation.
 	 * @return array
 	 */
 	private static function check_webhook_secret( array $context ): array {
-		$label = __( 'Secret de webhook', 'rcp-stripe-sepa' );
+		$label = __( 'Webhook secret', 'rcp-stripe-sepa' );
 
 		if ( empty( $context['secret_present'] ) ) {
 			return self::error(
 				'webhook_secret',
 				$label,
-				__( 'Absent : aucun webhook ne peut être authentifié, les adhésions resteront en attente.', 'rcp-stripe-sepa' )
+				__( 'Missing: no webhook can be authenticated, and memberships will stay pending.', 'rcp-stripe-sepa' )
 			);
 		}
 
@@ -218,17 +218,17 @@ final class Diagnostics {
 			return self::warning(
 				'webhook_secret',
 				$label,
-				__( 'Stocké en base. Préférez une constante dans wp-config.php, qui ne fuite ni dans un export ni dans une sauvegarde.', 'rcp-stripe-sepa' )
+				__( 'Stored in the database. Prefer a constant in wp-config.php, which leaks neither through an export nor through a backup.', 'rcp-stripe-sepa' )
 			);
 		}
 
-		return self::ok( 'webhook_secret', $label, __( 'Défini par constante.', 'rcp-stripe-sepa' ) );
+		return self::ok( 'webhook_secret', $label, __( 'Defined as a constant.', 'rcp-stripe-sepa' ) );
 	}
 
 	/**
 	 * Événements reçus.
 	 *
-	 * @param array $context État de l'installation.
+	 * @param array $context Status de l'installation.
 	 * @return array
 	 */
 	private static function check_events( array $context ): array {
@@ -241,10 +241,10 @@ final class Diagnostics {
 				'events',
 				$label,
 				sprintf(
-					/* translators: %d: nombre d'événements abandonnés. */
+					/* translators: %d: number of abandoned events. */
 					_n(
-						'%d événement abandonné après plusieurs tentatives.',
-						'%d événements abandonnés après plusieurs tentatives.',
+						'%d event abandoned after several attempts.',
+						'%d events abandoned after several attempts.',
 						$failed,
 						'rcp-stripe-sepa'
 					),
@@ -257,7 +257,7 @@ final class Diagnostics {
 			return self::warning(
 				'events',
 				$label,
-				__( 'Aucun événement reçu. Vérifiez le point de terminaison déclaré chez Stripe.', 'rcp-stripe-sepa' )
+				__( 'No event received. Check the endpoint declared in Stripe.', 'rcp-stripe-sepa' )
 			);
 		}
 
@@ -265,8 +265,8 @@ final class Diagnostics {
 			'events',
 			$label,
 			sprintf(
-				/* translators: %d: nombre d'événements traités. */
-				_n( '%d événement traité.', '%d événements traités.', $total, 'rcp-stripe-sepa' ),
+				/* translators: %d: number of processed events. */
+				_n( '%d event processed.', '%d events processed.', $total, 'rcp-stripe-sepa' ),
 				$total
 			)
 		);
@@ -275,26 +275,26 @@ final class Diagnostics {
 	/**
 	 * Prélèvements restés en attente au-delà du délai configuré.
 	 *
-	 * @param array $context État de l'installation.
+	 * @param array $context Status de l'installation.
 	 * @return array
 	 */
 	private static function check_stale_payments( array $context ): array {
-		$label = __( 'Prélèvements en attente', 'rcp-stripe-sepa' );
+		$label = __( 'Pending debits', 'rcp-stripe-sepa' );
 		$stale = (int) ( $context['stale_payments'] ?? 0 );
 		$days  = (int) ( $context['stale_after'] ?? 14 );
 
 		if ( 0 === $stale ) {
-			return self::ok( 'stale_payments', $label, __( 'Aucun retard.', 'rcp-stripe-sepa' ) );
+			return self::ok( 'stale_payments', $label, __( 'Nothing overdue.', 'rcp-stripe-sepa' ) );
 		}
 
 		return self::warning(
 			'stale_payments',
 			$label,
 			sprintf(
-				/* translators: 1: nombre de paiements, 2: nombre de jours. */
+				/* translators: 1: number of payments, 2: number of days. */
 				_n(
-					'%1$d prélèvement en attente depuis plus de %2$d jours : un webhook n\'arrive peut-être pas.',
-					'%1$d prélèvements en attente depuis plus de %2$d jours : un webhook n\'arrive peut-être pas.',
+					'%1$d debit pending for more than %2$d days: a webhook may not be arriving.',
+					'%1$d debits pending for more than %2$d days: a webhook may not be arriving.',
 					$stale,
 					'rcp-stripe-sepa'
 				),
@@ -309,7 +309,7 @@ final class Diagnostics {
 	/**
 	 * @param string $id     Identifiant.
 	 * @param string $label  Intitulé.
-	 * @param string $detail Détail.
+	 * @param string $detail Details.
 	 * @return array
 	 */
 	private static function ok( string $id, string $label, string $detail ): array {
@@ -319,7 +319,7 @@ final class Diagnostics {
 	/**
 	 * @param string $id     Identifiant.
 	 * @param string $label  Intitulé.
-	 * @param string $detail Détail.
+	 * @param string $detail Details.
 	 * @return array
 	 */
 	private static function warning( string $id, string $label, string $detail ): array {
@@ -329,7 +329,7 @@ final class Diagnostics {
 	/**
 	 * @param string $id     Identifiant.
 	 * @param string $label  Intitulé.
-	 * @param string $detail Détail.
+	 * @param string $detail Details.
 	 * @return array
 	 */
 	private static function error( string $id, string $label, string $detail ): array {
@@ -339,7 +339,7 @@ final class Diagnostics {
 	/**
 	 * Statut le plus grave parmi les contrôles.
 	 *
-	 * @param array[] $checks Contrôles.
+	 * @param array[] $checks Checks.
 	 * @return string
 	 */
 	private static function worst( array $checks ): string {

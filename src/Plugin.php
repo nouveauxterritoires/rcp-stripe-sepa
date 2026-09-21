@@ -17,6 +17,7 @@ use RCP_Stripe_Sepa\Email\Notifications;
 use RCP_Stripe_Sepa\Frontend\MandateDetails;
 use RCP_Stripe_Sepa\Compat\RequirementsNotice;
 use RCP_Stripe_Sepa\Gateway\Registrar;
+use RCP_Stripe_Sepa\Privacy\Registry as PrivacyRegistry;
 use RCP_Stripe_Sepa\Migration\AccountPage;
 use RCP_Stripe_Sepa\Migration\AjaxController;
 use RCP_Stripe_Sepa\Webhook\Endpoint;
@@ -116,6 +117,7 @@ final class Plugin {
 		AjaxController::register();
 		MandateDetails::register();
 		Notifications::register();
+		PrivacyRegistry::register();
 
 		if ( is_admin() ) {
 			DiagnosticsPage::register();

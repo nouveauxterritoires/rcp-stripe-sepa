@@ -6,6 +6,12 @@ Versionnement : [SemVer](https://semver.org/lang/fr/).
 ## [Non publié]
 
 ### Ajouté
+- Exportateur et effaceur de données personnelles branchés sur les outils de WordPress : un adhérent
+  obtient son mandat par la procédure standard, et sa suppression efface les métadonnées locales.
+- L'effacement signale explicitement que les données détenues par Stripe ne sont pas supprimées,
+  les obligations comptables primant sur le droit à l'effacement.
+- Mention proposée à la politique de confidentialité du site.
+- Purge quotidienne des adresses de signature de mandat au-delà de treize mois.
 - Écran « Restrict › Prélèvement SEPA » : état de la configuration, URL du point de terminaison,
   vingt derniers événements reçus et rejeu manuel de l'un d'eux.
 - Rejeu d'événement relisant la charge utile auprès de Stripe plutôt qu'une copie locale, avec

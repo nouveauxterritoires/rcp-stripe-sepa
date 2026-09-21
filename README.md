@@ -15,6 +15,7 @@ Content Pro, qui n'intègre nativement que la carte bancaire via Stripe.
 > Un écran de diagnostic, l'affichage des mandats et les e-mails transactionnels complètent
 > l'ensemble. 378 tests, 84 % de couverture.
 > Restent à livrer : l'internationalisation complète et les tests de bout en bout.
+> Les demandes d'accès et d'effacement passent par les outils de confidentialité de WordPress.
 
 ## Documentation
 

@@ -1,0 +1,172 @@
+{
+    "id": "evt_3UI9f1A461x37mSv1322Y1af",
+    "object": "event",
+    "api_version": "2020-08-27",
+    "created": 1790006505,
+    "data": {
+        "object": {
+            "id": "pi_3UI9f1A461x37mSv1tMa1ImM",
+            "object": "payment_intent",
+            "allowed_payment_method_types": null,
+            "amount": 1000,
+            "amount_capturable": 0,
+            "amount_details": {
+                "tip": []
+            },
+            "amount_received": 0,
+            "application": null,
+            "application_fee_amount": null,
+            "automatic_payment_methods": null,
+            "canceled_at": null,
+            "cancellation_reason": null,
+            "capture_method": "automatic",
+            "charges": {
+                "object": "list",
+                "data": [
+                    {
+                        "id": "py_3UI9f1A461x37mSv1KPlfpT0",
+                        "object": "charge",
+                        "amount": 1000,
+                        "amount_captured": 1000,
+                        "amount_refunded": 0,
+                        "application": null,
+                        "application_fee": null,
+                        "application_fee_amount": null,
+                        "balance_transaction": null,
+                        "billing_details": {
+                            "address": {
+                                "city": null,
+                                "country": null,
+                                "line1": null,
+                                "line2": null,
+                                "postal_code": null,
+                                "state": null
+                            },
+                            "email": "membre+failed@example.test",
+                            "name": "Membre Test failed",
+                            "phone": null,
+                            "tax_id": null
+                        },
+                        "calculated_statement_descriptor": null,
+                        "captured": true,
+                        "created": 1790006505,
+                        "currency": "eur",
+                        "customer": "cus_VIlB7XFl6CyoeE",
+                        "description": "Subscription creation",
+                        "destination": null,
+                        "dispute": null,
+                        "disputed": false,
+                        "failure_balance_transaction": null,
+                        "failure_code": null,
+                        "failure_message": null,
+                        "fraud_details": [],
+                        "invoice": "in_1UI9f1A461x37mSvbhq1LccW",
+                        "livemode": false,
+                        "metadata": [],
+                        "on_behalf_of": null,
+                        "order": null,
+                        "outcome": {
+                            "advice_code": null,
+                            "network_advice_code": null,
+                            "network_decline_code": null,
+                            "network_status": "approved_by_network",
+                            "reason": null,
+                            "risk_level": "normal",
+                            "risk_score": 11,
+                            "seller_message": "Payment complete.",
+                            "type": "authorized"
+                        },
+                        "paid": false,
+                        "payment_intent": "pi_3UI9f1A461x37mSv1tMa1ImM",
+                        "payment_method": "pm_1UI9f0A461x37mSvgIQ71otZ",
+                        "payment_method_details": {
+                            "sepa_debit": {
+                                "bank_code": "20041",
+                                "branch_code": "01005",
+                                "country": "FR",
+                                "fingerprint": "5wLcvlklhBSHV3we",
+                                "last4": "2607",
+                                "mandate": "mandate_1UI9f3A461x37mSvmpjprmXQ"
+                            },
+                            "type": "sepa_debit"
+                        },
+                        "radar_options": [],
+                        "receipt_email": null,
+                        "receipt_number": null,
+                        "receipt_url": null,
+                        "refunded": false,
+                        "refunds": {
+                            "object": "list",
+                            "data": [],
+                            "has_more": false,
+                            "total_count": 0,
+                            "url": "/v1/charges/py_3UI9f1A461x37mSv1KPlfpT0/refunds"
+                        },
+                        "review": null,
+                        "shipping": null,
+                        "source": null,
+                        "source_transfer": null,
+                        "statement_descriptor": null,
+                        "statement_descriptor_suffix": null,
+                        "status": "pending",
+                        "transfer_data": null,
+                        "transfer_group": null
+                    }
+                ],
+                "has_more": false,
+                "total_count": 1,
+                "url": "/v1/charges?payment_intent=pi_3UI9f1A461x37mSv1tMa1ImM"
+            },
+            "client_secret": "pi_3UI9f1A461x37mSv1tMa1ImM_secret_pVmPjmxIH77aZtxqpBmgLyi2n",
+            "confirmation_method": "automatic",
+            "created": 1790006503,
+            "currency": "eur",
+            "customer": "cus_VIlB7XFl6CyoeE",
+            "customer_account": null,
+            "description": "Subscription creation",
+            "excluded_payment_method_types": null,
+            "invoice": "in_1UI9f1A461x37mSvbhq1LccW",
+            "last_payment_error": null,
+            "latest_charge": "py_3UI9f1A461x37mSv1KPlfpT0",
+            "livemode": false,
+            "managed_payments": {
+                "enabled": false
+            },
+            "metadata": [],
+            "next_action": null,
+            "on_behalf_of": null,
+            "payment_details": {
+                "customer_reference": null,
+                "order_reference": "in_1UI9f1A461x37mSvbhq1LccW"
+            },
+            "payment_method": "pm_1UI9f0A461x37mSvgIQ71otZ",
+            "payment_method_configuration_details": null,
+            "payment_method_options": {
+                "sepa_debit": []
+            },
+            "payment_method_types": [
+                "sepa_debit"
+            ],
+            "payment_record": null,
+            "processing": null,
+            "receipt_email": null,
+            "review": null,
+            "setup_future_usage": null,
+            "shared_payment_granted_token": null,
+            "shipping": null,
+            "source": null,
+            "statement_descriptor": null,
+            "statement_descriptor_suffix": null,
+            "status": "processing",
+            "transfer_data": null,
+            "transfer_group": null
+        }
+    },
+    "livemode": false,
+    "pending_webhooks": 0,
+    "request": {
+        "id": "req_Ozx3GbL44kZOyK",
+        "idempotency_key": "87368387-60fa-48fc-ad25-1c0f370a35f5"
+    },
+    "type": "payment_intent.processing"
+}

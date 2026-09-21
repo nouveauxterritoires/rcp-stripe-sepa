@@ -12,7 +12,8 @@ CLI   := $(DC) run --rm wpcli
         test test-unit test-integration test-contract test-webhooks test-e2e \
         coverage lint fix matrix build \
         webhook-secret webhook-list webhook-send webhook-replay webhook-capture \
-        webhook-events webhook-attack stripe-listen stripe-trigger
+        webhook-events webhook-attack \
+        stripe-doctor stripe-seed stripe-clean stripe-listen stripe-trigger
 
 help: ## Affiche cette aide
 	@grep -hE '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
@@ -110,7 +111,18 @@ webhook-attack: ## Rejoue une fixture avec une signature invalide, absente et an
 	@echo "--- signature antidatée de 10 minutes (attendu : 400)"
 	-php bin/webhook.php send $(or $(FIXTURE),synthetic-payment-intent-succeeded) --age=600
 
-# --- Stripe -------------------------------------------------------------------
+# --- Compte Stripe de test ----------------------------------------------------
+
+stripe-doctor: ## Vérifie que l'environnement de test Stripe est exploitable
+	php bin/stripe.php doctor
+
+stripe-seed: ## Crée un parcours SEPA de test — make stripe-seed SCENARIO=success ARGS=--subscription
+	php bin/stripe.php seed $(or $(SCENARIO),success) $(ARGS)
+
+stripe-clean: ## Annule les PaymentIntents de test restés inachevés
+	php bin/stripe.php clean
+
+# --- Stripe CLI ---------------------------------------------------------------
 
 stripe-listen: ## Relaie de vrais webhooks Stripe vers le site local (affiche le whsec_ à reporter dans .env)
 	$(DC) --profile stripe up stripe-cli

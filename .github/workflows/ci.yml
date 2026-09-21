@@ -43,7 +43,7 @@ jobs:
       - run: composer install --no-interaction --prefer-dist
       - name: Audit des dépendances PHP
         run: composer audit --abandoned=ignore
-      - name: Aucun secret ni IBAN en dur (CDC T-SEC-12)
+      - name: Aucun secret, aucun IBAN réel (CDC T-SEC-12)
         run: bash bin/scan-secrets.sh
       - name: Aucun test ignoré ni marqueur de substitution (CDC NR-05)
         run: bash bin/scan-placeholders.sh

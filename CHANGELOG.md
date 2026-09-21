@@ -20,12 +20,22 @@ Versionnement : [SemVer](https://semver.org/lang/fr/).
   fixtures signées hors ligne, rejeu et capture d'événements Stripe réels, envois volontairement
   invalides (mauvaise signature, signature absente, horodatage antidaté).
 - Fixtures de webhooks SEPA et documentation associée (`docs/webhooks-en-local.md`).
+- Outillage du compte Stripe de test (`bin/stripe.php`) : diagnostic d'environnement, création de
+  parcours SEPA (paiement unique et abonnement récurrent) sur les IBAN de test, nettoyage.
+- Fixtures de webhooks capturées sur un compte Stripe réel, et enseignements consignés dans
+  `docs/environnement-stripe-test.md`.
+- Script de construction de l'archive distribuable (`bin/build.sh`).
 - Cahier des charges complet (`docs/cahier-des-charges.md`).
 - ADR-0001 : stratégie d'intégration à Restrict Content Pro par héritage.
 - Environnement Docker : WordPress, MySQL, Restrict Content, WP-CLI, Mailpit, Stripe CLI, stripe-mock.
 - Outillage de test : PHPUnit (4 suites), PHPCS (standards WordPress), PHPStan, seuil de couverture.
 - Contrôles de sécurité automatisés : détection de secrets, d'IBAN en dur et de fausse complétion.
 - Chaîne d'intégration continue GitHub Actions (matrice PHP 7.4 → 8.3, WordPress, RCP).
+
+### Modifié
+- Le contrôle statique des IBAN distingue le code livré, où aucun IBAN n'est toléré, et le reste du
+  dépôt, où seuls les IBAN de test publiés par Stripe sont admis. Les contrôles de secrets couvrent
+  désormais l'outillage et les tests.
 
 ### Corrigé
 - Le client MariaDB de l'image WordPress refusait le certificat auto-signé de MySQL 8 ; la

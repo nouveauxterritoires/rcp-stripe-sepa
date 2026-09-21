@@ -20,159 +20,20 @@ if ( 'cli' !== PHP_SAPI ) {
 	exit( 1 );
 }
 
+require_once __DIR__ . '/lib/stripe-console.php';
+
+use function RCP_Stripe_Sepa\Console\fail;
+use function RCP_Stripe_Sepa\Console\http_request;
+use function RCP_Stripe_Sepa\Console\load_env;
+use function RCP_Stripe_Sepa\Console\mask;
+use function RCP_Stripe_Sepa\Console\out;
+use function RCP_Stripe_Sepa\Console\secret_key;
+use function RCP_Stripe_Sepa\Console\setting;
+use function RCP_Stripe_Sepa\Console\stripe;
+use function RCP_Stripe_Sepa\Console\write_env;
+
 const FIXTURES_DIR = __DIR__ . '/../tests/fixtures/webhooks';
-const STRIPE_API   = 'https://api.stripe.com/v1';
 const DEFAULT_PATH = '/wp-json/rcp-stripe-sepa/v1/webhook';
-
-/**
- * Écrit un message sur la sortie standard.
- *
- * @param string $message Message.
- * @param string $color   Code couleur ANSI.
- * @return void
- */
-function out( string $message, string $color = '' ): void {
-	$prefix = '' !== $color ? "\033[{$color}m" : '';
-	$suffix = '' !== $color ? "\033[0m" : '';
-
-	fwrite( STDOUT, $prefix . $message . $suffix . PHP_EOL );
-}
-
-/**
- * Interrompt l'exécution avec un message d'erreur.
- *
- * @param string $message Message.
- * @return never
- */
-function fail( string $message ) {
-	fwrite( STDERR, "\033[0;31mErreur :\033[0m " . $message . PHP_EOL );
-	exit( 1 );
-}
-
-/**
- * Masque une valeur sensible pour l'affichage.
- *
- * @param string $value Valeur.
- * @return string
- */
-function mask( string $value ): string {
-	if ( strlen( $value ) <= 12 ) {
-		return str_repeat( '*', strlen( $value ) );
-	}
-
-	return substr( $value, 0, 8 ) . str_repeat( '*', 8 ) . substr( $value, -4 );
-}
-
-/**
- * Chemin du fichier .env.
- *
- * @return string
- */
-function env_path(): string {
-	return __DIR__ . '/../.env';
-}
-
-/**
- * Charge les variables du fichier .env.
- *
- * `parse_ini_file()` n'est pas utilisée : elle échoue sur les commentaires
- * contenant des parenthèses.
- *
- * L'absence de .env n'est pas une erreur : les variables peuvent provenir de
- * l'environnement, ce dont dépendent l'intégration continue et les tests.
- *
- * @return array<string, string>
- */
-function load_env(): array {
-	$path = env_path();
-
-	if ( ! is_readable( $path ) ) {
-		return array();
-	}
-
-	$vars = array();
-
-	foreach ( file( $path, FILE_IGNORE_NEW_LINES ) as $line ) {
-		$line = trim( $line );
-
-		if ( '' === $line || '#' === $line[0] || false === strpos( $line, '=' ) ) {
-			continue;
-		}
-
-		list( $key, $value ) = explode( '=', $line, 2 );
-
-		$vars[ trim( $key ) ] = trim( $value, " \"'" );
-	}
-
-	return $vars;
-}
-
-/**
- * Valeur d'un réglage, l'environnement primant sur le fichier .env.
- *
- * @param array<string, string> $env      Variables lues dans .env.
- * @param string                $key      Nom du réglage.
- * @param string                $fallback Valeur par défaut.
- * @return string
- */
-function setting( array $env, string $key, string $fallback = '' ): string {
-	$from_environment = getenv( $key );
-
-	if ( is_string( $from_environment ) && '' !== $from_environment ) {
-		return $from_environment;
-	}
-
-	return '' !== ( $env[ $key ] ?? '' ) ? $env[ $key ] : $fallback;
-}
-
-/**
- * Enregistre une variable dans .env, en remplaçant la ligne existante.
- *
- * @param string $key   Nom de la variable.
- * @param string $value Valeur.
- * @return void
- */
-function write_env( string $key, string $value ): void {
-	$path    = env_path();
-	$lines   = file( $path, FILE_IGNORE_NEW_LINES );
-	$written = false;
-
-	foreach ( $lines as $index => $line ) {
-		if ( 0 === strpos( trim( $line ), $key . '=' ) ) {
-			$lines[ $index ] = $key . '=' . $value;
-			$written         = true;
-			break;
-		}
-	}
-
-	if ( ! $written ) {
-		$lines[] = $key . '=' . $value;
-	}
-
-	file_put_contents( $path, implode( PHP_EOL, $lines ) . PHP_EOL );
-}
-
-/**
- * Clé secrète Stripe, en refusant toute clé de production.
- *
- * @param array<string, string> $env Variables d'environnement.
- * @return string
- */
-function secret_key( array $env ): string {
-	$key = setting( $env, 'STRIPE_TEST_SECRET_KEY' );
-
-	if ( '' === $key ) {
-		fail( 'STRIPE_TEST_SECRET_KEY absente de .env et de l\'environnement.' );
-	}
-
-	// Garde-fou : cet outil rejoue des événements, il ne doit jamais viser
-	// un compte de production.
-	if ( 0 === strpos( $key, 'sk_live_' ) || 0 === strpos( $key, 'rk_live_' ) ) {
-		fail( 'Clé de production détectée. Cet outil est réservé au mode test.' );
-	}
-
-	return $key;
-}
 
 /**
  * Secret de signature des webhooks.
@@ -250,45 +111,6 @@ function fixture_path( string $name ): string {
 }
 
 /**
- * Exécute une requête HTTP et renvoie le code et le corps de la réponse.
- *
- * @param string   $url     URL.
- * @param string   $method  Méthode HTTP.
- * @param string[] $headers En-têtes.
- * @param string   $body    Corps de la requête.
- * @return array{0: int, 1: string}
- */
-function http_request( string $url, string $method, array $headers, string $body = '' ): array {
-	$handle = curl_init( $url );
-
-	curl_setopt_array(
-		$handle,
-		array(
-			CURLOPT_RETURNTRANSFER => true,
-			CURLOPT_CUSTOMREQUEST  => $method,
-			CURLOPT_HTTPHEADER     => $headers,
-			CURLOPT_TIMEOUT        => 30,
-		)
-	);
-
-	if ( '' !== $body ) {
-		curl_setopt( $handle, CURLOPT_POSTFIELDS, $body );
-	}
-
-	$response = curl_exec( $handle );
-	$status   = (int) curl_getinfo( $handle, CURLINFO_RESPONSE_CODE );
-	$error    = curl_error( $handle );
-
-	curl_close( $handle );
-
-	if ( false === $response ) {
-		fail( 'Requête HTTP échouée : ' . $error );
-	}
-
-	return array( $status, (string) $response );
-}
-
-/**
  * Récupère un événement depuis l'API Stripe.
  *
  * @param string $event_id Identifiant de l'événement.
@@ -296,27 +118,23 @@ function http_request( string $url, string $method, array $headers, string $body
  * @return array
  */
 function fetch_event( string $event_id, string $key ): array {
-	list( $status, $body ) = http_request(
-		STRIPE_API . '/events/' . rawurlencode( $event_id ),
-		'GET',
-		array( 'Authorization: Bearer ' . $key )
-	);
+	list( $status, $event ) = stripe( $key, 'events/' . rawurlencode( $event_id ) );
 
-	$decoded = json_decode( $body, true );
-
-	if ( 200 !== $status || ! is_array( $decoded ) ) {
-		$message = is_array( $decoded ) && isset( $decoded['error']['message'] )
-			? $decoded['error']['message']
-			: 'réponse inattendue';
-
-		fail( sprintf( 'Stripe a renvoyé %d : %s', $status, $message ) );
+	if ( 200 !== $status ) {
+		fail(
+			sprintf(
+				'Stripe a renvoyé %d : %s',
+				$status,
+				(string) ( $event['error']['message'] ?? 'réponse inattendue' )
+			)
+		);
 	}
 
-	if ( ! empty( $decoded['livemode'] ) ) {
+	if ( ! empty( $event['livemode'] ) ) {
 		fail( 'Cet événement provient du mode production. Rejeu refusé.' );
 	}
 
-	return $decoded;
+	return $event;
 }
 
 // -- Commandes ----------------------------------------------------------------
@@ -524,13 +342,7 @@ function command_events( array $options ): void {
 		$query['type'] = (string) $options['type'];
 	}
 
-	list( $status, $body ) = http_request(
-		STRIPE_API . '/events?' . http_build_query( $query ),
-		'GET',
-		array( 'Authorization: Bearer ' . secret_key( $env ) )
-	);
-
-	$decoded = json_decode( $body, true );
+	list( $status, $decoded ) = stripe( secret_key( $env ), 'events?' . http_build_query( $query ) );
 
 	if ( 200 !== $status || ! isset( $decoded['data'] ) ) {
 		fail( sprintf( 'Stripe a renvoyé %d.', $status ) );

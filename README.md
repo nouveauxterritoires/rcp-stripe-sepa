@@ -18,6 +18,7 @@ Content Pro, qui n'intègre nativement que la carte bancaire via Stripe.
 | [ADR-0001](docs/adr/0001-strategie-integration-rcp.md) | Pourquoi étendre la passerelle Stripe de RCP par héritage |
 | [Compatibilité RCP](docs/compatibilite-rcp.md) | Variante libre / variante commerciale, détection, tests de contrat |
 | [Webhooks en local](docs/webhooks-en-local.md) | Rejouer des événements signés, hors ligne ou via la CLI Stripe |
+| [Environnement Stripe de test](docs/environnement-stripe-test.md) | Ce qui est nécessaire, ce qui ne l'est pas, et les pièges constatés |
 | [SECURITY.md](SECURITY.md) | Politique de sécurité et checklist de revue |
 
 ## Fonctionnalités visées
@@ -35,7 +36,9 @@ Prérequis : Docker, Docker Compose v2, et un compte Stripe en mode test.
 ```bash
 cp .env.example .env
 # Renseigner STRIPE_TEST_SECRET_KEY et STRIPE_TEST_PUBLISHABLE_KEY dans .env
+make webhook-secret
 make up
+make stripe-doctor      # vérifie que l'environnement de test est exploitable
 ```
 
 - Site : http://localhost:8080 — administration `admin` / `admin`
@@ -55,6 +58,14 @@ make webhook-attack        # signature invalide, absente, antidatée
 # En ligne : vrais événements relayés par la CLI Stripe
 make stripe-listen         # reporter le whsec_ affiché dans .env, puis make setup
 make stripe-trigger EVENT=payment_intent.succeeded
+```
+
+Pour alimenter le compte Stripe de test avec des parcours SEPA réels — voir
+[docs/environnement-stripe-test.md](docs/environnement-stripe-test.md) :
+
+```bash
+make stripe-seed SCENARIO=success ARGS=--subscription
+make webhook-capture EVENT_ID=evt_xxx NAME=mon-cas
 ```
 
 ## Tests

@@ -1,0 +1,97 @@
+# rcp-stripe-sepa — commandes de développement et de test.
+#
+# Prérequis : Docker + Docker Compose v2.
+# Copier .env.example vers .env avant le premier `make up`.
+
+SHELL := /bin/bash
+DC    := docker compose
+CLI   := $(DC) run --rm wpcli
+
+.DEFAULT_GOAL := help
+.PHONY: help up down clean shell wp setup logs \
+        test test-unit test-integration test-contract test-webhooks test-e2e \
+        coverage lint fix stripe-listen stripe-trigger matrix build
+
+help: ## Affiche cette aide
+	@grep -hE '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
+		| awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-22s\033[0m %s\n", $$1, $$2}'
+
+# --- Cycle de vie de la pile --------------------------------------------------
+
+up: ## Démarre la pile et provisionne le site
+	$(DC) up -d db db-tests wordpress mailpit stripe-mock
+	$(CLI) "bash /var/www/html/wp-content/plugins/rcp-stripe-sepa/bin/setup.sh"
+	@echo "Site      : http://localhost:$${WP_PORT:-8080}"
+	@echo "E-mails   : http://localhost:$${MAILPIT_PORT:-8025}"
+
+down: ## Arrête la pile (conserve les données)
+	$(DC) down
+
+clean: ## Détruit la pile, les volumes et les données
+	$(DC) down -v --remove-orphans
+
+setup: ## Rejoue le provisionnement
+	$(CLI) "bash /var/www/html/wp-content/plugins/rcp-stripe-sepa/bin/setup.sh"
+
+shell: ## Ouvre un shell dans le conteneur WordPress
+	$(DC) exec wordpress bash
+
+wp: ## Exécute une commande WP-CLI — make wp CMD="plugin list"
+	$(CLI) "wp --path=/var/www/html --allow-root $(CMD)"
+
+logs: ## Suit les journaux
+	$(DC) logs -f wordpress
+
+# --- Tests --------------------------------------------------------------------
+
+prepare-tests: ## Installe la bibliothèque de tests WordPress
+	$(CLI) "bash /var/www/html/wp-content/plugins/rcp-stripe-sepa/bin/install-wp-tests.sh"
+
+test: test-unit test-integration test-contract test-webhooks ## Exécute toute la suite PHP
+
+test-unit: ## Tests unitaires (WordPress mocké, sans base)
+	$(CLI) "cd /var/www/html/wp-content/plugins/rcp-stripe-sepa && composer install --no-interaction && vendor/bin/phpunit --testsuite unit"
+
+test-integration: prepare-tests ## Tests d'intégration (WordPress + RCP réels)
+	$(CLI) "cd /var/www/html/wp-content/plugins/rcp-stripe-sepa && vendor/bin/phpunit --testsuite integration"
+
+test-contract: ## Tests de contrat (stripe-mock + contrat RCP)
+	$(CLI) "cd /var/www/html/wp-content/plugins/rcp-stripe-sepa && vendor/bin/phpunit --testsuite contract"
+
+test-webhooks: ## Tests des webhooks (signature, idempotence, désordre)
+	$(CLI) "cd /var/www/html/wp-content/plugins/rcp-stripe-sepa && vendor/bin/phpunit --testsuite webhooks"
+
+test-e2e: ## Tests de bout en bout (Playwright)
+	npx playwright test
+
+coverage: ## Rapport de couverture HTML (tests/coverage/)
+	$(CLI) "cd /var/www/html/wp-content/plugins/rcp-stripe-sepa && XDEBUG_MODE=coverage vendor/bin/phpunit --coverage-html tests/coverage --coverage-text"
+
+# --- Qualité ------------------------------------------------------------------
+
+lint: ## PHPCS + PHPStan + ESLint
+	$(CLI) "cd /var/www/html/wp-content/plugins/rcp-stripe-sepa && vendor/bin/phpcs && vendor/bin/phpstan analyse --memory-limit=1G"
+
+fix: ## Corrige automatiquement ce qui peut l'être
+	$(CLI) "cd /var/www/html/wp-content/plugins/rcp-stripe-sepa && vendor/bin/phpcbf || true"
+
+# --- Stripe -------------------------------------------------------------------
+
+stripe-listen: ## Relaie les webhooks Stripe vers le site local
+	$(DC) --profile stripe up stripe-cli
+
+stripe-trigger: ## Déclenche un événement — make stripe-trigger EVENT=payment_intent.succeeded
+	$(DC) --profile stripe run --rm stripe-cli trigger $(EVENT)
+
+# --- Matrice ------------------------------------------------------------------
+
+matrix: ## Rejoue la suite sur la matrice PHP × WP × RCP
+	@for php in 7.4 8.0 8.1 8.2 8.3; do \
+	  for wp in latest 6.7; do \
+	    echo "=== PHP $$php / WP $$wp ==="; \
+	    PHP_VERSION=$$php WP_VERSION=$$wp $(MAKE) --no-print-directory clean up test || exit 1; \
+	  done; \
+	done
+
+build: ## Construit l'archive distribuable
+	bash bin/build.sh

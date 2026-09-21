@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<ruleset name="rcp-stripe-sepa">
+    <description>Standards WordPress appliqués au plugin.</description>
+
+    <file>src</file>
+    <file>rcp-stripe-sepa.php</file>
+    <file>uninstall.php</file>
+
+    <exclude-pattern>*/vendor/*</exclude-pattern>
+    <exclude-pattern>*/node_modules/*</exclude-pattern>
+    <exclude-pattern>*/tests/coverage/*</exclude-pattern>
+
+    <arg name="extensions" value="php"/>
+    <arg name="colors"/>
+    <arg value="sp"/>
+    <arg name="parallel" value="8"/>
+
+    <rule ref="WordPress"/>
+    <rule ref="WordPress-Extra"/>
+    <rule ref="WordPress-Docs"/>
+
+    <!-- Compatibilité PHP déclarée dans l'en-tête du plugin. -->
+    <config name="testVersion" value="7.4-"/>
+    <rule ref="PHPCompatibilityWP"/>
+
+    <!-- Préfixes et text domain imposés (voir CDC §5.3). -->
+    <rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+        <properties>
+            <property name="prefixes" type="array">
+                <element value="rcp_stripe_sepa"/>
+                <element value="RCP_SEPA_"/>
+                <element value="RCP_Stripe_Sepa"/>
+            </property>
+        </properties>
+    </rule>
+    <rule ref="WordPress.WP.I18n">
+        <properties>
+            <property name="text_domain" type="array">
+                <element value="rcp-stripe-sepa"/>
+            </property>
+        </properties>
+    </rule>
+
+    <!-- PSR-4 : les noms de fichiers ne suivent pas la convention WordPress. -->
+    <rule ref="WordPress.Files.FileName">
+        <exclude-pattern>src/*</exclude-pattern>
+    </rule>
+</ruleset>

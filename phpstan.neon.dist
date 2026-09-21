@@ -1,0 +1,13 @@
+includes:
+    - vendor/szepeviktor/phpstan-wordpress/extension.neon
+
+parameters:
+    level: 5
+    paths:
+        - src
+        - rcp-stripe-sepa.php
+        - uninstall.php
+    scanDirectories:
+        # Classes de RCP et SDK Stripe fournis à l'exécution par RCP.
+        - stubs
+    treatPhpDocTypesAsCertain: false

@@ -1,0 +1,34 @@
+# Dépendances
+/vendor/
+/node_modules/
+
+# Archives propriétaires (Restrict Content Pro) — ne jamais versionner
+/vendor-plugins/
+!/vendor-plugins/.gitkeep
+
+# Secrets et configuration locale
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Artefacts de build et de test
+/assets/js/dist/
+/tests/coverage/
+/tests/results/
+/playwright-report/
+/test-results/
+.phpunit.result.cache
+.phpcs-cache
+/build/
+*.zip
+
+# Environnement local
+/.idea/
+/.vscode/
+.DS_Store
+*.log
+
+# OMC
+/.omc/

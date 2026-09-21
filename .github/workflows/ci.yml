@@ -1,0 +1,139 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+  schedule:
+    # Détecte une rupture de contrat amont (RCP / Stripe) avant les utilisateurs.
+    - cron: '0 4 * * *'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+
+  lint:
+    name: Standards et analyse statique
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          coverage: none
+          tools: composer:v2
+      - run: composer install --no-interaction --prefer-dist
+      - name: PHPCS
+        run: vendor/bin/phpcs
+      - name: PHPStan
+        run: vendor/bin/phpstan analyse --memory-limit=1G --no-progress
+
+  security:
+    name: Sécurité
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer:v2
+      - run: composer install --no-interaction --prefer-dist
+      - name: Audit des dépendances PHP
+        run: composer audit --abandoned=ignore
+      - name: Aucun secret ni IBAN en dur (CDC T-SEC-12)
+        run: bash bin/scan-secrets.sh
+      - name: Aucun test ignoré ni marqueur de substitution (CDC NR-05)
+        run: bash bin/scan-placeholders.sh
+
+  unit:
+    name: Unitaires — PHP ${{ matrix.php }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['7.4', '8.0', '8.1', '8.2', '8.3']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: xdebug
+          tools: composer:v2
+      - run: composer install --no-interaction --prefer-dist
+      - run: vendor/bin/phpunit --testsuite unit
+
+  integration:
+    name: Intégration — WP ${{ matrix.wp }} / RCP ${{ matrix.rcp }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        wp: ['latest', '6.7']
+        rcp: ['latest']
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: wordpress_test
+        ports: ['3306:3306']
+        options: >-
+          --health-cmd="mysqladmin ping -proot"
+          --health-interval=5s --health-timeout=5s --health-retries=20
+      stripe-mock:
+        image: stripe/stripe-mock:latest
+        ports: ['12111:12111']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          coverage: xdebug
+          tools: composer:v2
+      - run: composer install --no-interaction --prefer-dist
+      - name: Installer la bibliothèque de tests WordPress
+        env:
+          WP_VERSION: ${{ matrix.wp }}
+          RCP_VERSION: ${{ matrix.rcp }}
+          WP_TESTS_DB_HOST: 127.0.0.1
+          WP_TESTS_DB_USER: root
+          WP_TESTS_DB_PASSWORD: root
+        run: bash bin/install-wp-tests.sh
+      - run: vendor/bin/phpunit --testsuite integration
+      - run: vendor/bin/phpunit --testsuite contract
+        env:
+          STRIPE_MOCK_HOST: 127.0.0.1
+      - run: vendor/bin/phpunit --testsuite webhooks
+
+  coverage:
+    name: Couverture (seuil 80 %)
+    runs-on: ubuntu-latest
+    needs: [unit]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          coverage: xdebug
+          tools: composer:v2
+      - run: composer install --no-interaction --prefer-dist
+      - run: XDEBUG_MODE=coverage vendor/bin/phpunit --testsuite unit --coverage-clover tests/coverage/clover.xml
+      - name: Contrôle du seuil
+        run: bash bin/check-coverage.sh tests/coverage/clover.xml 80
+
+  i18n:
+    name: Fichier .pot à jour
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: wp-cli
+      - run: wp i18n make-pot . languages/rcp-stripe-sepa.pot --slug=rcp-stripe-sepa
+      - name: Échouer si le .pot a changé
+        run: |
+          git diff --quiet -- languages/rcp-stripe-sepa.pot \
+            || { echo "Le fichier .pot n'est pas à jour. Régénérez-le."; git diff -- languages/; exit 1; }

@@ -165,8 +165,40 @@ final class StateMachineTest extends TestCase {
 		$this->assertSame( StateMachine::PAYMENT_FAILED, $transition->payment_status() );
 	}
 
+	/**
+	 * Un mandat refusé n'a jamais rien encaissé : l'accès doit rester fermé.
+	 */
+	public function test_un_mandat_refuse_ferme_l_acces(): void {
+		$transition = StateMachine::resolve(
+			'setup_intent.setup_failed',
+			array(),
+			StateMachine::MEMBERSHIP_PENDING
+		);
+
+		$this->assertSame( StateMachine::MEMBERSHIP_EXPIRED, $transition->membership_status() );
+		$this->assertSame( StateMachine::PAYMENT_FAILED, $transition->payment_status() );
+	}
+
+	/**
+	 * Seule exception : l'adhérent qui se désabonne a réglé sa période et en
+	 * conserve le bénéfice jusqu'au terme — ce que `cancelled` exprime.
+	 */
+	public function test_un_desabonnement_laisse_l_acces_jusqu_au_terme(): void {
+		$transition = StateMachine::resolve(
+			'customer.subscription.deleted',
+			array(),
+			StateMachine::MEMBERSHIP_ACTIVE
+		);
+
+		$this->assertSame( StateMachine::MEMBERSHIP_CANCELLED, $transition->membership_status() );
+	}
+
 	// -- Litiges et remboursements ---------------------------------------------
 
+	/**
+	 * Révoquer, c'est fermer l'accès : `cancelled` le laisserait ouvert
+	 * jusqu'à l'échéance, alors même que les fonds ont été repris.
+	 */
 	public function test_un_litige_revoque_l_adhesion(): void {
 		$transition = StateMachine::resolve(
 			'charge.dispute.created',
@@ -174,7 +206,7 @@ final class StateMachineTest extends TestCase {
 			StateMachine::MEMBERSHIP_ACTIVE
 		);
 
-		$this->assertSame( StateMachine::MEMBERSHIP_CANCELLED, $transition->membership_status() );
+		$this->assertSame( StateMachine::MEMBERSHIP_EXPIRED, $transition->membership_status() );
 	}
 
 	public function test_un_litige_peut_se_limiter_a_une_notification(): void {
@@ -197,7 +229,7 @@ final class StateMachineTest extends TestCase {
 			StateMachine::MEMBERSHIP_ACTIVE
 		);
 
-		$this->assertSame( StateMachine::MEMBERSHIP_CANCELLED, $transition->membership_status() );
+		$this->assertSame( StateMachine::MEMBERSHIP_EXPIRED, $transition->membership_status() );
 		$this->assertSame( StateMachine::PAYMENT_REFUNDED, $transition->payment_status() );
 	}
 

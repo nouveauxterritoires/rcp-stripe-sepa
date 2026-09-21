@@ -78,12 +78,12 @@ car elles restent à diagnostiquer.
 |---|---|---|
 | `payment_intent.processing` | `pending` (ou `active` en politique optimiste) — jamais de retour en arrière depuis `active` | `pending` |
 | `payment_intent.succeeded`, `invoice.paid` | `active` | `complete` |
-| `payment_intent.payment_failed` | `cancelled` au premier paiement, inchangée sur renouvellement | `failed` |
+| `payment_intent.payment_failed` | `expired` au premier paiement, inchangée sur renouvellement | `failed` |
 | `invoice.payment_failed` | voir §6 | voir §6 |
 | `setup_intent.succeeded` | inchangée | inchangé |
-| `setup_intent.setup_failed` | `cancelled` | `failed` |
-| `charge.dispute.created` | `cancelled`, ou inchangée si la politique est « notifier » | inchangé |
-| `charge.refunded` | `cancelled` si remboursement total | `refunded` |
+| `setup_intent.setup_failed` | `expired` | `failed` |
+| `charge.dispute.created` | `expired`, ou inchangée si la politique est « notifier » | inchangé |
+| `charge.refunded` | `expired` si remboursement total | `refunded` |
 | `customer.subscription.deleted` | `cancelled` | inchangé |
 | tout autre | ignoré | ignoré |
 

@@ -368,7 +368,7 @@ utiliser de carte bancaire.
 - L'adhésion reste `pending` jusqu'à `payment_intent.succeeded`, puis passe `active` sans date
   d'expiration.
 - **RG-04** : si le PaymentIntent échoue (`payment_intent.payment_failed`), le paiement RCP passe
-  `failed` et l'adhésion `cancelled` ; un lien de nouvelle tentative est envoyé au membre.
+  `failed` et l'adhésion `expired` ; un lien de nouvelle tentative est envoyé au membre.
 - **RG-05** : un litige (`charge.dispute.created`) sur un paiement à vie révoque l'adhésion et
   notifie l'administrateur.
 
@@ -516,9 +516,9 @@ Purge automatique (tâche planifiée quotidienne) des lignes `processed` de plus
 |---|---|
 | `payment_intent.processing` | Paiement RCP → `pending` ; note d'adhésion « prélèvement en cours » ; e-mail « prélèvement initié » |
 | `payment_intent.succeeded` | Paiement → `complete` ; adhésion → `active` ; e-mail de bienvenue |
-| `payment_intent.payment_failed` | Paiement → `failed` ; adhésion → `cancelled` (1re facture) ou `past_due` (renouvellement) ; e-mail d'échec avec motif localisé |
+| `payment_intent.payment_failed` | Paiement → `failed` ; adhésion → `expired` (1re facture) ou `past_due` (renouvellement) ; e-mail d'échec avec motif localisé |
 | `setup_intent.succeeded` | Récupération du `pm_*` généré ; persistance du mandat ; rattachement à l'abonnement |
-| `setup_intent.setup_failed` | Inscription en échec ; message d'erreur localisé |
+| `setup_intent.setup_failed` | Inscription en échec ; adhésion → `expired` ; message d'erreur localisé |
 | `invoice.paid` | Renouvellement réussi : création du paiement RCP `complete`, prolongation de l'adhésion |
 | `invoice.payment_failed` | Renouvellement échoué : adhésion `past_due`, relance selon la politique Stripe Smart Retries |
 | `invoice.payment_action_required` | Journalisation + alerte administrateur (cas rare en SEPA) |
@@ -541,20 +541,27 @@ Tout autre événement est enregistré au statut `skipped` et renvoie `200`.
                      └────┬────┘   payment_intent.payment_failed
                           │                                 │
      payment_intent.succeeded │ invoice.paid                ▼
-                          │                            ┌───────────┐
-                          ▼                            │ cancelled │
-                     ┌────────┐                        └───────────┘
-        ┌───────────▶│ active │◀──────────┐                 ▲
-        │            └───┬────┘           │                 │
-        │  invoice.paid  │  invoice.payment_failed          │
-        │                ▼                │                 │
-        │          ┌──────────┐           │                 │
-        └──────────│ past_due │───────────┘                 │
-                   └────┬─────┘  échecs de relance épuisés  │
-                        │         customer.subscription.deleted
-                        └─────────────────────────────────────┘
+                          │                             ┌─────────┐
+                          ▼                             │ expired │
+                     ┌────────┐                         └─────────┘
+        ┌───────────▶│ active │◀──────────┐                  ▲
+        │            └───┬────┘           │                  │
+        │  invoice.paid  │  invoice.payment_failed           │
+        │                ▼                │                  │
+        │          ┌──────────┐           │                  │
+        └──────────│ past_due │───────────┘                  │
+                   └────┬─────┘                              │
+                        │  échecs de relance épuisés         │
+                        ▼                                    │
+                  ┌───────────┐                              │
+                  │ cancelled │   charge.dispute.created     │
+                  └───────────┘   charge.refunded (total) ───┘
+                   customer.subscription.deleted
 
-  charge.dispute.created / charge.refunded  →  révocation depuis n'importe quel état
+  Révoquer l'accès, c'est `expired`. Dans RCP, une adhésion `cancelled` dont
+  l'échéance n'est pas passée reste active : elle a été réglée, et son titulaire
+  en garde le bénéfice jusqu'au terme. `cancelled` ne convient donc qu'au
+  désabonnement — jamais à un encaissement qui n'a pas eu lieu ou repris.
 ```
 
 ### 8.4 Idempotence et robustesse
@@ -988,20 +995,138 @@ Une fonctionnalité est terminée lorsque :
 Tableau maintenu dans `docs/traceability.md`, généré à partir des annotations `@covers` et des
 identifiants d'exigence (`F-xx`, `RG-xx`, `SEC-xx`, `CNF-xx`, `I-x`) présents dans les noms de tests.
 
-## Annexe C — Checklist de mise en production
+## Annexe C — Mise en production
 
-- [ ] Compte Stripe habilité au prélèvement SEPA (`sepa_debit_payments` active), ICS validé.
-- [ ] Pré-notification activée dans le Dashboard Stripe (CNF-03).
-- [ ] Clés de production renseignées, clés de test retirées.
-- [ ] Point de terminaison de webhook de production créé, secret renseigné, événements §8.2 souscrits.
-- [ ] HTTPS valide, certificat non expiré.
-- [ ] Test de joignabilité du webhook au vert (Site Health).
-- [ ] Devise du site et des niveaux d'adhésion : EUR.
-- [ ] Texte de mandat relu par le référent juridique.
-- [ ] Mentions légales et politique de confidentialité mises à jour (transfert vers Stripe).
-- [ ] Un prélèvement réel de faible montant effectué et suivi jusqu'à `succeeded`.
-- [ ] Alertes administrateur configurées (adresse e-mail de supervision).
-- [ ] Sauvegarde de la base effectuée avant activation.
+Le prélèvement SEPA n'est pas une carte : un encaissement met deux à quatorze
+jours ouvrés, un rejet peut survenir huit semaines après coup, et un mandat
+contesté treize mois après. Une bascule ratée ne se voit donc pas le jour même.
+D'où une recette qui s'étale, et un retour arrière qui reste possible pendant
+toute cette période.
+
+Les cases se cochent dans l'ordre. Chacune indique **comment le vérifier** :
+une case cochée sur une intention, sans preuve, ne vaut rien.
+
+### C.1 Sept jours avant — habilitations et conformité
+
+Ces points dépendent de tiers (Stripe, banque, juriste) et ne se rattrapent pas
+la veille.
+
+- [ ] **Compte Stripe habilité au prélèvement SEPA.** Dashboard → *Settings →
+      Payment methods* : « SEPA Direct Debit » au statut *Active*, et non
+      *Pending*. L'habilitation peut demander plusieurs jours.
+- [ ] **Identifiant Créancier SEPA (ICS) attribué et affiché** dans les
+      paramètres du compte. Sans ICS, aucun mandat n'est émissible.
+- [ ] **Pré-notification activée** (CNF-03). Dashboard → *Settings → Customer
+      emails* : l'avis de prélèvement doit partir au moins deux jours ouvrés
+      avant le débit. C'est une obligation, pas un confort.
+- [ ] **Texte du mandat relu par le référent juridique**, dans chaque langue
+      publiée. Comparer l'écran d'inscription réel, pas le fichier `.pot`.
+- [ ] **Mentions légales et politique de confidentialité à jour** : transfert de
+      données vers Stripe, durées de conservation, droits d'accès et
+      d'effacement (§ RGPD).
+- [ ] **Devise EUR** sur le site *et* sur chaque niveau d'adhésion concerné. Le
+      SEPA n'accepte rien d'autre ; un niveau en devise étrangère ne proposera
+      pas la passerelle.
+- [ ] **Adresse de supervision définie** et relevée par quelqu'un : elle
+      recevra les alertes de litige et de mandat révoqué.
+
+### C.2 La veille — préparation technique
+
+- [ ] **Sauvegarde de la base effectuée et restaurée ailleurs pour épreuve.**
+      Une sauvegarde qu'on n'a jamais restaurée n'est pas une sauvegarde.
+- [ ] **Version figée et construite** : `make build`, archive obtenue depuis un
+      dépôt propre (`git status` vide, étiquette posée).
+- [ ] **Suites vertes sur la version livrée** : `make test` et `make lint`.
+- [ ] **Matrice de compatibilité rejouée** : `make matrix` (PHP × WordPress ×
+      RCP), sur la variante — libre ou Pro — réellement installée en production.
+- [ ] **Revue de sécurité passée** : annexe D, intégralement.
+- [ ] **Fenêtre de bascule choisie hors jour d'échéance** d'un renouvellement
+      existant, pour ne pas mêler migration et prélèvement.
+
+### C.3 Le jour J — bascule
+
+L'ordre importe : le point de terminaison doit exister et être joignable *avant*
+qu'une inscription puisse produire un événement.
+
+- [ ] **HTTPS valide**, certificat non expiré, chaîne complète. Stripe refuse de
+      livrer un webhook à un certificat invalide et n'alerte que par e-mail.
+- [ ] **Clés de production renseignées** dans RCP (*Restrict → Settings →
+      Payments*), mode bac à sable désactivé. Les clés de test ne doivent plus
+      figurer nulle part, y compris dans `wp-config.php`.
+- [ ] **Point de terminaison de webhook de production créé** dans le Dashboard
+      Stripe, pointant sur `https://<site>/wp-json/rcp-stripe-sepa/v1/webhook`.
+      L'adresse exacte est rappelée sur l'écran *Restrict → SEPA Direct Debit*.
+- [ ] **Les treize événements du §8.2 souscrits**, ni plus ni moins. Un
+      événement manquant laisse une adhésion figée ; un événement superflu
+      encombre le journal sans effet.
+- [ ] **Secret du point de terminaison reporté** dans la constante
+      `RCP_SEPA_WEBHOOK_SECRET_LIVE` de `wp-config.php` — de préférence à
+      l'option en base, qu'une sauvegarde exportée exposerait.
+- [ ] **Plugin activé**, puis **écran de diagnostic entièrement au vert** :
+      *Restrict → SEPA Direct Debit*. Les cinq contrôles — passerelle, devise,
+      HTTPS, secret de webhook, paiements en souffrance — doivent tous être
+      satisfaits. Un contrôle en alerte se traite avant d'ouvrir les
+      inscriptions.
+- [ ] **Politiques de traitement décidées et posées** : conduite en cas de
+      litige (révoquer l'accès ou seulement notifier) et politique d'accès
+      pendant l'encaissement (`strict` par défaut : pas d'accès tant que les
+      fonds ne sont pas confirmés). Ce sont des choix commerciaux, pas des
+      réglages techniques.
+- [ ] **Joignabilité du webhook éprouvée depuis Stripe** : *Send test webhook*
+      depuis le Dashboard, puis vérifier que l'événement apparaît bien dans le
+      journal du plugin. Un `200` côté Stripe ne prouve rien si le plugin l'a
+      ignoré.
+
+### C.4 Recette en production
+
+Tant que ces points ne sont pas obtenus, considérer la bascule comme non
+terminée — même si tout paraît fonctionner.
+
+- [ ] **Un prélèvement réel de faible montant** effectué sur un compte
+      bancaire maîtrisé, avec un IBAN réel : les IBAN de test ne franchissent
+      pas le mode production.
+- [ ] **Suivi jusqu'à `succeeded`**, c'est-à-dire deux à quatorze jours plus
+      tard. Vérifier alors : adhésion `active`, paiement RCP `complete`, accès
+      au contenu ouvert, e-mail de bienvenue reçu.
+- [ ] **Un prélèvement refusé éprouvé** (IBAN de compte clos, ou refus
+      provoqué) : adhésion `expired`, contenu refermé, e-mail d'échec reçu.
+      C'est le scénario que les tests de bout en bout ont pris en défaut ;
+      il mérite d'être revu sur le site réel.
+- [ ] **Une bascule carte → SEPA effectuée** sur une adhésion existante : prix
+      et date de prochaine échéance inchangés (RG-06).
+- [ ] **Aucun paiement en souffrance anormal** après quinze jours : le contrôle
+      « paiements en souffrance » de l'écran de diagnostic reste vert.
+
+### C.5 Retour arrière
+
+À préparer avant d'en avoir besoin. Le retour arrière n'est pas symétrique :
+désactiver le plugin n'annule pas les mandats déjà signés ni les prélèvements
+en cours.
+
+- [ ] **Procédure écrite et à portée de main** : désactiver la passerelle SEPA
+      dans RCP — ce qui la retire du formulaire d'inscription sans toucher aux
+      adhésions existantes — plutôt que désactiver le plugin, ce qui laisserait
+      les webhooks sans destinataire.
+- [ ] **Ne jamais supprimer le point de terminaison de webhook** tant qu'un
+      prélèvement est en cours : les événements perdus ne sont pas rejoués
+      indéfiniment par Stripe.
+- [ ] **Les adhésions déjà migrées restent en SEPA** : prévoir leur traitement
+      (retour à la carte, ou maintien) avant d'annoncer un retour arrière.
+
+### C.6 Surveillance des premières semaines
+
+Le SEPA rend la supervision plus longue qu'un déploiement ordinaire.
+
+- [ ] **Huit semaines** : fenêtre pendant laquelle un débiteur peut faire
+      rejeter un prélèvement autorisé, sans motif. Surveiller
+      `charge.dispute.created` et les remboursements.
+- [ ] **Treize mois** : fenêtre de contestation d'un prélèvement *non* autorisé.
+      Conserver la preuve du mandat — date, RUM, IBAN tronqué — sur toute cette
+      durée, et la purger ensuite.
+- [ ] **Journal des événements relu chaque semaine** le premier mois : aucun
+      événement au statut `failed` ni abandonné après épuisement des tentatives.
+- [ ] **Alertes reçues et traitées**, pas seulement émises : vérifier que la
+      boîte de supervision reçoit bien les litiges et mandats révoqués.
 
 ## Annexe D — Checklist de revue de sécurité (avant chaque version)
 

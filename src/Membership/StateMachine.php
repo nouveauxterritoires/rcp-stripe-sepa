@@ -29,6 +29,24 @@ final class StateMachine {
 	// Statuts d'adhésion RCP.
 	public const MEMBERSHIP_PENDING   = 'pending';
 	public const MEMBERSHIP_ACTIVE    = 'active';
+
+	/*
+	 * Révoquer un accès, c'est `expired`, jamais `cancelled`.
+	 *
+	 * `RCP_Membership::is_active()` tient pour actives les adhésions `active`
+	 * *et* `cancelled` dont l'échéance n'est pas passée : une adhésion
+	 * résiliée garde l'accès jusqu'au terme de la période, puisqu'elle a été
+	 * réglée. Poser `cancelled` là où rien n'a été encaissé — ou là où les
+	 * fonds ont été repris — laisse donc le contenu grand ouvert.
+	 *
+	 * Restrict Content Pro lui-même appelle `expire()` sur `charge.refunded`.
+	 *
+	 * `cancelled` reste juste pour `customer.subscription.deleted` : l'adhérent
+	 * a réglé sa période et se désabonne pour la suite.
+	 *
+	 * Révélé par un test de bout en bout ; les tests d'intégration
+	 * vérifiaient notre statut, pas la règle d'accès de RCP.
+	 */
 	public const MEMBERSHIP_CANCELLED = 'cancelled';
 	public const MEMBERSHIP_EXPIRED   = 'expired';
 
@@ -109,7 +127,7 @@ final class StateMachine {
 
 			case 'setup_intent.setup_failed':
 				return Transition::to(
-					self::MEMBERSHIP_CANCELLED,
+					self::MEMBERSHIP_EXPIRED,
 					self::PAYMENT_FAILED,
 					'Mandat SEPA refusé.'
 				);
@@ -179,15 +197,7 @@ final class StateMachine {
 			);
 		}
 
-		/*
-		 * `expired`, et non `cancelled` : dans Restrict Content Pro, une
-		 * adhésion résiliée conserve l'accès au contenu jusqu'à son échéance,
-		 * puisque la période a été réglée. Ici, rien n'a jamais été encaissé —
-		 * l'adhésion doit donc être sans accès, ce que seul `expired` garantit.
-		 *
-		 * Ce comportement a été révélé par un test de bout en bout : les tests
-		 * d'intégration vérifiaient notre statut, pas la règle d'accès de RCP.
-		 */
+		// Voir la note sur la révocation d'accès, en tête de classe.
 		return Transition::to(
 			self::MEMBERSHIP_EXPIRED,
 			self::PAYMENT_FAILED,
@@ -239,7 +249,7 @@ final class StateMachine {
 		}
 
 		return Transition::to(
-			self::MEMBERSHIP_CANCELLED,
+			self::MEMBERSHIP_EXPIRED,
 			null,
 			'Litige SEPA ouvert, accès révoqué.'
 		);
@@ -258,7 +268,7 @@ final class StateMachine {
 
 		if ( $is_full ) {
 			return Transition::to(
-				self::MEMBERSHIP_CANCELLED,
+				self::MEMBERSHIP_EXPIRED,
 				self::PAYMENT_REFUNDED,
 				'SEPA Direct Debit intégralement remboursé.'
 			);

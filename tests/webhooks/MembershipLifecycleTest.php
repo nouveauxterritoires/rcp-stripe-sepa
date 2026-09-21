@@ -99,10 +99,10 @@ final class MembershipLifecycleTest extends WP_UnitTestCase {
 			)
 		);
 
-		$this->assertSame(
-			StateMachine::MEMBERSHIP_EXPIRED,
-			$this->reload_membership( $membership_id )->get_status()
-		);
+		$membership = $this->reload_membership( $membership_id );
+
+		$this->assertSame( StateMachine::MEMBERSHIP_EXPIRED, $membership->get_status() );
+		$this->assertFalse( $membership->is_active(), 'Le contenu doit rester fermé.' );
 	}
 
 	public function test_un_renouvellement_refuse_laisse_l_adhesion_active(): void {
@@ -185,12 +185,16 @@ final class MembershipLifecycleTest extends WP_UnitTestCase {
 			)
 		);
 
-		$this->assertSame(
-			StateMachine::MEMBERSHIP_EXPIRED,
-			$this->reload_membership( $membership_id )->get_status()
-		);
+		$membership = $this->reload_membership( $membership_id );
+
+		$this->assertSame( StateMachine::MEMBERSHIP_EXPIRED, $membership->get_status() );
+		$this->assertFalse( $membership->is_active(), 'Le contenu doit rester fermé.' );
 	}
 
+	/**
+	 * Le statut ne suffit pas à conclure : c'est `is_active()`, la règle
+	 * d'accès de RCP, qui décide si le contenu reste ouvert.
+	 */
 	public function test_un_litige_revoque_l_adhesion(): void {
 		$membership_id = $this->create_sepa_membership( 0, StateMachine::MEMBERSHIP_ACTIVE );
 
@@ -205,10 +209,10 @@ final class MembershipLifecycleTest extends WP_UnitTestCase {
 			)
 		);
 
-		$this->assertSame(
-			StateMachine::MEMBERSHIP_CANCELLED,
-			$this->reload_membership( $membership_id )->get_status()
-		);
+		$membership = $this->reload_membership( $membership_id );
+
+		$this->assertSame( StateMachine::MEMBERSHIP_EXPIRED, $membership->get_status() );
+		$this->assertFalse( $membership->is_active(), 'Le contenu doit être refermé.' );
 	}
 
 	public function test_l_adhesion_est_resolue_par_l_abonnement_stripe(): void {

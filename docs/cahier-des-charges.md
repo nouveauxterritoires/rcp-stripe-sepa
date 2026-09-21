@@ -815,6 +815,7 @@ les tests automatisés soient exécutables à l'identique en local et en CI.
 | `wpcli` | même image dérivée | Installation, configuration, exécution des tests |
 | `mailpit` | `axllent/mailpit` | Capture des e-mails transactionnels, `http://localhost:8025` |
 | `stripe-cli` | `stripe/stripe-cli` | `stripe listen --forward-to` vers le point de terminaison du plugin |
+| `bin/webhook.php` | — | Rejeu hors ligne d'événements signés localement, sans réseau ni tunnel (`docs/webhooks-en-local.md`) |
 | `stripe-mock` | `stripe/stripe-mock` | API Stripe bouchonnée pour les tests de contrat hors ligne |
 | `playwright` | `mcr.microsoft.com/playwright` | Exécution des tests E2E |
 
@@ -852,6 +853,10 @@ Le script `bin/setup.sh` (idempotent) exécute :
 | `make fix` | PHPCBF + ESLint --fix |
 | `make stripe-listen` | Relaie les webhooks Stripe vers le site local |
 | `make stripe-trigger EVENT=payment_intent.succeeded` | Déclenche un événement de test |
+| `make webhook-secret` | Génère un secret de webhook pour le développement local |
+| `make webhook-send FIXTURE=...` | Signe une fixture et la rejoue vers le point de terminaison |
+| `make webhook-attack` | Rejoue avec signature invalide, absente et antidatée |
+| `make webhook-capture EVENT_ID=... NAME=...` | Enregistre un événement Stripe réel en fixture |
 | `make logs` | Suit les journaux WordPress et PHP |
 | `make matrix` | Rejoue la suite sur toute la matrice PHP × WP × RCP |
 

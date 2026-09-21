@@ -1,0 +1,32 @@
+{
+  "id": "evt_synthetic_setup_0001",
+  "object": "event",
+  "api_version": "2022-11-15",
+  "created": 1758470000,
+  "livemode": false,
+  "pending_webhooks": 1,
+  "request": {
+    "id": null,
+    "idempotency_key": null
+  },
+  "type": "setup_intent.succeeded",
+  "data": {
+    "object": {
+      "id": "seti_synthetic_0000000000001",
+      "object": "setup_intent",
+      "customer": "cus_synthetic_0001",
+      "livemode": false,
+      "mandate": "mandate_synthetic_0001",
+      "payment_method": "pm_synthetic_sepa_0001",
+      "payment_method_types": [
+        "sepa_debit"
+      ],
+      "status": "succeeded",
+      "usage": "off_session",
+      "metadata": {
+        "rcp_membership_id": "1",
+        "user_id": "2"
+      }
+    }
+  }
+}

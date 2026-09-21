@@ -17,6 +17,7 @@ Content Pro, qui n'intègre nativement que la carte bancaire via Stripe.
 | [Cahier des charges](docs/cahier-des-charges.md) | Périmètre, contraintes, spécifications, sécurité, tests, jalons |
 | [ADR-0001](docs/adr/0001-strategie-integration-rcp.md) | Pourquoi étendre la passerelle Stripe de RCP par héritage |
 | [Compatibilité RCP](docs/compatibilite-rcp.md) | Variante libre / variante commerciale, détection, tests de contrat |
+| [Webhooks en local](docs/webhooks-en-local.md) | Rejouer des événements signés, hors ligne ou via la CLI Stripe |
 | [SECURITY.md](SECURITY.md) | Politique de sécurité et checklist de revue |
 
 ## Fonctionnalités visées
@@ -43,13 +44,18 @@ make up
 Si l'un de ces ports est déjà pris sur votre poste, changez `WP_PORT` ou `MAILPIT_PORT` dans `.env`
 et relancez `make up` : le provisionnement réaligne les URL du site.
 
-Pour recevoir les webhooks Stripe en local, dans un second terminal :
+Pour les webhooks, deux modes — voir [docs/webhooks-en-local.md](docs/webhooks-en-local.md) :
 
 ```bash
-make stripe-listen
-```
+# Hors ligne : rejeu de fixtures signées localement, sans réseau ni tunnel
+make webhook-secret && make setup
+make webhook-send FIXTURE=synthetic-payment-intent-succeeded
+make webhook-attack        # signature invalide, absente, antidatée
 
-Reporter le secret `whsec_…` affiché dans `.env` (`STRIPE_WEBHOOK_SECRET`), puis `make setup`.
+# En ligne : vrais événements relayés par la CLI Stripe
+make stripe-listen         # reporter le whsec_ affiché dans .env, puis make setup
+make stripe-trigger EVENT=payment_intent.succeeded
+```
 
 ## Tests
 

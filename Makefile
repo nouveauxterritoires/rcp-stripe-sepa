@@ -10,7 +10,9 @@ CLI   := $(DC) run --rm wpcli
 .DEFAULT_GOAL := help
 .PHONY: help up down clean shell wp setup logs \
         test test-unit test-integration test-contract test-webhooks test-e2e \
-        coverage lint fix stripe-listen stripe-trigger matrix build
+        coverage lint fix matrix build \
+        webhook-secret webhook-list webhook-send webhook-replay webhook-capture \
+        webhook-events webhook-attack stripe-listen stripe-trigger
 
 help: ## Affiche cette aide
 	@grep -hE '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
@@ -77,12 +79,43 @@ lint: ## PHPCS + PHPStan (ESLint ajouté avec le JavaScript, au jalon J3)
 fix: ## Corrige automatiquement les écarts de style PHP
 	$(CLI) "cd /var/www/html/wp-content/plugins/rcp-stripe-sepa && vendor/bin/phpcbf || true"
 
+# --- Webhooks -----------------------------------------------------------------
+# Deux modes complémentaires :
+#   - hors ligne : les fixtures sont signées localement et rejouées (webhook-*) ;
+#   - en ligne   : la CLI Stripe relaie de vrais événements (stripe-*).
+
+webhook-secret: ## Génère un secret de webhook pour le développement local
+	php bin/webhook.php secret
+
+webhook-list: ## Liste les fixtures de webhooks disponibles
+	php bin/webhook.php list
+
+webhook-send: ## Rejoue une fixture — make webhook-send FIXTURE=synthetic-payment-intent-succeeded
+	php bin/webhook.php send $(FIXTURE) $(ARGS)
+
+webhook-replay: ## Rejoue un événement Stripe réel — make webhook-replay EVENT_ID=evt_xxx
+	php bin/webhook.php replay $(EVENT_ID) $(ARGS)
+
+webhook-capture: ## Enregistre un événement en fixture — make webhook-capture EVENT_ID=evt_xxx NAME=mon-cas
+	php bin/webhook.php capture $(EVENT_ID) $(NAME)
+
+webhook-events: ## Liste les derniers événements du compte Stripe de test
+	php bin/webhook.php events $(ARGS)
+
+webhook-attack: ## Rejoue une fixture avec une signature invalide, absente et antidatée
+	@echo "--- signature invalide (attendu : 400)"
+	-php bin/webhook.php send $(or $(FIXTURE),synthetic-payment-intent-succeeded) --bad-signature
+	@echo "--- signature absente (attendu : 400)"
+	-php bin/webhook.php send $(or $(FIXTURE),synthetic-payment-intent-succeeded) --no-signature
+	@echo "--- signature antidatée de 10 minutes (attendu : 400)"
+	-php bin/webhook.php send $(or $(FIXTURE),synthetic-payment-intent-succeeded) --age=600
+
 # --- Stripe -------------------------------------------------------------------
 
-stripe-listen: ## Relaie les webhooks Stripe vers le site local
+stripe-listen: ## Relaie de vrais webhooks Stripe vers le site local (affiche le whsec_ à reporter dans .env)
 	$(DC) --profile stripe up stripe-cli
 
-stripe-trigger: ## Déclenche un événement — make stripe-trigger EVENT=payment_intent.succeeded
+stripe-trigger: ## Déclenche un événement chez Stripe — make stripe-trigger EVENT=payment_intent.succeeded
 	$(DC) --profile stripe run --rm stripe-cli trigger $(EVENT)
 
 # --- Matrice ------------------------------------------------------------------

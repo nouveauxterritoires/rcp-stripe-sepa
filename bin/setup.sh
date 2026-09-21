@@ -91,6 +91,17 @@ log "Activation de rcp-stripe-sepa"
 wp plugin activate rcp-stripe-sepa 2>/dev/null \
   || log "rcp-stripe-sepa pas encore implémenté — activation ignorée"
 
+# --- Secret de webhook --------------------------------------------------------
+# Le secret vit dans wp-config.php, jamais en base (cahier des charges SEC-02).
+# `wp config set` est idempotent et fonctionne même quand l'entrypoint de
+# l'image n'a pas régénéré wp-config.php.
+if [ -n "${STRIPE_WEBHOOK_SECRET:-}" ]; then
+  log "Configuration du secret de webhook"
+  wp config set RCP_SEPA_WEBHOOK_SECRET_TEST "$STRIPE_WEBHOOK_SECRET" --type=constant
+else
+  log "Aucun secret de webhook — générez-en un : make webhook-secret"
+fi
+
 # --- Tables de RCP ------------------------------------------------------------
 # RCP crée ses tables sur le hook `admin_init` (priorité -99999). WP-CLI ne
 # passant pas par l'administration, on déclenche le hook explicitement,

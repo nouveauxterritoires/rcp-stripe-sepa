@@ -16,6 +16,10 @@ Versionnement : [SemVer](https://semver.org/lang/fr/).
 - Documentation de la stratégie de compatibilité (`docs/compatibilite-rcp.md`).
 - Couverture fusionnée entre suites (`bin/coverage.sh`) et contrôle de seuil.
 - Job d'intégration continue dédié à Restrict Content Pro, déclenché par secret de dépôt.
+- Outillage console des webhooks (`bin/webhook.php`) : génération d'un secret local, rejeu de
+  fixtures signées hors ligne, rejeu et capture d'événements Stripe réels, envois volontairement
+  invalides (mauvaise signature, signature absente, horodatage antidaté).
+- Fixtures de webhooks SEPA et documentation associée (`docs/webhooks-en-local.md`).
 - Cahier des charges complet (`docs/cahier-des-charges.md`).
 - ADR-0001 : stratégie d'intégration à Restrict Content Pro par héritage.
 - Environnement Docker : WordPress, MySQL, Restrict Content, WP-CLI, Mailpit, Stripe CLI, stripe-mock.
@@ -31,3 +35,9 @@ Versionnement : [SemVer](https://semver.org/lang/fr/).
 - La bibliothèque de tests de WordPress est installée dans un volume persistant : `/tmp` ne
   survivait pas d'un conteneur éphémère à l'autre.
 - Le contrôle de seuil de couverture échouait silencieusement sur une sortie sans saut de ligne.
+- Xdebug était déclaré deux fois, et son avertissement polluait la sortie de tous les scripts en
+  ligne de commande.
+- Les services `wordpress` et `wpcli` construisaient deux images distinctes : un rebuild pouvait
+  laisser l'une des deux périmée. Elles partagent désormais un seul tag.
+- Le secret de webhook n'atteignait pas `wp-config.php` sur un volume existant, l'entrypoint de
+  l'image ne régénérant pas le fichier ; il est posé par `wp config set` au provisionnement.

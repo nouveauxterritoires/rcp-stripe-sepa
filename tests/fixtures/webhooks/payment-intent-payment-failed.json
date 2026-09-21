@@ -1,0 +1,221 @@
+{
+    "id": "evt_3UI9f1A461x37mSv1jirJudJ",
+    "object": "event",
+    "api_version": "2020-08-27",
+    "created": 1790006524,
+    "data": {
+        "object": {
+            "id": "pi_3UI9f1A461x37mSv1tMa1ImM",
+            "object": "payment_intent",
+            "allowed_payment_method_types": null,
+            "amount": 1000,
+            "amount_capturable": 0,
+            "amount_details": {
+                "tip": []
+            },
+            "amount_received": 0,
+            "application": null,
+            "application_fee_amount": null,
+            "automatic_payment_methods": null,
+            "canceled_at": null,
+            "cancellation_reason": null,
+            "capture_method": "automatic",
+            "charges": {
+                "object": "list",
+                "data": [
+                    {
+                        "id": "py_3UI9f1A461x37mSv1KPlfpT0",
+                        "object": "charge",
+                        "amount": 1000,
+                        "amount_captured": 1000,
+                        "amount_refunded": 0,
+                        "application": null,
+                        "application_fee": null,
+                        "application_fee_amount": null,
+                        "balance_transaction": "txn_3UI9f1A461x37mSv1V5RENNq",
+                        "billing_details": {
+                            "address": {
+                                "city": null,
+                                "country": null,
+                                "line1": null,
+                                "line2": null,
+                                "postal_code": null,
+                                "state": null
+                            },
+                            "email": "membre+failed@example.test",
+                            "name": "Membre Test failed",
+                            "phone": null,
+                            "tax_id": null
+                        },
+                        "calculated_statement_descriptor": null,
+                        "captured": true,
+                        "created": 1790006505,
+                        "currency": "eur",
+                        "customer": "cus_VIlB7XFl6CyoeE",
+                        "description": "Subscription creation",
+                        "destination": null,
+                        "dispute": null,
+                        "disputed": false,
+                        "failure_balance_transaction": "txn_1UI9fLA461x37mSvGUd6en2s",
+                        "failure_code": "incorrect_account_holder_name",
+                        "failure_message": "The transaction can't be processed because your customer's account information is missing or incorrect. Collect a new mandate and ask your customer to provide their name and address exactly as it appears on their bank account. After this, you can attempt the transaction again.",
+                        "fraud_details": [],
+                        "invoice": "in_1UI9f1A461x37mSvbhq1LccW",
+                        "livemode": false,
+                        "metadata": [],
+                        "on_behalf_of": null,
+                        "order": null,
+                        "outcome": {
+                            "advice_code": null,
+                            "network_advice_code": null,
+                            "network_decline_code": "RR01",
+                            "network_status": "declined_by_network",
+                            "reason": "generic_decline",
+                            "risk_level": "normal",
+                            "risk_score": 11,
+                            "seller_message": "The bank did not return any further details with this decline.",
+                            "type": "issuer_declined"
+                        },
+                        "paid": false,
+                        "payment_intent": "pi_3UI9f1A461x37mSv1tMa1ImM",
+                        "payment_method": "pm_1UI9f0A461x37mSvgIQ71otZ",
+                        "payment_method_details": {
+                            "sepa_debit": {
+                                "bank_code": "20041",
+                                "branch_code": "01005",
+                                "country": "FR",
+                                "expected_debit_date": "2026-09-21",
+                                "fingerprint": "5wLcvlklhBSHV3we",
+                                "last4": "2607",
+                                "mandate": "mandate_1UI9f3A461x37mSvmpjprmXQ"
+                            },
+                            "type": "sepa_debit"
+                        },
+                        "radar_options": [],
+                        "receipt_email": null,
+                        "receipt_number": null,
+                        "receipt_url": null,
+                        "refunded": false,
+                        "refunds": {
+                            "object": "list",
+                            "data": [],
+                            "has_more": false,
+                            "total_count": 0,
+                            "url": "/v1/charges/py_3UI9f1A461x37mSv1KPlfpT0/refunds"
+                        },
+                        "review": null,
+                        "shipping": null,
+                        "source": null,
+                        "source_transfer": null,
+                        "statement_descriptor": null,
+                        "statement_descriptor_suffix": null,
+                        "status": "failed",
+                        "transfer_data": null,
+                        "transfer_group": null
+                    }
+                ],
+                "has_more": false,
+                "total_count": 1,
+                "url": "/v1/charges?payment_intent=pi_3UI9f1A461x37mSv1tMa1ImM"
+            },
+            "client_secret": "pi_3UI9f1A461x37mSv1tMa1ImM_secret_pVmPjmxIH77aZtxqpBmgLyi2n",
+            "confirmation_method": "automatic",
+            "created": 1790006503,
+            "currency": "eur",
+            "customer": "cus_VIlB7XFl6CyoeE",
+            "customer_account": null,
+            "description": "Subscription creation",
+            "excluded_payment_method_types": null,
+            "invoice": "in_1UI9f1A461x37mSvbhq1LccW",
+            "last_payment_error": {
+                "code": "payment_intent_payment_attempt_failed",
+                "decline_code": "generic_decline",
+                "doc_url": "https://stripe.com/docs/error-codes/payment-intent-payment-attempt-failed",
+                "failure_code": "incorrect_account_holder_name",
+                "message": "The transaction can't be processed because your customer's account information is missing or incorrect. Collect a new mandate and ask your customer to provide their name and address exactly as it appears on their bank account. After this, you can attempt the transaction again.",
+                "network_decline_code": "RR01",
+                "payment_method": {
+                    "id": "pm_1UI9f0A461x37mSvgIQ71otZ",
+                    "object": "payment_method",
+                    "allow_redisplay": "unspecified",
+                    "billing_details": {
+                        "address": {
+                            "city": null,
+                            "country": null,
+                            "line1": null,
+                            "line2": null,
+                            "postal_code": null,
+                            "state": null
+                        },
+                        "email": "membre+failed@example.test",
+                        "name": "Membre Test failed",
+                        "phone": null,
+                        "tax_id": null
+                    },
+                    "created": 1790006502,
+                    "customer": "cus_VIlB7XFl6CyoeE",
+                    "customer_account": null,
+                    "livemode": false,
+                    "metadata": {
+                        "rcp_stripe_sepa_seed": "failed"
+                    },
+                    "sepa_debit": {
+                        "bank_code": "20041",
+                        "branch_code": "01005",
+                        "country": "FR",
+                        "fingerprint": "VS6VqVEbcAxfO2vk",
+                        "generated_from": {
+                            "charge": null,
+                            "setup_attempt": null
+                        },
+                        "last4": "2607"
+                    },
+                    "shared_payment_granted_token": null,
+                    "type": "sepa_debit"
+                },
+                "payment_method_type": "sepa_debit",
+                "type": "card_error"
+            },
+            "latest_charge": "py_3UI9f1A461x37mSv1KPlfpT0",
+            "livemode": false,
+            "managed_payments": {
+                "enabled": false
+            },
+            "metadata": [],
+            "next_action": null,
+            "on_behalf_of": null,
+            "payment_details": {
+                "customer_reference": null,
+                "order_reference": "in_1UI9f1A461x37mSvbhq1LccW"
+            },
+            "payment_method": null,
+            "payment_method_configuration_details": null,
+            "payment_method_options": {
+                "sepa_debit": []
+            },
+            "payment_method_types": [
+                "sepa_debit"
+            ],
+            "payment_record": null,
+            "processing": null,
+            "receipt_email": null,
+            "review": null,
+            "setup_future_usage": null,
+            "shared_payment_granted_token": null,
+            "shipping": null,
+            "source": null,
+            "statement_descriptor": null,
+            "statement_descriptor_suffix": null,
+            "status": "requires_payment_method",
+            "transfer_data": null,
+            "transfer_group": null
+        }
+    },
+    "livemode": false,
+    "pending_webhooks": 0,
+    "request": {
+        "id": null,
+        "idempotency_key": null
+    },
+    "type": "payment_intent.payment_failed"
+}

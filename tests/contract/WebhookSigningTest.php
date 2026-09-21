@@ -52,7 +52,7 @@ final class WebhookSigningTest extends WP_UnitTestCase {
 	}
 
 	public function test_la_signature_produite_est_acceptee_par_le_sdk_stripe(): void {
-		$fixture = $this->fixture( 'synthetic-payment-intent-succeeded' );
+		$fixture = $this->fixture( 'payment-intent-succeeded' );
 		$payload = (string) file_get_contents( $fixture );
 		$header  = $this->sign( $fixture );
 
@@ -63,9 +63,9 @@ final class WebhookSigningTest extends WP_UnitTestCase {
 	}
 
 	public function test_une_charge_utile_alteree_est_rejetee(): void {
-		$fixture = $this->fixture( 'synthetic-payment-intent-succeeded' );
+		$fixture = $this->fixture( 'payment-intent-succeeded' );
 		$header  = $this->sign( $fixture );
-		$altered = str_replace( '"amount": 1000', '"amount": 999999', (string) file_get_contents( $fixture ) );
+		$altered = str_replace( '"livemode": false', '"livemode": true', (string) file_get_contents( $fixture ) );
 
 		$this->expectException( SignatureVerificationException::class );
 
@@ -73,7 +73,7 @@ final class WebhookSigningTest extends WP_UnitTestCase {
 	}
 
 	public function test_un_mauvais_secret_est_rejete(): void {
-		$fixture = $this->fixture( 'synthetic-payment-intent-succeeded' );
+		$fixture = $this->fixture( 'payment-intent-succeeded' );
 		$payload = (string) file_get_contents( $fixture );
 		$header  = $this->sign( $fixture );
 
@@ -84,7 +84,7 @@ final class WebhookSigningTest extends WP_UnitTestCase {
 
 	public function test_une_signature_antidatee_est_rejetee_par_la_tolerance(): void {
 		// SEC-07 : tolérance de 300 secondes.
-		$fixture   = $this->fixture( 'synthetic-payment-intent-succeeded' );
+		$fixture   = $this->fixture( 'payment-intent-succeeded' );
 		$payload   = (string) file_get_contents( $fixture );
 		$timestamp = time() - 600;
 		$header    = 't=' . $timestamp . ',v1=' . hash_hmac( 'sha256', $timestamp . '.' . $payload, $this->secret );

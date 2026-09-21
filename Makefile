@@ -91,7 +91,7 @@ webhook-secret: ## Génère un secret de webhook pour le développement local
 webhook-list: ## Liste les fixtures de webhooks disponibles
 	php bin/webhook.php list
 
-webhook-send: ## Rejoue une fixture — make webhook-send FIXTURE=synthetic-payment-intent-succeeded
+webhook-send: ## Rejoue une fixture — make webhook-send FIXTURE=payment-intent-succeeded
 	php bin/webhook.php send $(FIXTURE) $(ARGS)
 
 webhook-replay: ## Rejoue un événement Stripe réel — make webhook-replay EVENT_ID=evt_xxx
@@ -105,11 +105,11 @@ webhook-events: ## Liste les derniers événements du compte Stripe de test
 
 webhook-attack: ## Rejoue une fixture avec une signature invalide, absente et antidatée
 	@echo "--- signature invalide (attendu : 400)"
-	-php bin/webhook.php send $(or $(FIXTURE),synthetic-payment-intent-succeeded) --bad-signature
+	-php bin/webhook.php send $(or $(FIXTURE),payment-intent-succeeded) --bad-signature
 	@echo "--- signature absente (attendu : 400)"
-	-php bin/webhook.php send $(or $(FIXTURE),synthetic-payment-intent-succeeded) --no-signature
+	-php bin/webhook.php send $(or $(FIXTURE),payment-intent-succeeded) --no-signature
 	@echo "--- signature antidatée de 10 minutes (attendu : 400)"
-	-php bin/webhook.php send $(or $(FIXTURE),synthetic-payment-intent-succeeded) --age=600
+	-php bin/webhook.php send $(or $(FIXTURE),payment-intent-succeeded) --age=600
 
 # --- Compte Stripe de test ----------------------------------------------------
 

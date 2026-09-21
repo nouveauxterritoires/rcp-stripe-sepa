@@ -52,7 +52,7 @@ Pour les webhooks, deux modes — voir [docs/webhooks-en-local.md](docs/webhooks
 ```bash
 # Hors ligne : rejeu de fixtures signées localement, sans réseau ni tunnel
 make webhook-secret && make setup
-make webhook-send FIXTURE=synthetic-payment-intent-succeeded
+make webhook-send FIXTURE=payment-intent-succeeded
 make webhook-attack        # signature invalide, absente, antidatée
 
 # En ligne : vrais événements relayés par la CLI Stripe

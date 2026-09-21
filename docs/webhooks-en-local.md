@@ -34,7 +34,7 @@ terminaison déclaré chez Stripe.
 
 ```bash
 make webhook-list
-make webhook-send FIXTURE=synthetic-payment-intent-succeeded
+make webhook-send FIXTURE=payment-intent-succeeded
 ```
 
 La commande affiche l'URL visée, le type d'événement, le code HTTP et le corps

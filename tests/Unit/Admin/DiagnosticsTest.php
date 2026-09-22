@@ -150,6 +150,9 @@ final class DiagnosticsTest extends TestCase {
 		$this->assertSame( Diagnostics::STATUS_WARNING, $this->check( $report, 'gateway' )['status'] );
 	}
 
+	/**
+	 * @group SEC-02
+	 */
 	public function test_un_secret_stocke_en_base_est_signale(): void {
 		// SEC-02 : une constante de wp-config ne fuite ni dans un export ni
 		// dans une sauvegarde partagée.
@@ -202,6 +205,9 @@ final class DiagnosticsTest extends TestCase {
 		$this->assertSame( Diagnostics::STATUS_WARNING, $report['problems'][1]['status'] );
 	}
 
+	/**
+	 * @group SEC-21
+	 */
 	public function test_le_mode_courant_est_rapporte(): void {
 		$this->assertTrue( Diagnostics::build( $this->context() )['test_mode'] );
 		$this->assertFalse( Diagnostics::build( $this->context( array( 'test_mode' => false ) ) )['test_mode'] );

@@ -9,6 +9,8 @@ declare( strict_types = 1 );
 
 namespace RCP_Stripe_Sepa\Admin;
 
+use RCP_Stripe_Sepa\Compat\Capability;
+
 use RCP_Stripe_Sepa\Webhook\Endpoint;
 use RCP_Stripe_Sepa\Webhook\EventStore;
 
@@ -23,7 +25,7 @@ final class DiagnosticsPage {
 
 	public const PAGE_SLUG        = 'rcp-stripe-sepa';
 	public const PARENT_SLUG      = 'rcp-members';
-	public const CAPABILITY       = 'rcp_manage_settings';
+	public const CAPABILITY       = Capability::MANAGE_SETTINGS;
 	public const REPLAY_ACTION    = 'rcp_stripe_sepa_replay_event';
 	public const NOTICE_TRANSIENT = 'rcp_stripe_sepa_admin_notice';
 

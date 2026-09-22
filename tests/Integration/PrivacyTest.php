@@ -99,6 +99,10 @@ final class PrivacyTest extends WP_UnitTestCase {
 
 	// -- Déclarations ------------------------------------------------------------
 
+	/**
+	 * @group F-12
+	 * @group CNF-05
+	 */
 	public function test_l_exportateur_est_declare(): void {
 		$exporters = apply_filters( 'wp_privacy_personal_data_exporters', array() );
 
@@ -106,6 +110,10 @@ final class PrivacyTest extends WP_UnitTestCase {
 		$this->assertIsCallable( $exporters[ Registry::EXPORTER_ID ]['callback'] );
 	}
 
+	/**
+	 * @group F-12
+	 * @group CNF-06
+	 */
 	public function test_l_effaceur_est_declare(): void {
 		$erasers = apply_filters( 'wp_privacy_personal_data_erasers', array() );
 
@@ -115,6 +123,9 @@ final class PrivacyTest extends WP_UnitTestCase {
 
 	// -- Export ----------------------------------------------------------------------
 
+	/**
+	 * @group SEC-14
+	 */
 	public function test_l_export_restitue_le_mandat(): void {
 		$export = Registry::export( $this->email() );
 

@@ -51,6 +51,9 @@ final class EventStoreTest extends WP_UnitTestCase {
 		$this->assertSame( 1, EventStore::attempts( 'evt_store_1' ) );
 	}
 
+	/**
+	 * @group I-1
+	 */
 	public function test_une_reception_deja_traitee_est_un_doublon(): void {
 		EventStore::claim( 'evt_store_2', 'payment_intent.succeeded', false, '{}' );
 		EventStore::resolve( 'evt_store_2', EventStore::STATUS_PROCESSED, 'ok' );
@@ -157,6 +160,9 @@ final class EventStoreTest extends WP_UnitTestCase {
 		$this->assertStringNotContainsString( 'FR14', (string) wp_json_encode( $row ) );
 	}
 
+	/**
+	 * @group SEC-22
+	 */
 	public function test_le_mode_de_l_evenement_est_conserve(): void {
 		EventStore::claim( 'evt_livemode', 'invoice.paid', true, '{}' );
 

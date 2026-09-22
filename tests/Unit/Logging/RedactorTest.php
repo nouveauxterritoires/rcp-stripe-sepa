@@ -22,6 +22,8 @@ final class RedactorTest extends TestCase {
 	 *
 	 * @param string $label   Nature du secret.
 	 * @param string $secret  Valeur à masquer.
+	 *
+	 * @group SEC-13
 	 */
 	public function test_masque_les_secrets( string $label, string $secret ): void {
 		$redacted = Redactor::redact( 'Appel échoué avec ' . $secret . ' en contexte' );
@@ -44,6 +46,9 @@ final class RedactorTest extends TestCase {
 		);
 	}
 
+	/**
+	 * @group SEC-13
+	 */
 	public function test_masque_un_iban(): void {
 		// SEC-03 : un IBAN ne doit jamais atteindre un journal.
 		$redacted = Redactor::redact( 'Mandat pour FR1420041010050500013M02606 accepté' );

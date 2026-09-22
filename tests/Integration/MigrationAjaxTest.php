@@ -105,6 +105,9 @@ final class MigrationAjaxTest extends WP_Ajax_UnitTestCase {
 
 	// -- Contrôle de propriété ----------------------------------------------------
 
+	/**
+	 * @group SEC-17
+	 */
 	public function test_un_adherent_ne_peut_pas_migrer_l_adhesion_d_un_autre(): void {
 		/*
 		 * SEC-17 : sans ce contrôle, l'identifiant d'adhésion étant un entier
@@ -171,6 +174,9 @@ final class MigrationAjaxTest extends WP_Ajax_UnitTestCase {
 
 	// -- Nonce ----------------------------------------------------------------------
 
+	/**
+	 * @group SEC-17
+	 */
 	public function test_une_requete_sans_nonce_est_refusee(): void {
 		$response = $this->dispatch(
 			AjaxController::ACTION_START,

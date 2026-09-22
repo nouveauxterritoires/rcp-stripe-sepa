@@ -56,6 +56,9 @@ final class TranslationTest extends WP_UnitTestCase {
 
 	// -- Couverture de la traduction ------------------------------------------------
 
+	/**
+	 * @group F-11
+	 */
 	public function test_la_traduction_couvre_les_chaines_du_modele(): void {
 		$catalogue = $this->french_catalogue();
 		$template  = file_get_contents( $this->languages_dir() . '/rcp-stripe-sepa.pot' );
@@ -144,6 +147,9 @@ final class TranslationTest extends WP_UnitTestCase {
 		$this->assertSame( array(), $suspects, 'Chaînes source encore en français.' );
 	}
 
+	/**
+	 * @group F-11
+	 */
 	public function test_le_plugin_declare_son_repertoire_de_traductions(): void {
 		$headers = get_file_data(
 			dirname( __DIR__, 2 ) . '/rcp-stripe-sepa.php',

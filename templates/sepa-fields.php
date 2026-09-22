@@ -18,6 +18,11 @@ defined( 'ABSPATH' ) || exit;
 <fieldset class="rcp-stripe-sepa-fields">
 	<legend class="screen-reader-text"><?php esc_html_e( 'Bank details', 'rcp-stripe-sepa' ); ?></legend>
 
+	<?php
+	// Bandeau de mode test : déjà échappé, et vide hors bac à sable (SEC-23).
+	echo \RCP_Stripe_Sepa\Mode\TestBanner::render(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	?>
+
 	<p class="rcp_card_fields rcp-stripe-sepa-holder">
 		<label for="rcp-stripe-sepa-holder-name">
 			<?php esc_html_e( 'Account holder’s name', 'rcp-stripe-sepa' ); ?>

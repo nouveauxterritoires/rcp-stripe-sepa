@@ -24,6 +24,10 @@ final class StateMachineTest extends TestCase {
 
 	// -- Prélèvement en cours --------------------------------------------------
 
+	/**
+	 * @group F-04
+	 * @group RG-01
+	 */
 	public function test_un_prelevement_en_cours_laisse_l_adhesion_en_attente(): void {
 		// RG-01 : aucun accès au contenu tant que le prélèvement n'a pas abouti.
 		$transition = StateMachine::resolve(
@@ -37,6 +41,9 @@ final class StateMachineTest extends TestCase {
 		$this->assertSame( StateMachine::PAYMENT_PENDING, $transition->payment_status() );
 	}
 
+	/**
+	 * @group RG-03
+	 */
 	public function test_la_politique_optimiste_active_des_le_mandat(): void {
 		$transition = StateMachine::resolve(
 			'payment_intent.processing',
@@ -100,6 +107,9 @@ final class StateMachineTest extends TestCase {
 
 	// -- Échecs ----------------------------------------------------------------
 
+	/**
+	 * @group RG-04
+	 */
 	public function test_un_echec_au_premier_paiement_ferme_l_acces(): void {
 		/*
 		 * `expired` et non `cancelled` : dans RCP, une adhésion résiliée garde
@@ -153,6 +163,9 @@ final class StateMachineTest extends TestCase {
 		$this->assertNull( $transition->payment_status() );
 	}
 
+	/**
+	 * @group F-07
+	 */
 	public function test_une_facture_en_echec_apres_tentative_est_un_impaye(): void {
 		$transition = StateMachine::resolve(
 			'invoice.payment_failed',
@@ -198,6 +211,9 @@ final class StateMachineTest extends TestCase {
 	/**
 	 * Révoquer, c'est fermer l'accès : `cancelled` le laisserait ouvert
 	 * jusqu'à l'échéance, alors même que les fonds ont été repris.
+	 *
+	 * @group F-07
+	 * @group RG-05
 	 */
 	public function test_un_litige_revoque_l_adhesion(): void {
 		$transition = StateMachine::resolve(

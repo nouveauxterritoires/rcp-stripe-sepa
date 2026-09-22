@@ -25,6 +25,11 @@ $rcp_sepa_form_id = 'rcp-stripe-sepa-migration-' . (int) $membership->get_id();
 >
 	<h3><?php esc_html_e( 'Switch to SEPA Direct Debit', 'rcp-stripe-sepa' ); ?></h3>
 
+	<?php
+	// Bandeau de mode test : déjà échappé, et vide hors bac à sable (SEC-23).
+	echo \RCP_Stripe_Sepa\Mode\TestBanner::render(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	?>
+
 	<p class="rcp-stripe-sepa-migration-intro">
 		<?php
 		printf(

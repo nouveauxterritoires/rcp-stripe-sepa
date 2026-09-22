@@ -9,6 +9,8 @@ declare( strict_types = 1 );
 
 namespace RCP_Stripe_Sepa\Gateway;
 
+use RCP_Stripe_Sepa\Mode\ModeGuard;
+
 /**
  * Déclare la passerelle SEPA à RCP et adapte les arguments partagés.
  *
@@ -36,6 +38,14 @@ final class Registrar {
 	 */
 	public static function add_gateway( $gateways ): array {
 		$gateways = is_array( $gateways ) ? $gateways : array();
+
+		/*
+		 * Mieux vaut une passerelle absente qu'une passerelle qui prélève dans
+		 * le mauvais mode. L'administrateur en est averti (SEC-24).
+		 */
+		if ( ! ModeGuard::allows_gateway() ) {
+			return $gateways;
+		}
 
 		$gateways[ GatewayDefinition::ID ] = GatewayDefinition::registry_entry();
 

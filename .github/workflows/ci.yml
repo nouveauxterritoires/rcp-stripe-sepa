@@ -30,6 +30,10 @@ jobs:
         run: vendor/bin/phpcs
       - name: PHPStan
         run: vendor/bin/phpstan analyse --memory-limit=1G --no-progress
+      - name: Traçabilité des exigences
+        # Échoue si la matrice versionnée n'est plus à jour, ou si une exigence
+        # du cahier des charges n'est établie par rien.
+        run: php bin/traceability.php --check
       - name: Conformité PSR-4
         # Un fichier dont le chemin ne reproduit pas la casse de son espace de
         # noms reste autochargeable sur macOS et introuvable sur Linux. Le

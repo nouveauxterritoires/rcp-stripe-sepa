@@ -587,3 +587,42 @@ msgstr "Coordonnées bancaires"
 #, php-format
 msgid "By providing your IBAN and confirming this payment, you authorise %s and Stripe, our payment provider, to send instructions to your bank to debit your account, and your bank to debit your account in accordance with those instructions. You are entitled to a refund from your bank under the terms of your agreement with it. A refund must be claimed within 8 weeks of the date on which your account was debited."
 msgstr "En fournissant votre IBAN et en confirmant ce paiement, vous autorisez %s et Stripe, notre prestataire de paiement, à envoyer des instructions à votre banque pour débiter votre compte, et votre banque à débiter votre compte conformément à ces instructions. Vous bénéficiez d'un droit à remboursement par votre banque selon les conditions décrites dans la convention que vous avez passée avec elle. Toute demande de remboursement doit être présentée dans les 8 semaines suivant la date de débit de votre compte."
+
+msgid "Defined — leave blank to keep it"
+msgstr "Défini — laisser vide pour le conserver"
+
+msgid "whsec_…"
+msgstr "whsec_…"
+
+msgid "The webhook secret is defined by the %s constant and cannot be changed here."
+msgstr "Le secret de webhook est défini par la constante %s et ne peut pas être modifié ici."
+
+msgid "Webhook secret left unchanged."
+msgstr "Secret de webhook inchangé."
+
+msgid "A Stripe webhook secret starts with “whsec_”."
+msgstr "Un secret de webhook Stripe commence par « whsec_ »."
+
+msgid "Webhook secret saved."
+msgstr "Secret de webhook enregistré."
+
+msgid "SEPA Direct Debit is disabled: Restrict Content Pro is in test mode, but a live Stripe key is configured. Real bank accounts would be debited."
+msgstr "Le prélèvement SEPA est désactivé : Restrict Content Pro est en mode test, mais une clé Stripe de production est configurée. Des comptes bancaires réels seraient débités."
+
+msgid "SEPA Direct Debit is disabled: Restrict Content Pro is in live mode, but a test Stripe key is configured. No payment would actually be collected."
+msgstr "Le prélèvement SEPA est désactivé : Restrict Content Pro est en mode production, mais une clé Stripe de test est configurée. Aucun paiement ne serait réellement encaissé."
+
+msgid "Stripe test mode — no real payment will be collected."
+msgstr "Mode test Stripe — aucun prélèvement réel ne sera effectué."
+
+msgid "Defined by the %s constant in wp-config.php. It cannot be changed from here, and nothing on this page reveals its value."
+msgstr "Défini par la constante %s dans wp-config.php. Il ne peut pas être modifié ici, et rien sur cette page n’en révèle la valeur."
+
+msgid "Signing secret of the Stripe endpoint"
+msgstr "Secret de signature du point de terminaison Stripe"
+
+msgid "The field is never pre-filled: leaving it blank keeps the current secret. Defining %s in wp-config.php is safer — a database export would not carry the secret."
+msgstr "Le champ n’est jamais pré-rempli : le laisser vide conserve le secret en place. Définir %s dans wp-config.php est plus sûr — un export de la base ne l’emporterait pas."
+
+msgid "Save"
+msgstr "Enregistrer"

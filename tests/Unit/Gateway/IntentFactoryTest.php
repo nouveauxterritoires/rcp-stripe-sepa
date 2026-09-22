@@ -62,6 +62,9 @@ final class IntentFactoryTest extends TestCase {
 		$this->assertSame( 'off_session', $args['setup_future_usage'] );
 	}
 
+	/**
+	 * @group F-03
+	 */
 	public function test_une_adhesion_a_vie_n_enregistre_pas_de_mandat_recurrent(): void {
 		/*
 		 * Un paiement unique ne doit pas laisser derrière lui un mandat
@@ -95,6 +98,9 @@ final class IntentFactoryTest extends TestCase {
 
 	// -- Confirmation ------------------------------------------------------------
 
+	/**
+	 * @group CNF-04
+	 */
 	public function test_l_intention_n_est_pas_confirmee_cote_serveur(): void {
 		/*
 		 * La confirmation a lieu dans le navigateur : c'est elle qui recueille
@@ -146,6 +152,9 @@ final class IntentFactoryTest extends TestCase {
 
 	// -- Choix de l'intention ------------------------------------------------------
 
+	/**
+	 * @group RG-03
+	 */
 	public function test_un_montant_nul_impose_une_intention_d_enregistrement(): void {
 		// Adhésion gratuite ou remise de 100 % : rien à encaisser aujourd'hui,
 		// mais un mandat à recueillir pour les échéances suivantes.

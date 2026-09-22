@@ -45,3 +45,18 @@
 		color: #a7aaad;
 	}
 }
+
+/*
+ * Bandeau de mode test (SEC-23).
+ *
+ * Volontairement voyant : il doit rester lisible même sur un thème qui redéfinit
+ * largement les formulaires, et ne peut pas être écarté par l'utilisateur.
+ */
+.rcp-stripe-sepa-test-mode {
+	margin: 0 0 1em;
+	padding: 0.6em 0.9em;
+	border-left: 4px solid #b26b00;
+	background: #fff5e5;
+	color: #4a2c00;
+	font-weight: 600;
+}

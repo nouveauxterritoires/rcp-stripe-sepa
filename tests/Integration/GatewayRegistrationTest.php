@@ -36,6 +36,9 @@ final class GatewayRegistrationTest extends WP_UnitTestCase {
 		Registrar::register();
 	}
 
+	/**
+	 * @group F-01
+	 */
 	public function test_la_passerelle_est_declaree_a_rcp(): void {
 		$gateways = new RCP_Payment_Gateways();
 
@@ -57,6 +60,9 @@ final class GatewayRegistrationTest extends WP_UnitTestCase {
 		$this->assertTrue( is_subclass_of( $entry['class'], 'RCP_Payment_Gateway_Stripe' ) );
 	}
 
+	/**
+	 * @group F-11
+	 */
 	public function test_la_passerelle_porte_des_libelles_traduits(): void {
 		$entry = ( new RCP_Payment_Gateways() )->available_gateways[ GatewayDefinition::ID ];
 
@@ -65,6 +71,9 @@ final class GatewayRegistrationTest extends WP_UnitTestCase {
 		$this->assertStringContainsString( 'SEPA', $entry['admin_label'] );
 	}
 
+	/**
+	 * @group F-01
+	 */
 	public function test_la_passerelle_est_activable_dans_les_reglages(): void {
 		global $rcp_options;
 
@@ -115,6 +124,9 @@ final class GatewayRegistrationTest extends WP_UnitTestCase {
 
 	// -- Devise --------------------------------------------------------------------
 
+	/**
+	 * @group RG-02
+	 */
 	public function test_une_devise_autre_que_l_euro_est_refusee(): void {
 		global $rcp_options;
 
@@ -156,6 +168,9 @@ final class GatewayRegistrationTest extends WP_UnitTestCase {
 
 	// -- Formulaire ---------------------------------------------------------------------
 
+	/**
+	 * @group SEC-12
+	 */
 	public function test_le_formulaire_ne_contient_aucun_champ_iban_natif(): void {
 		// SEC-12 : l'IBAN est saisi dans un Stripe Element, jamais dans un
 		// champ dont la valeur serait soumise au serveur WordPress.
@@ -169,6 +184,9 @@ final class GatewayRegistrationTest extends WP_UnitTestCase {
 		);
 	}
 
+	/**
+	 * @group CNF-01
+	 */
 	public function test_le_formulaire_presente_le_mandat(): void {
 		$html = ( new Gateway() )->fields();
 

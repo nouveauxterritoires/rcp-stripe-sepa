@@ -164,6 +164,9 @@ final class RcpContractTest extends WP_UnitTestCase {
 		);
 	}
 
+	/**
+	 * @group I-2
+	 */
 	public function test_la_generation_de_cle_d_idempotence_est_disponible(): void {
 		$this->assertTrue( function_exists( 'rcp_stripe_generate_idempotency_key' ) );
 

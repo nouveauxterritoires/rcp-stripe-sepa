@@ -100,6 +100,9 @@ final class PersonalDataTest extends TestCase {
 
 	// -- Ce qui n'est jamais exporté -------------------------------------------------
 
+	/**
+	 * @group SEC-04
+	 */
 	public function test_aucun_identifiant_technique_n_est_exporte(): void {
 		/*
 		 * Les identifiants Stripe ne renseignent pas la personne concernée sur
@@ -126,6 +129,9 @@ final class PersonalDataTest extends TestCase {
 
 	// -- Mention de politique de confidentialité ----------------------------------------
 
+	/**
+	 * @group CNF-07
+	 */
 	public function test_la_mention_de_confidentialite_nomme_le_sous_traitant(): void {
 		$content = PersonalData::privacy_policy_content();
 
@@ -133,6 +139,9 @@ final class PersonalDataTest extends TestCase {
 		$this->assertStringContainsString( 'mandat', $content );
 	}
 
+	/**
+	 * @group CNF-08
+	 */
 	public function test_la_mention_precise_la_duree_de_conservation(): void {
 		$this->assertStringContainsString( '13', PersonalData::privacy_policy_content() );
 	}

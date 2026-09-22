@@ -40,6 +40,8 @@ test.describe( 'Migration vers le prélèvement SEPA', () => {
 		await expect( page.getByText( /8 weeks|8 semaines/ ).first() ).toBeVisible();
 	} );
 
+	// @group F-05
+	// @group RG-06
 	test( 'la bascule remplace le moyen de paiement sans toucher à l\'adhésion', async ( { page } ) => {
 		/*
 		 * RG-06 : la migration ne change ni le prix ni la date d'échéance, et
@@ -60,6 +62,7 @@ test.describe( 'Migration vers le prélèvement SEPA', () => {
 		expect( membershipGateway( membership ) ).toBe( 'stripe_sepa' );
 	} );
 
+	// @group F-08
 	test( 'le mandat en vigueur est ensuite rappelé à l\'adhérent', async ( { page } ) => {
 		await page.getByRole( 'button', { name: /Switch to SEPA/i } ).click();
 		await page.waitForSelector( '.rcp-stripe-sepa-migration .rcp-stripe-sepa-element iframe', { timeout: 30_000 } );

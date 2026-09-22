@@ -244,15 +244,7 @@ final class Migrator {
 		try {
 			\Stripe\Subscription::update(
 				$subscription_id,
-				array(
-					'default_payment_method' => $payment_method,
-					'payment_settings'       => array(
-						'payment_method_types' => array( IntentFactory::PAYMENT_METHOD_TYPE ),
-					),
-					// Aucune proratisation : la migration ne touche ni au prix
-					// ni à la date de prochaine échéance.
-					'proration_behavior'     => 'none',
-				),
+				self::subscription_update_args( $payment_method ),
 				StripeSdk::request_options()
 			);
 		} catch ( Exception $exception ) {
@@ -262,6 +254,33 @@ final class Migrator {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Modifications appliquées à l'abonnement Stripe.
+	 *
+	 * La charge utile est délibérément étroite. Elle désigne le moyen de
+	 * paiement des échéances **à venir** et rien d'autre : une facture déjà
+	 * émise conserve le sien, et continue d'être réglée par la carte que
+	 * l'adhérent quitte (RG-08). Régler autrement reviendrait à prélever par
+	 * SEPA une somme que le débiteur croyait payée par carte.
+	 *
+	 * Fonction pure, donc éprouvable sans appeler Stripe.
+	 *
+	 * @param string $payment_method Identifiant du mandat SEPA.
+	 * @return array
+	 */
+	public static function subscription_update_args( string $payment_method ): array {
+		return array(
+			'default_payment_method' => $payment_method,
+			'payment_settings'       => array(
+				'payment_method_types' => array( IntentFactory::PAYMENT_METHOD_TYPE ),
+			),
+
+			// Aucune proratisation : ni le prix ni la date de prochaine
+			// échéance ne bougent (RG-06).
+			'proration_behavior'     => 'none',
+		);
 	}
 
 	/**

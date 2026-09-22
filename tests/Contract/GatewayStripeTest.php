@@ -287,6 +287,9 @@ final class GatewayStripeTest extends WP_UnitTestCase {
 		$this->assertSame( 'setup_intent', $result['stripe_intent_type'] );
 	}
 
+	/**
+	 * @group RG-02
+	 */
 	public function test_une_devise_non_euro_interrompt_l_inscription(): void {
 		global $rcp_options;
 
@@ -325,6 +328,9 @@ final class GatewayStripeTest extends WP_UnitTestCase {
 		$this->assertSame( StateMachine::PAYMENT_PENDING, $payment->status );
 	}
 
+	/**
+	 * @group RG-01
+	 */
 	public function test_l_adhesion_n_est_pas_activee_a_l_inscription(): void {
 		global $rcp_payments_db;
 
@@ -440,6 +446,9 @@ final class GatewayStripeTest extends WP_UnitTestCase {
 		$this->assertEmpty( $rcp_payments_db->get_payment( $this->payment_id )->transaction_id );
 	}
 
+	/**
+	 * @group F-02
+	 */
 	public function test_une_adhesion_reconductible_cree_un_abonnement(): void {
 		$this->finalize( $this->gateway(), $this->confirmed_intent() );
 
@@ -479,6 +488,9 @@ final class GatewayStripeTest extends WP_UnitTestCase {
 		);
 	}
 
+	/**
+	 * @group F-03
+	 */
 	public function test_une_adhesion_non_reconductible_ne_cree_pas_d_abonnement(): void {
 		// Adhésion à vie : un seul prélèvement, aucun mandat récurrent.
 		global $rcp_payments_db;

@@ -45,6 +45,10 @@ final class WebhookEndpointTest extends WP_UnitTestCase {
 
 	// -- Authentification -------------------------------------------------------
 
+	/**
+	 * @group F-06
+	 * @group SEC-06
+	 */
 	public function test_une_charge_utile_signee_est_acceptee(): void {
 		$response = $this->send( $this->event( 'payment_intent.succeeded' ) );
 
@@ -84,6 +88,9 @@ final class WebhookEndpointTest extends WP_UnitTestCase {
 		$this->assertSame( 400, rest_get_server()->dispatch( $request )->get_status() );
 	}
 
+	/**
+	 * @group SEC-07
+	 */
 	public function test_une_signature_antidatee_est_rejetee(): void {
 		// SEC-07 : tolérance de 300 secondes.
 		$event    = $this->event( 'payment_intent.succeeded' );
@@ -107,6 +114,9 @@ final class WebhookEndpointTest extends WP_UnitTestCase {
 		$this->assertSame( 400, $response->get_status() );
 	}
 
+	/**
+	 * @group SEC-10
+	 */
 	public function test_la_reponse_ne_divulgue_aucune_information(): void {
 		// SEC-10.
 		$response = $this->send( $this->event( 'payment_intent.succeeded' ), array( 'signature' => null ) );
@@ -120,6 +130,12 @@ final class WebhookEndpointTest extends WP_UnitTestCase {
 
 	// -- Cloisonnement des modes ------------------------------------------------
 
+	/**
+	 * @group F-09
+	 * @group I-4
+	 * @group SEC-09
+	 * @group SEC-22
+	 */
 	public function test_un_evenement_de_production_est_ignore_en_mode_test(): void {
 		// SEC-09 / I-4 : un webhook de production ne doit rien activer ici.
 		$event = $this->event( 'payment_intent.succeeded', array(), array( 'livemode' => true ) );
@@ -132,6 +148,10 @@ final class WebhookEndpointTest extends WP_UnitTestCase {
 
 	// -- Idempotence -------------------------------------------------------------
 
+	/**
+	 * @group F-06
+	 * @group I-1
+	 */
 	public function test_un_evenement_rejoue_n_est_traite_qu_une_fois(): void {
 		// I-1 : cinq livraisons du même événement, un seul traitement.
 		$event     = $this->event( 'payment_intent.succeeded' );
@@ -160,6 +180,9 @@ final class WebhookEndpointTest extends WP_UnitTestCase {
 		$this->assertSame( 1, $this->stored_rows( $second['id'] ) );
 	}
 
+	/**
+	 * @group I-5
+	 */
 	public function test_un_evenement_en_erreur_repetee_est_abandonne(): void {
 		// I-5 : au-delà du nombre maximal de tentatives, l'événement est
 		// abandonné plutôt que rejoué indéfiniment.
@@ -209,6 +232,9 @@ final class WebhookEndpointTest extends WP_UnitTestCase {
 
 	// -- Limitation de débit ------------------------------------------------------
 
+	/**
+	 * @group SEC-11
+	 */
 	public function test_la_limitation_de_debit_protege_le_point_de_terminaison(): void {
 		// SEC-11.
 		add_filter( 'rcp_stripe_sepa_webhook_rate_limit', static fn() => 3 );
@@ -243,6 +269,9 @@ final class WebhookEndpointTest extends WP_UnitTestCase {
 		$this->assertSame( 404, $response->get_status() );
 	}
 
+	/**
+	 * @group SEC-08
+	 */
 	public function test_le_point_de_terminaison_n_est_pas_celui_de_rcp(): void {
 		// SEC-08 : RCP ne vérifie pas la signature ; sa route n'est pas utilisée.
 		$this->assertStringContainsString( 'rcp-stripe-sepa/v1/webhook', Endpoint::url() );

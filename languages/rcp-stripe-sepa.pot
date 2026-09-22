@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-09-22T08:30:34+00:00\n"
+"POT-Creation-Date: 2026-09-22T09:09:27+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: rcp-stripe-sepa\n"
@@ -88,6 +88,7 @@ msgid "Missing. Stripe.js and mandate collection both require it."
 msgstr ""
 
 #: src/Admin/Diagnostics.php:207
+#: templates/admin-diagnostics.php:162
 msgid "Webhook secret"
 msgstr ""
 
@@ -143,18 +144,19 @@ msgid_plural "%1$d debits pending for more than %2$d days: a webhook may not be 
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Admin/DiagnosticsPage.php:48
-#: src/Admin/DiagnosticsPage.php:49
+#: src/Admin/DiagnosticsPage.php:50
+#: src/Admin/DiagnosticsPage.php:51
 #: src/Admin/SiteHealth.php:42
 #: src/Gateway/GatewayDefinition.php:63
 #: src/Gateway/SignupProcessor.php:185
 #: src/Privacy/Registry.php:96
-#: templates/admin-diagnostics.php:55
+#: templates/admin-diagnostics.php:56
 msgid "SEPA Direct Debit"
 msgstr ""
 
-#: src/Admin/DiagnosticsPage.php:73
-#: src/Admin/DiagnosticsPage.php:93
+#: src/Admin/DiagnosticsPage.php:75
+#: src/Admin/DiagnosticsPage.php:95
+#: src/Admin/SecretField.php:114
 msgid "You do not have permission to do this."
 msgstr ""
 
@@ -175,8 +177,8 @@ msgid "This event belongs to the other mode: replay refused."
 msgstr ""
 
 #: src/Admin/MembershipMandate.php:72
-#: templates/migration-form.php:54
-#: templates/sepa-fields.php:38
+#: templates/migration-form.php:59
+#: templates/sepa-fields.php:43
 msgid "IBAN"
 msgstr ""
 
@@ -211,6 +213,32 @@ msgstr ""
 
 #: src/Admin/MembershipMandate.php:105
 msgid "Signed mandate"
+msgstr ""
+
+#: src/Admin/SecretField.php:94
+msgid "Defined — leave blank to keep it"
+msgstr ""
+
+#: src/Admin/SecretField.php:95
+msgid "whsec_…"
+msgstr ""
+
+#. translators: %s: PHP constant name.
+#: src/Admin/SecretField.php:149
+#, php-format
+msgid "The webhook secret is defined by the %s constant and cannot be changed here."
+msgstr ""
+
+#: src/Admin/SecretField.php:158
+msgid "Webhook secret left unchanged."
+msgstr ""
+
+#: src/Admin/SecretField.php:165
+msgid "A Stripe webhook secret starts with “whsec_”."
+msgstr ""
+
+#: src/Admin/SecretField.php:173
+msgid "Webhook secret saved."
 msgstr ""
 
 #: src/Admin/SiteHealth.php:58
@@ -420,7 +448,7 @@ msgid "Your membership is now paid by SEPA Direct Debit."
 msgstr ""
 
 #. translators: %s: previous gateway identifier.
-#: src/Migration/Migrator.php:317
+#: src/Migration/Migrator.php:336
 #, php-format
 msgid "SEPA Direct Debit — payment method migrated from “%s”. Price and next renewal date unchanged."
 msgstr ""
@@ -443,6 +471,18 @@ msgstr ""
 
 #: src/Migration/ReasonPresenter.php:60
 msgid "The mandate was not confirmed. Please enter your bank details again."
+msgstr ""
+
+#: src/Mode/ModeGuard.php:95
+msgid "SEPA Direct Debit is disabled: Restrict Content Pro is in test mode, but a live Stripe key is configured. Real bank accounts would be debited."
+msgstr ""
+
+#: src/Mode/ModeGuard.php:101
+msgid "SEPA Direct Debit is disabled: Restrict Content Pro is in live mode, but a test Stripe key is configured. No payment would actually be collected."
+msgstr ""
+
+#: src/Mode/TestBanner.php:51
+msgid "Stripe test mode — no real payment will be collected."
 msgstr ""
 
 #: src/Privacy/PersonalData.php:40
@@ -496,92 +536,112 @@ msgstr ""
 msgid "View the signed mandate"
 msgstr ""
 
-#: templates/admin-diagnostics.php:45
+#: templates/admin-diagnostics.php:46
 msgid "Passed"
 msgstr ""
 
-#: templates/admin-diagnostics.php:46
+#: templates/admin-diagnostics.php:47
 msgid "Needs attention"
 msgstr ""
 
-#: templates/admin-diagnostics.php:47
+#: templates/admin-diagnostics.php:48
 msgid "Blocking"
 msgstr ""
 
-#: templates/admin-diagnostics.php:66
+#: templates/admin-diagnostics.php:67
 msgid "Stripe test mode."
 msgstr ""
 
-#: templates/admin-diagnostics.php:67
+#: templates/admin-diagnostics.php:68
 msgid "No real debit is taken."
 msgstr ""
 
-#: templates/admin-diagnostics.php:72
+#: templates/admin-diagnostics.php:73
 msgid "Configuration status"
 msgstr ""
 
-#: templates/admin-diagnostics.php:76
+#: templates/admin-diagnostics.php:77
 msgid "SEPA Direct Debit configuration checks"
 msgstr ""
 
-#: templates/admin-diagnostics.php:80
+#: templates/admin-diagnostics.php:81
 msgid "Check"
 msgstr ""
 
-#: templates/admin-diagnostics.php:81
+#: templates/admin-diagnostics.php:82
 msgid "Status"
 msgstr ""
 
-#: templates/admin-diagnostics.php:82
+#: templates/admin-diagnostics.php:83
 msgid "Details"
 msgstr ""
 
-#: templates/admin-diagnostics.php:99
+#: templates/admin-diagnostics.php:100
 msgid "Endpoint"
 msgstr ""
 
-#: templates/admin-diagnostics.php:102
+#: templates/admin-diagnostics.php:103
 msgid "Declare this URL as a webhook endpoint in your Stripe dashboard:"
 msgstr ""
 
-#: templates/admin-diagnostics.php:106
+#: templates/admin-diagnostics.php:107
 msgid "Most recent events"
 msgstr ""
 
-#: templates/admin-diagnostics.php:109
+#: templates/admin-diagnostics.php:110
 msgid "No event received yet."
 msgstr ""
 
-#: templates/admin-diagnostics.php:113
+#: templates/admin-diagnostics.php:114
 msgid "The twenty most recent webhook events received"
 msgstr ""
 
-#: templates/admin-diagnostics.php:117
+#: templates/admin-diagnostics.php:118
 msgid "Received"
 msgstr ""
 
-#: templates/admin-diagnostics.php:118
+#: templates/admin-diagnostics.php:119
 msgid "Type"
 msgstr ""
 
-#: templates/admin-diagnostics.php:119
+#: templates/admin-diagnostics.php:120
 msgid "Outcome"
 msgstr ""
 
-#: templates/admin-diagnostics.php:120
+#: templates/admin-diagnostics.php:121
 msgid "Attempts"
 msgstr ""
 
-#: templates/admin-diagnostics.php:121
+#: templates/admin-diagnostics.php:122
 msgid "Note"
 msgstr ""
 
-#: templates/admin-diagnostics.php:122
+#: templates/admin-diagnostics.php:123
 msgid "Action"
 msgstr ""
 
-#: templates/admin-diagnostics.php:152
+#: templates/admin-diagnostics.php:153
 msgid "Replay"
+msgstr ""
+
+#. translators: %s: PHP constant name.
+#: templates/admin-diagnostics.php:169
+#, php-format
+msgid "Defined by the %s constant in wp-config.php. It cannot be changed from here, and nothing on this page reveals its value."
+msgstr ""
+
+#: templates/admin-diagnostics.php:181
+msgid "Signing secret of the Stripe endpoint"
+msgstr ""
+
+#. translators: %s: PHP constant name.
+#: templates/admin-diagnostics.php:201
+#, php-format
+msgid "The field is never pre-filled: leaving it blank keeps the current secret. Defining %s in wp-config.php is safer — a database export would not carry the secret."
+msgstr ""
+
+#: templates/admin-diagnostics.php:209
+msgid "Save"
 msgstr ""
 
 #: templates/admin-membership-mandate.php:16
@@ -593,23 +653,23 @@ msgid "In Stripe"
 msgstr ""
 
 #. translators: %s: membership level name.
-#: templates/migration-form.php:32
+#: templates/migration-form.php:37
 #, php-format
 msgid "Membership concerned: %s. The price and next renewal date stay the same."
 msgstr ""
 
-#: templates/migration-form.php:40
-#: templates/sepa-fields.php:23
+#: templates/migration-form.php:45
+#: templates/sepa-fields.php:28
 msgid "Account holder’s name"
 msgstr ""
 
 #. translators: %s: site name, acting as the creditor.
-#: templates/migration-form.php:69
+#: templates/migration-form.php:74
 #, php-format
 msgid "By providing your IBAN and confirming this mandate, you authorise %s and Stripe, our payment provider, to send instructions to your bank to debit your account, and your bank to debit your account in accordance with those instructions. You are entitled to a refund from your bank under the terms of your agreement with it. A refund must be claimed within 8 weeks of the date on which your account was debited."
 msgstr ""
 
-#: templates/migration-form.php:83
+#: templates/migration-form.php:88
 msgid "Confirm the mandate"
 msgstr ""
 
@@ -618,7 +678,7 @@ msgid "Bank details"
 msgstr ""
 
 #. translators: %s: site name, acting as the creditor.
-#: templates/sepa-fields.php:60
+#: templates/sepa-fields.php:65
 #, php-format
 msgid "By providing your IBAN and confirming this payment, you authorise %s and Stripe, our payment provider, to send instructions to your bank to debit your account, and your bank to debit your account in accordance with those instructions. You are entitled to a refund from your bank under the terms of your agreement with it. A refund must be claimed within 8 weeks of the date on which your account was debited."
 msgstr ""

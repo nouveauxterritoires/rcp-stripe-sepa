@@ -64,6 +64,8 @@ final class EligibilityTest extends TestCase {
 	 * @dataProvider provide_blocking_statuses
 	 *
 	 * @param string $status Statut bloquant.
+	 *
+	 * @group RG-07
 	 */
 	public function test_une_adhesion_non_active_n_est_pas_eligible( string $status ): void {
 		/*

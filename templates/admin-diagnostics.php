@@ -14,6 +14,7 @@ declare( strict_types = 1 );
 
 use RCP_Stripe_Sepa\Admin\Diagnostics;
 use RCP_Stripe_Sepa\Admin\DiagnosticsPage;
+use RCP_Stripe_Sepa\Admin\SecretField;
 use RCP_Stripe_Sepa\Webhook\EventStore;
 
 defined( 'ABSPATH' ) || exit;
@@ -157,6 +158,58 @@ $rcp_sepa_status_label = static function ( string $status ): string {
 				<?php endforeach; ?>
 			</tbody>
 		</table>
+	<?php endif; ?>
+	<h2><?php esc_html_e( 'Webhook secret', 'rcp-stripe-sepa' ); ?></h2>
+
+	<?php if ( SecretField::is_locked() ) : ?>
+		<p>
+			<?php
+			printf(
+				/* translators: %s: PHP constant name. */
+				esc_html__( 'Defined by the %s constant in wp-config.php. It cannot be changed from here, and nothing on this page reveals its value.', 'rcp-stripe-sepa' ),
+				'<code>' . esc_html( SecretField::constant_name() ) . '</code>'
+			);
+			?>
+		</p>
+	<?php else : ?>
+		<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" autocomplete="off">
+			<?php wp_nonce_field( SecretField::ACTION ); ?>
+			<input type="hidden" name="action" value="<?php echo esc_attr( SecretField::ACTION ); ?>" />
+
+			<p>
+				<label for="rcp-stripe-sepa-webhook-secret">
+					<?php esc_html_e( 'Signing secret of the Stripe endpoint', 'rcp-stripe-sepa' ); ?>
+				</label>
+				<br />
+				<input
+					id="rcp-stripe-sepa-webhook-secret"
+					name="<?php echo esc_attr( SecretField::FIELD ); ?>"
+					class="regular-text"
+					placeholder="<?php echo esc_attr( SecretField::placeholder() ); ?>"
+					<?php
+					foreach ( SecretField::attributes() as $rcp_sepa_attribute => $rcp_sepa_value ) {
+						printf( ' %s="%s"', esc_attr( $rcp_sepa_attribute ), esc_attr( $rcp_sepa_value ) );
+					}
+					?>
+				/>
+			</p>
+
+			<p class="description">
+				<?php
+				printf(
+					/* translators: %s: PHP constant name. */
+					esc_html__( 'The field is never pre-filled: leaving it blank keeps the current secret. Defining %s in wp-config.php is safer — a database export would not carry the secret.', 'rcp-stripe-sepa' ),
+					'<code>' . esc_html( SecretField::constant_name() ) . '</code>'
+				);
+				?>
+			</p>
+
+			<p>
+				<button type="submit" class="button button-primary">
+					<?php esc_html_e( 'Save', 'rcp-stripe-sepa' ); ?>
+				</button>
+			</p>
+		</form>
 	<?php endif; ?>
 </div>
 

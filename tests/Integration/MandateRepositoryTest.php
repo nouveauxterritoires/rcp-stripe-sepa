@@ -112,6 +112,9 @@ final class MandateRepositoryTest extends WP_UnitTestCase {
 		$this->assertCount( 1, $values, 'La métadonnée a été dupliquée.' );
 	}
 
+	/**
+	 * @group SEC-15
+	 */
 	public function test_l_adresse_d_acceptation_est_purgee_apres_la_duree_de_conservation(): void {
 		// SEC-15 : au-delà de 13 mois, cette donnée personnelle n'a plus
 		// d'utilité probatoire.

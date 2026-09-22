@@ -109,6 +109,9 @@ final class NotificationsTest extends WP_UnitTestCase {
 
 	// -- Messages à l'adhérent ---------------------------------------------------
 
+	/**
+	 * @group F-10
+	 */
 	public function test_un_prelevement_engage_previent_l_adherent_du_delai(): void {
 		/*
 		 * Sans ce message, l'adhérent croit son adhésion active et s'étonne de
@@ -123,6 +126,9 @@ final class NotificationsTest extends WP_UnitTestCase {
 		$this->assertStringContainsString( 'working days', $this->all_text() );
 	}
 
+	/**
+	 * @group F-10
+	 */
 	public function test_un_prelevement_refuse_previent_l_adherent(): void {
 		$this->apply(
 			Transition::to( StateMachine::MEMBERSHIP_CANCELLED, StateMachine::PAYMENT_FAILED, 'Prélèvement refusé.' ),

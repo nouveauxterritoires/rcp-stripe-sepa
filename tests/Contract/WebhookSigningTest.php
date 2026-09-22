@@ -51,6 +51,9 @@ final class WebhookSigningTest extends WP_UnitTestCase {
 		$this->secret = 'whsec_' . str_repeat( 'a1b2c3d4', 6 );
 	}
 
+	/**
+	 * @group SEC-06
+	 */
 	public function test_la_signature_produite_est_acceptee_par_le_sdk_stripe(): void {
 		$fixture = $this->fixture( 'payment-intent-succeeded' );
 		$payload = (string) file_get_contents( $fixture );

@@ -10,6 +10,7 @@ declare( strict_types = 1 );
 namespace RCP_Stripe_Sepa;
 
 use RCP_Stripe_Sepa\Admin\DiagnosticsPage;
+use RCP_Stripe_Sepa\Admin\SecretField;
 use RCP_Stripe_Sepa\Admin\MembershipMandate;
 use RCP_Stripe_Sepa\Admin\SiteHealth;
 use RCP_Stripe_Sepa\Compat\RcpEnvironment;
@@ -19,6 +20,8 @@ use RCP_Stripe_Sepa\Compat\RequirementsNotice;
 use RCP_Stripe_Sepa\Gateway\Registrar;
 use RCP_Stripe_Sepa\Privacy\Registry as PrivacyRegistry;
 use RCP_Stripe_Sepa\Migration\AccountPage;
+use RCP_Stripe_Sepa\Mode\ModeNotice;
+use RCP_Stripe_Sepa\Mode\TestBanner;
 use RCP_Stripe_Sepa\Migration\AjaxController;
 use RCP_Stripe_Sepa\Webhook\Endpoint;
 use RCP_Stripe_Sepa\Webhook\EventStore;
@@ -117,10 +120,13 @@ final class Plugin {
 		AjaxController::register();
 		MandateDetails::register();
 		Notifications::register();
+		TestBanner::register();
+		ModeNotice::register();
 		PrivacyRegistry::register();
 
 		if ( is_admin() ) {
 			DiagnosticsPage::register();
+			SecretField::register();
 			SiteHealth::register();
 			MembershipMandate::register();
 		}

@@ -119,6 +119,9 @@ final class AdminScreensTest extends WP_UnitTestCase {
 		$this->assertSame( Diagnostics::STATUS_ERROR, $statuses['currency'] );
 	}
 
+	/**
+	 * @group SEC-01
+	 */
 	public function test_le_rapport_ne_contient_aucun_secret(): void {
 		// L'écran est destiné au support : son contenu peut être copié ailleurs.
 		$serialized = (string) wp_json_encode( Diagnostics::report() );
@@ -129,6 +132,9 @@ final class AdminScreensTest extends WP_UnitTestCase {
 
 	// -- Écran d'administration -------------------------------------------------
 
+	/**
+	 * @group SEC-16
+	 */
 	public function test_l_ecran_est_reserve_aux_administrateurs(): void {
 		// SEC-16 : la capacité est vérifiée à l'affichage, pas seulement à
 		// l'inscription du menu.
@@ -139,6 +145,9 @@ final class AdminScreensTest extends WP_UnitTestCase {
 		DiagnosticsPage::render();
 	}
 
+	/**
+	 * @group F-13
+	 */
 	public function test_l_ecran_s_affiche_pour_un_administrateur(): void {
 		wp_set_current_user( $this->create_rcp_admin() );
 
@@ -151,6 +160,9 @@ final class AdminScreensTest extends WP_UnitTestCase {
 		$this->assertStringContainsString( 'Stripe test mode', $html );
 	}
 
+	/**
+	 * @group F-13
+	 */
 	public function test_l_ecran_liste_les_evenements_recus(): void {
 		EventStore::claim( 'evt_ecran_1', 'payment_intent.succeeded', false, '{}' );
 		EventStore::resolve( 'evt_ecran_1', EventStore::STATUS_PROCESSED, 'membership activated' );
@@ -176,6 +188,9 @@ final class AdminScreensTest extends WP_UnitTestCase {
 		DiagnosticsPage::handle_replay();
 	}
 
+	/**
+	 * @group SEC-16
+	 */
 	public function test_le_rejeu_est_refuse_sans_droits(): void {
 		wp_set_current_user( $this->create_user() );
 
@@ -213,6 +228,9 @@ final class AdminScreensTest extends WP_UnitTestCase {
 
 	// -- Mandat côté administration ---------------------------------------------------
 
+	/**
+	 * @group F-08
+	 */
 	public function test_le_mandat_est_affiche_sur_la_fiche_d_adhesion(): void {
 		$membership = rcp_get_membership( $this->sepa_membership_with_mandate() );
 
@@ -235,6 +253,10 @@ final class AdminScreensTest extends WP_UnitTestCase {
 		$this->assertDoesNotMatchRegularExpression( '/FR\d{2}[A-Z0-9]{10,}/', $html );
 	}
 
+	/**
+	 * @group F-09
+	 * @group SEC-22
+	 */
 	public function test_les_liens_stripe_visent_le_mode_courant(): void {
 		$membership = rcp_get_membership( $this->sepa_membership_with_mandate() );
 
@@ -258,6 +280,9 @@ final class AdminScreensTest extends WP_UnitTestCase {
 
 	// -- Mandat côté membre -------------------------------------------------------------
 
+	/**
+	 * @group F-08
+	 */
 	public function test_le_mandat_est_affiche_sur_la_page_du_compte(): void {
 		$this->sepa_membership_with_mandate();
 

@@ -240,6 +240,9 @@ final class MigrationStripeTest extends WP_UnitTestCase {
 		);
 	}
 
+	/**
+	 * @group F-05
+	 */
 	public function test_une_intention_du_bon_client_bascule_l_adhesion(): void {
 		$membership_id = $this->card_membership( 'cus_nominal' );
 

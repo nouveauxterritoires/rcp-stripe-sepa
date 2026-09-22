@@ -122,6 +122,9 @@ final class MigrationAccountPageTest extends WP_UnitTestCase {
 		$this->assertSame( '', $html );
 	}
 
+	/**
+	 * @group SEC-18
+	 */
 	public function test_un_parametre_inattendu_ne_casse_pas_l_affichage(): void {
 		// L'action est invoquée par un gabarit : elle doit tolérer l'absence
 		// d'adhésion sans erreur fatale.
@@ -145,6 +148,9 @@ final class MigrationAccountPageTest extends WP_UnitTestCase {
 		$this->assertStringContainsString( 'hidden', $html, 'Le formulaire doit être masqué au départ.' );
 	}
 
+	/**
+	 * @group SEC-12
+	 */
 	public function test_le_formulaire_ne_contient_aucun_champ_iban_soumis(): void {
 		// SEC-12 : l'IBAN est saisi dans un Stripe Element.
 		$this->card_membership();

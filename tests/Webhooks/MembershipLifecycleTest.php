@@ -67,6 +67,9 @@ final class MembershipLifecycleTest extends WP_UnitTestCase {
 		);
 	}
 
+	/**
+	 * @group F-04
+	 */
 	public function test_un_prelevement_en_cours_laisse_l_adhesion_en_attente(): void {
 		// RG-01 : aucun accès au contenu avant encaissement effectif.
 		$membership_id = $this->create_sepa_membership( 0, StateMachine::MEMBERSHIP_PENDING );
@@ -125,6 +128,9 @@ final class MembershipLifecycleTest extends WP_UnitTestCase {
 		);
 	}
 
+	/**
+	 * @group I-3
+	 */
 	public function test_les_evenements_arrives_dans_le_desordre_ne_retrogradent_pas_l_adhesion(): void {
 		// I-3 : un « processing » livré après un « succeeded » ne doit pas
 		// refermer un accès déjà accordé.
@@ -195,6 +201,8 @@ final class MembershipLifecycleTest extends WP_UnitTestCase {
 	/**
 	 * Le statut ne suffit pas à conclure : c'est `is_active()`, la règle
 	 * d'accès de RCP, qui décide si le contenu reste ouvert.
+	 *
+	 * @group RG-05
 	 */
 	public function test_un_litige_revoque_l_adhesion(): void {
 		$membership_id = $this->create_sepa_membership( 0, StateMachine::MEMBERSHIP_ACTIVE );

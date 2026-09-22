@@ -48,6 +48,7 @@ test.describe( 'Inscription par prélèvement SEPA', () => {
 		await page.goto( '/adhesion/' );
 	} );
 
+	// @group F-01
 	test( 'le prélèvement SEPA est proposé à côté de la carte', async ( { page } ) => {
 		// Les deux passerelles doivent coexister : la régression la plus
 		// coûteuse serait de casser le paiement par carte du même site.
@@ -55,6 +56,7 @@ test.describe( 'Inscription par prélèvement SEPA', () => {
 		await expect( page.getByText( /Credit|Debit Card/i ).first() ).toBeVisible();
 	} );
 
+	// @group SEC-12
 	test( 'le formulaire SEPA ne contient aucun champ IBAN soumis au serveur', async ( { page } ) => {
 		await page.getByRole( 'radio', { name: /SEPA/i } ).check();
 		await page.waitForSelector( '#rcp-stripe-sepa-iban-element iframe', { timeout: 30_000 } );
@@ -65,12 +67,16 @@ test.describe( 'Inscription par prélèvement SEPA', () => {
 		expect( nativeIbanFields ).toBe( 0 );
 	} );
 
+	// @group CNF-01
+	// @group CNF-02
 	test( 'le mandat est présenté avant la signature', async ( { page } ) => {
 		await page.getByRole( 'radio', { name: /SEPA/i } ).check();
 
 		await expect( page.getByText( /8 weeks|8 semaines/ ).first() ).toBeVisible();
 	} );
 
+	// @group F-02
+	// @group RG-01
 	test( 'une inscription laisse l\'adhésion en attente d\'encaissement', async ( { page } ) => {
 		/*
 		 * RG-01 : un prélèvement SEPA n'aboutit pas au moment de

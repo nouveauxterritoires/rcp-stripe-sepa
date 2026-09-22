@@ -70,6 +70,7 @@ test.describe( 'Activation par webhook', () => {
 		return membershipId( member.email );
 	}
 
+	// @group RG-01
 	test( 'le contenu réservé reste fermé tant que le prélèvement n\'a pas abouti', async ( { page } ) => {
 		// RG-01 : c'est l'invariant que toute l'architecture protège.
 		await subscribe( page );
@@ -79,6 +80,7 @@ test.describe( 'Activation par webhook', () => {
 		await expect( page.locator( 'body' ) ).not.toContainText( 'Contenu réservé aux adhérents.' );
 	} );
 
+	// @group F-04
 	test( 'l\'encaissement confirmé active l\'adhésion et ouvre le contenu', async ( { page } ) => {
 		const id = await subscribe( page );
 
@@ -91,6 +93,7 @@ test.describe( 'Activation par webhook', () => {
 		await expect( page.locator( 'body' ) ).toContainText( 'Contenu réservé aux adhérents.' );
 	} );
 
+	// @group RG-04
 	test( 'un prélèvement refusé laisse le contenu fermé', async ( { page } ) => {
 		const id = await subscribe( page );
 
@@ -103,6 +106,7 @@ test.describe( 'Activation par webhook', () => {
 		await expect( page.locator( 'body' ) ).not.toContainText( 'Contenu réservé aux adhérents.' );
 	} );
 
+	// @group I-1
 	test( 'un événement rejoué n\'est pas retraité', async ( { page } ) => {
 		// I-1 : Stripe rejoue ses événements ; un double traitement fausserait
 		// la comptabilité.

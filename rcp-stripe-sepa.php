@@ -3,7 +3,7 @@
  * Plugin Name:       SEPA Direct Debit for Restrict Content Pro
  * Plugin URI:        https://github.com/nouveaux-territoires/rcp-stripe-sepa
  * Description:       Adds SEPA Direct Debit (Stripe) to the payment methods available in Restrict Content Pro: recurring memberships, one-off payments and card-to-SEPA migration.
- * Version:           0.1.0-dev
+ * Version:           1.0.0-rc.1
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            Nouveaux Territoires
@@ -19,7 +19,7 @@ declare( strict_types = 1 );
 
 defined( 'ABSPATH' ) || exit;
 
-const RCP_SEPA_VERSION = '0.1.0-dev';
+const RCP_SEPA_VERSION = '1.0.0-rc.1';
 
 define( 'RCP_SEPA_PLUGIN_FILE', __FILE__ );
 define( 'RCP_SEPA_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );

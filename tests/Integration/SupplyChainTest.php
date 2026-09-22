@@ -241,4 +241,36 @@ final class SupplyChainTest extends WP_UnitTestCase {
 			$this->assertGreaterThan( 500, strlen( (string) file_get_contents( $path ) ), $doc . ' est trop succinct.' );
 		}
 	}
+	/**
+	 * Un répertoire requis à l'exécution mais absent de l'archive produit une
+	 * erreur fatale sur le site de l'adhérent, et nulle part ailleurs : ni les
+	 * suites, ni l'environnement de développement ne l'empruntent depuis
+	 * l'archive. `templates/` manquait ainsi, ce qui aurait fait planter le
+	 * formulaire d'inscription de toute installation réelle.
+	 */
+	public function test_l_archive_emporte_tout_ce_que_le_plugin_charge(): void {
+		$build    = (string) file_get_contents( $this->root() . '/bin/build.sh' );
+		$required = array();
+
+		foreach ( $this->shipped_sources() as $file ) {
+			$source = (string) file_get_contents( $file );
+
+			if ( preg_match_all( "~__DIR__ \. '(?:/\.\.)+/([A-Za-z0-9_-]+)/~", $source, $matches ) ) {
+				$required = array_merge( $required, $matches[1] );
+			}
+		}
+
+		$required = array_unique( $required );
+
+		$this->assertNotEmpty( $required, 'Le relevé des répertoires chargés ne doit pas être vide.' );
+
+		foreach ( $required as $directory ) {
+			$this->assertMatchesRegularExpression(
+				'/\bfor item in .*\b' . preg_quote( $directory, '/' ) . '\b/',
+				$build,
+				sprintf( 'bin/build.sh doit emporter « %s », que le plugin charge à l’exécution.', $directory )
+			);
+		}
+	}
+
 }

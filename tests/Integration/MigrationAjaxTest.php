@@ -217,4 +217,32 @@ final class MigrationAjaxTest extends WP_Ajax_UnitTestCase {
 		$this->assertFalse( $response['success'] );
 		$this->assertNotEmpty( $response['data']['message'] );
 	}
+	/**
+	 * Le message technique renvoyé par Stripe est attaché aux données de
+	 * l'erreur, pour qu'un développeur puisse le lire sans dépendre du journal
+	 * de RCP. Il ne doit jamais accompagner la réponse envoyée à l'adhérent :
+	 * il nomme des objets internes et, selon le cas, des identifiants de
+	 * client.
+	 */
+	public function test_la_reponse_ne_transporte_jamais_le_detail_technique(): void {
+		$error = new \WP_Error(
+			'rcp_stripe_sepa_setup_failed',
+			'Message destiné à l\'adhérent.',
+			array( 'stripe_message' => 'No such customer: cus_SECRET' )
+		);
+
+		$sent = array( 'message' => $error->get_error_message() );
+
+		$this->assertSame( 'Message destiné à l\'adhérent.', $sent['message'] );
+		$this->assertStringNotContainsString( 'cus_SECRET', wp_json_encode( $sent ) );
+
+		/*
+		 * Le contrôleur ne compose sa réponse qu'avec `get_error_message()` :
+		 * c'est cette propriété du code qu'il faut préserver.
+		 */
+		$controller = (string) file_get_contents( dirname( __DIR__, 2 ) . '/src/Migration/AjaxController.php' );
+
+		$this->assertStringNotContainsString( 'get_error_data', $controller );
+	}
+
 }

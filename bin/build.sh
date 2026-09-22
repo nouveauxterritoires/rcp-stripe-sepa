@@ -25,7 +25,7 @@ bash bin/scan-placeholders.sh > /dev/null
 rm -rf "$TARGET"
 mkdir -p "$TARGET"
 
-for item in "$SLUG.php" uninstall.php src assets languages readme.txt LICENSE; do
+for item in "$SLUG.php" uninstall.php src templates assets languages readme.txt LICENSE; do
   [ -e "$item" ] && cp -R "$item" "$TARGET/"
 done
 

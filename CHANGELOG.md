@@ -3,9 +3,30 @@
 Format : [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/).
 Versionnement : [SemVer](https://semver.org/lang/fr/).
 
-## [Non publié]
+## [1.0.0-rc.1] — 2026-09-22
+
+Candidate à la version 1.0.0. Le code est complet et vérifié — 456 tests PHP,
+17 parcours de bout en bout, 83,7 % de couverture de lignes, et les 64 exigences
+du cahier des charges toutes établies — mais aucun prélèvement réel n'a encore
+été encaissé : la recette de l'annexe C.4 exige un IBAN réel et un compte en
+production. C'est le seul écart qui sépare cette version d'une 1.0.0.
 
 ### Ajouté
+- Suite de bout en bout Playwright : inscription récurrente, activation par webhook, bascule depuis
+  la carte et adhésion à vie, jouées sur le site Docker réel avec Stripe en mode test.
+- Matrice de traçabilité exigences ↔ tests (`docs/traceability.md`), générée depuis les annotations
+  `@group` de PHPUnit. Chaque exigence du cahier des charges est donc rejouable isolément —
+  `vendor/bin/phpunit --group RG-01` — et l'intégration continue refuse une exigence sans preuve.
+- Garde-fou de cohérence des modes : une clé Stripe de production employée alors que le bac à sable
+  est actif retire la passerelle, et inversement. Un avis d'administration en explique la cause.
+- Bandeau non masquable signalant le mode test, à l'inscription, à la bascule et dans
+  l'administration : un formulaire de paiement en mode test est autrement indiscernable d'un
+  formulaire réel.
+- Champ de réglage du secret de webhook, masqué et jamais pré-rempli — le laisser vide conserve la
+  valeur en place — et en lecture seule lorsqu'une constante de `wp-config.php` prévaut.
+- Annexe C du cahier des charges refondue en runbook de mise en production : six phases ordonnées,
+  de l'habilitation SEPA du compte jusqu'à la surveillance des fenêtres de rejet à huit semaines et
+  treize mois, chaque point indiquant comment le vérifier, et un retour arrière écrit d'avance.
 - Internationalisation complète : modèle `.pot`, traduction française compilée, et tests vérifiant
   la couverture de la traduction ainsi que l'intégrité des marqueurs de substitution.
 - Exportateur et effaceur de données personnelles branchés sur les outils de WordPress : un adhérent
@@ -91,6 +112,18 @@ Versionnement : [SemVer](https://semver.org/lang/fr/).
   désormais l'outillage et les tests.
 
 ### Corrigé
+- **Révoquer un accès s'écrit `expired`, jamais `cancelled`.** `RCP_Membership::is_active()` tient
+  pour actives les adhésions `cancelled` dont l'échéance n'est pas passée : une adhésion résiliée
+  garde l'accès jusqu'au terme de la période qu'elle a réglée. Trois transitions laissaient donc le
+  contenu ouvert alors que rien n'avait été encaissé, ou que les fonds avaient été repris : mandat
+  refusé, litige révoqué et remboursement total. Ce dernier divergeait en outre de Restrict Content
+  Pro, qui appelle `expire()`. Défaut révélé par un test de bout en bout.
+- La clé secrète Stripe n'était armée nulle part hors d'une passerelle RCP. La bascule carte → SEPA
+  et le rejeu d'événement partaient donc sans clé : l'un comme l'autre étaient inopérants.
+- Stripe refuse d'émettre un mandat SEPA sans adresse de contact ; la bascule ne la transmettait
+  pas, ce qui la rendait totalement inopérante.
+- Le gestionnaire JavaScript d'inscription lisait la mauvaise signature d'événement : RCP transmet
+  `(form, response)` et conclut par `rcp_submit_registration_form()`.
 - `rcp_subscription_details_action_links` est une action et non un filtre : le bouton de migration
   n'apparaissait pas. Les tests appelaient `apply_filters()` et validaient donc l'hypothèse plutôt
   que la réalité ; ils empruntent désormais le même chemin que le gabarit de RCP.

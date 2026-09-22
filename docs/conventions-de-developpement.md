@@ -205,10 +205,39 @@ avec contrôle de seuil, `i18n` vérifiant que le `.pot` est à jour.
 Un déclencheur quotidien exécute les tests de contrat contre la dernière version
 des dépendances.
 
-Les dépendances propriétaires ne sont jamais versionnées : `.gitignore` bloque
-leurs répertoires et archives, et le job qui en a besoin ne s'exécute que si un
-secret de dépôt le permet, en `continue-on-error` pour ne pas bloquer une
-contribution externe.
+### Dépendances propriétaires
+
+Elles ne sont jamais versionnées : `.gitignore` bloque leurs répertoires et
+leurs archives. La tâche qui en a besoin télécharge l'archive depuis une URL
+licenciée, laquelle porte la clé de licence.
+
+Ce secret ne peut donc pas être un secret de dépôt : le dépôt est public, et un
+secret de dépôt est lisible par n'importe quelle tâche — donc par un workflow
+modifié sur une branche quelconque. Il vit dans l'environnement `rcp-pro`,
+accessible depuis `main` et les étiquettes `v*` seulement, et dont chaque
+exécution demande une approbation.
+
+Deux conséquences, contre-intuitives mais structurantes :
+
+- **L'approbation est réclamée dès que la tâche démarre**, même pour ne rien
+  faire faute de secret. La variable de dépôt `RCP_PRO_ENABLED` décide donc en
+  amont si la tâche doit seulement exister — le contexte `vars` est lisible
+  avant le démarrage, le contexte `secrets` ne l'est pas.
+- **La cadence est volontairement basse** : une exécution nocturne, sur
+  étiquette de version, et à la demande. La compatibilité avec une variante
+  commerciale ne bouge pas d'un commit à l'autre, et une approbation réclamée à
+  chaque poussée finirait par se donner sans regarder — ce qui viderait la
+  garantie de son sens.
+
+La tâche est bloquante. Elle n'entre en scène que sur décision explicite : un
+échec y est un signal, pas du bruit.
+
+Pour l'activer :
+
+```bash
+gh secret set RCP_PRO_ARCHIVE_URL --env rcp-pro
+gh variable set RCP_PRO_ENABLED --body true
+```
 
 ## 9. Internationalisation
 

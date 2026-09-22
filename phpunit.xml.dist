@@ -39,7 +39,13 @@
     </coverage>
 
     <php>
-        <env name="WP_TESTS_DIR" value="/wp-tests/lib"/>
+        <!--
+            `WP_TESTS_DIR` n'est volontairement pas fixé ici : ce fichier vaut
+            pour tous les environnements, alors que le chemin, lui, en dépend.
+            La pile Docker le pose dans docker-compose.yml ; ailleurs, le
+            bootstrap retombe sur le même répertoire temporaire que
+            `bin/install-wp-tests.sh`.
+        -->
         <env name="STRIPE_MOCK_HOST" value="stripe-mock"/>
         <env name="STRIPE_MOCK_PORT" value="12111"/>
     </php>

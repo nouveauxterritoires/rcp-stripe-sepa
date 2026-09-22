@@ -144,15 +144,44 @@ require $tests_dir . '/includes/bootstrap.php';
  * l'initialisation de l'administration. Le DDL n'étant pas transactionnel, les
  * tables survivent au rollback opéré entre deux tests.
  */
-if ( function_exists( 'rcp_setup_components' ) && function_exists( 'rcp_get_component' ) ) {
+/*
+ * Le plugin crée sa propre table d'événements sur `admin_init`, hook que la
+ * suite ne déclenche pas — même raison que pour les tables de RCP ci-dessous.
+ */
+if ( class_exists( '\\RCP_Stripe_Sepa\\Webhook\\EventStore' ) ) {
+	\RCP_Stripe_Sepa\Webhook\EventStore::install();
+}
+
+/*
+ * Restrict Content Pro répartit son schéma en deux familles. Les tables
+ * introduites en 3.0 sont des « composants » ; les plus anciennes — paiements,
+ * méta de niveaux et de paiements — restent créées par `rcp_create_tables()`,
+ * appelée à l'activation. Les deux sont nécessaires.
+ */
+if ( function_exists( 'rcp_create_tables' ) ) {
+	require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+
+	rcp_create_tables();
+}
+
+if ( function_exists( 'rcp_setup_components' ) && function_exists( 'restrict_content_pro' ) ) {
 	rcp_setup_components();
 
-	$rcp_sepa_components = array( 'customers', 'discounts', 'memberships', 'queue', 'membership_counts', 'logs' );
+	/*
+	 * Le registre de RCP est parcouru plutôt qu'une liste tenue ici : une
+	 * liste se périme en silence. Elle avait d'ailleurs omis
+	 * `membership_levels`, ce qui rendait toute création de niveau impossible
+	 * sur une base vierge — invisible en local, où la table subsistait d'une
+	 * exécution antérieure, mais fatal en intégration continue.
+	 */
+	$rcp_sepa_components = restrict_content_pro()->components;
 
-	foreach ( $rcp_sepa_components as $rcp_sepa_component ) {
-		$rcp_sepa_object = rcp_get_component( $rcp_sepa_component );
+	if ( ! is_array( $rcp_sepa_components ) ) {
+		$rcp_sepa_components = array();
+	}
 
-		if ( ! $rcp_sepa_object ) {
+	foreach ( $rcp_sepa_components as $rcp_sepa_object ) {
+		if ( ! is_object( $rcp_sepa_object ) || ! method_exists( $rcp_sepa_object, 'get_interface' ) ) {
 			continue;
 		}
 

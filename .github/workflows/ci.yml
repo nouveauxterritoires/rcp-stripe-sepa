@@ -231,7 +231,7 @@ jobs:
         with:
           php-version: '8.2'
           tools: wp-cli
-      - run: wp i18n make-pot . languages/rcp-stripe-sepa.pot --slug=rcp-stripe-sepa --exclude=vendor,tests,ressources,node_modules,stubs
+      - run: wp i18n make-pot . languages/rcp-stripe-sepa.pot --slug=rcp-stripe-sepa --exclude=vendor,tests,ressources,node_modules,stubs,build
       - name: Échouer si le .pot a changé
         run: |
           # `POT-Creation-Date` change à chaque génération : la comparer

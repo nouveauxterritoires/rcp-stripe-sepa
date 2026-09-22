@@ -10,7 +10,7 @@ CLI   := $(DC) run --rm wpcli
 .DEFAULT_GOAL := help
 .PHONY: help up down clean shell wp setup logs \
         test test-unit test-integration test-contract test-webhooks test-e2e \
-        coverage traceability lint fix matrix build \
+        coverage traceability pot lint fix matrix build \
         webhook-secret webhook-list webhook-send webhook-replay webhook-capture \
         webhook-events webhook-attack \
         stripe-doctor stripe-seed stripe-clean stripe-listen stripe-trigger
@@ -74,6 +74,9 @@ coverage: prepare-tests ## Couverture fusionnée de toutes les suites (tests/cov
 
 traceability: ## Régénère docs/traceability.md à partir des annotations @group
 	php bin/traceability.php
+
+pot: ## Régénère le modèle de traduction
+	$(CLI) "cd /var/www/html/wp-content/plugins/rcp-stripe-sepa && wp i18n make-pot . languages/rcp-stripe-sepa.pot --slug=rcp-stripe-sepa --exclude=vendor,tests,ressources,node_modules,stubs,build --allow-root"
 
 lint: ## PHPCS + PHPStan (ESLint ajouté avec le JavaScript, au jalon J3)
 	$(CLI) "cd /var/www/html/wp-content/plugins/rcp-stripe-sepa && vendor/bin/phpcs --report-full --report-summary && vendor/bin/phpstan analyse --memory-limit=1G"

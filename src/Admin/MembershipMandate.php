@@ -69,11 +69,11 @@ final class MembershipMandate {
 	private static function rows( array $mandate ): array {
 		return array_filter(
 			array(
-				__( 'IBAN', 'rcp-stripe-sepa' )       => MandateData::masked_iban( $mandate ),
-				__( 'Account holder', 'rcp-stripe-sepa' )  => (string) $mandate['account_holder_name'],
+				__( 'IBAN', 'rcp-stripe-sepa' )           => MandateData::masked_iban( $mandate ),
+				__( 'Account holder', 'rcp-stripe-sepa' ) => (string) $mandate['account_holder_name'],
 				__( 'Mandate reference', 'rcp-stripe-sepa' ) => (string) $mandate['mandate_reference'],
 				__( 'Mandate status', 'rcp-stripe-sepa' ) => (string) $mandate['mandate_status'],
-				__( 'Accepted on', 'rcp-stripe-sepa' ) => (string) $mandate['accepted_at'],
+				__( 'Accepted on', 'rcp-stripe-sepa' )    => (string) $mandate['accepted_at'],
 			),
 			static function ( string $value ): bool {
 				return '' !== $value;

@@ -27,8 +27,8 @@ namespace RCP_Stripe_Sepa\Membership;
 final class StateMachine {
 
 	// Statuts d'adhésion RCP.
-	public const MEMBERSHIP_PENDING   = 'pending';
-	public const MEMBERSHIP_ACTIVE    = 'active';
+	public const MEMBERSHIP_PENDING = 'pending';
+	public const MEMBERSHIP_ACTIVE  = 'active';
 
 	/*
 	 * Révoquer un accès, c'est `expired`, jamais `cancelled`.

@@ -11,8 +11,13 @@ DB_PASS="${WP_TESTS_DB_PASSWORD:-root}"
 DB_HOST="${WP_TESTS_DB_HOST:-db-tests}"
 WP_VERSION="${WP_VERSION:-latest}"
 
-WP_TESTS_DIR="${WP_TESTS_DIR:-/wp-tests/lib}"
-WP_CORE_DIR="${WP_CORE_DIR:-/wp-tests/core}"
+# Par défaut, un répertoire temporaire : c'est le seul emplacement inscriptible
+# partout — un runner d'intégration continue n'autorise pas la création d'un
+# répertoire à la racine. La pile Docker, elle, impose explicitement
+# `/wp-tests`, monté sur un volume qui survit aux conteneurs jetables.
+WP_TESTS_BASE="${WP_TESTS_BASE:-${TMPDIR:-/tmp}/rcp-sepa-wp-tests}"
+WP_TESTS_DIR="${WP_TESTS_DIR:-$WP_TESTS_BASE/lib}"
+WP_CORE_DIR="${WP_CORE_DIR:-$WP_TESTS_BASE/core}"
 
 log() { printf '\033[1;34m==>\033[0m %s\n' "$*"; }
 

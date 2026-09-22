@@ -315,7 +315,12 @@ final class Diagnostics {
 	 * @return array
 	 */
 	private static function ok( string $id, string $label, string $detail ): array {
-		return compact( 'id', 'label', 'detail' ) + array( 'status' => self::STATUS_OK );
+		return array(
+			'id'     => $id,
+			'label'  => $label,
+			'detail' => $detail,
+			'status' => self::STATUS_OK,
+		);
 	}
 
 	/**
@@ -327,7 +332,12 @@ final class Diagnostics {
 	 * @return array
 	 */
 	private static function warning( string $id, string $label, string $detail ): array {
-		return compact( 'id', 'label', 'detail' ) + array( 'status' => self::STATUS_WARNING );
+		return array(
+			'id'     => $id,
+			'label'  => $label,
+			'detail' => $detail,
+			'status' => self::STATUS_WARNING,
+		);
 	}
 
 	/**
@@ -339,7 +349,12 @@ final class Diagnostics {
 	 * @return array
 	 */
 	private static function error( string $id, string $label, string $detail ): array {
-		return compact( 'id', 'label', 'detail' ) + array( 'status' => self::STATUS_ERROR );
+		return array(
+			'id'     => $id,
+			'label'  => $label,
+			'detail' => $detail,
+			'status' => self::STATUS_ERROR,
+		);
 	}
 
 	/**

@@ -69,7 +69,9 @@ if ( 'unit' === $rcp_sepa_suite ) {
 	return;
 }
 
-$tests_dir = getenv( 'WP_TESTS_DIR' ) ?: '/wp-tests/lib';
+// Doit s'accorder au défaut de `bin/install-wp-tests.sh`.
+$tests_base = getenv( 'TMPDIR' ) ?: '/tmp';
+$tests_dir  = getenv( 'WP_TESTS_DIR' ) ?: rtrim( $tests_base, '/' ) . '/rcp-sepa-wp-tests/lib';
 
 if ( ! file_exists( $tests_dir . '/includes/functions.php' ) ) {
 	fwrite(

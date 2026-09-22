@@ -37,12 +37,12 @@ final class PersonalData {
 		}
 
 		$fields = array(
-			__( 'Bank account debited', 'rcp-stripe-sepa' )  => MandateData::masked_iban( $mandate ),
-			__( 'Account holder', 'rcp-stripe-sepa' )     => (string) ( $mandate['account_holder_name'] ?? '' ),
-			__( 'Account country', 'rcp-stripe-sepa' )          => (string) ( $mandate['country'] ?? '' ),
-			__( 'Mandate reference', 'rcp-stripe-sepa' )     => (string) ( $mandate['mandate_reference'] ?? '' ),
-			__( 'Mandate status', 'rcp-stripe-sepa' )        => (string) ( $mandate['mandate_status'] ?? '' ),
-			__( 'Mandate signed on', 'rcp-stripe-sepa' )         => (string) ( $mandate['accepted_at'] ?? '' ),
+			__( 'Bank account debited', 'rcp-stripe-sepa' ) => MandateData::masked_iban( $mandate ),
+			__( 'Account holder', 'rcp-stripe-sepa' )    => (string) ( $mandate['account_holder_name'] ?? '' ),
+			__( 'Account country', 'rcp-stripe-sepa' )   => (string) ( $mandate['country'] ?? '' ),
+			__( 'Mandate reference', 'rcp-stripe-sepa' ) => (string) ( $mandate['mandate_reference'] ?? '' ),
+			__( 'Mandate status', 'rcp-stripe-sepa' )    => (string) ( $mandate['mandate_status'] ?? '' ),
+			__( 'Mandate signed on', 'rcp-stripe-sepa' ) => (string) ( $mandate['accepted_at'] ?? '' ),
 			__( 'Signature IP address', 'rcp-stripe-sepa' ) => (string) ( $mandate['accepted_ip'] ?? '' ),
 		);
 

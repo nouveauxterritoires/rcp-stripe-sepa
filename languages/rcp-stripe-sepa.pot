@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-09-21T18:23:09+00:00\n"
+"POT-Creation-Date: 2026-09-22T08:30:34+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: rcp-stripe-sepa\n"
@@ -363,7 +363,7 @@ msgid "SEPA Direct Debit is not configured. Please contact the site administrato
 msgstr ""
 
 #: src/Gateway/Gateway.php:341
-#: src/Migration/AccountPage.php:143
+#: src/Migration/AccountPage.php:151
 msgid "Please enter the account holder’s name."
 msgstr ""
 
@@ -386,7 +386,7 @@ msgid "Stripe — SEPA Direct Debit"
 msgstr ""
 
 #. translators: %s: error message returned by Stripe.
-#: src/Gateway/SignupProcessor.php:328
+#: src/Gateway/SignupProcessor.php:329
 #, php-format
 msgid "SEPA Direct Debit — the subscription could not be created: %s"
 msgstr ""
@@ -402,15 +402,15 @@ msgstr ""
 msgid "Switch to SEPA Direct Debit"
 msgstr ""
 
-#: src/Migration/AccountPage.php:144
+#: src/Migration/AccountPage.php:152
 msgid "Saving your mandate…"
 msgstr ""
 
-#: src/Migration/AccountPage.php:145
+#: src/Migration/AccountPage.php:153
 msgid "Your membership is now paid by SEPA Direct Debit. The price and next renewal date are unchanged."
 msgstr ""
 
-#: src/Migration/AccountPage.php:146
+#: src/Migration/AccountPage.php:154
 #: src/Migration/ReasonPresenter.php:51
 msgid "Switching to SEPA Direct Debit failed. Please try again, or contact us if the problem persists."
 msgstr ""
@@ -420,7 +420,7 @@ msgid "Your membership is now paid by SEPA Direct Debit."
 msgstr ""
 
 #. translators: %s: previous gateway identifier.
-#: src/Migration/Migrator.php:308
+#: src/Migration/Migrator.php:317
 #, php-format
 msgid "SEPA Direct Debit — payment method migrated from “%s”. Price and next renewal date unchanged."
 msgstr ""

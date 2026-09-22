@@ -41,6 +41,16 @@
         </properties>
     </rule>
 
+    <!--
+        Les exportateurs et effaceurs de données personnelles reçoivent un
+        numéro de page imposé par WordPress. Le plugin renvoie tout en une
+        seule page : le paramètre est inutilisé, mais ne peut pas disparaître
+        sans rompre la signature attendue.
+    -->
+    <rule ref="Generic.CodeAnalysis.UnusedFunctionParameter">
+        <exclude-pattern>src/Privacy/Registry.php</exclude-pattern>
+    </rule>
+
     <!-- PSR-4 : les noms de fichiers ne suivent pas la convention WordPress. -->
     <rule ref="WordPress.Files.FileName">
         <exclude-pattern>src/*</exclude-pattern>

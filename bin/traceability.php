@@ -105,13 +105,26 @@ function read_php_coverage(): array {
 		}
 
 		$files = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $path ) );
+		$paths = array();
 
 		foreach ( $files as $file ) {
 			if ( ! $file->isFile() || 'php' !== $file->getExtension() ) {
 				continue;
 			}
 
-			collect_groups( (string) $file->getPathname(), $coverage );
+			$paths[] = (string) $file->getPathname();
+		}
+
+		/*
+		 * L'ordre de parcours d'un répertoire dépend du système de fichiers :
+		 * sans tri, le document généré sur macOS diffère de celui généré sur
+		 * Linux, et la porte d'intégration continue échoue sans qu'aucune
+		 * exigence ait bougé.
+		 */
+		sort( $paths, SORT_STRING );
+
+		foreach ( $paths as $file_path ) {
+			collect_groups( $file_path, $coverage );
 		}
 	}
 
@@ -193,7 +206,10 @@ function read_e2e_coverage(): array {
 		return $coverage;
 	}
 
-	foreach ( (array) glob( $path . '/*.spec.js' ) as $file ) {
+	$specs = (array) glob( $path . '/*.spec.js' );
+	sort( $specs, SORT_STRING );
+
+	foreach ( $specs as $file ) {
 		$lines    = file( (string) $file, FILE_IGNORE_NEW_LINES );
 		$relative = 'tests/e2e/' . basename( (string) $file );
 		$pending  = array();
@@ -262,7 +278,10 @@ function render( array $requirements, array $coverage ): string {
 			$tests = $coverage[ $id ] ?? array();
 
 			if ( array() !== $tests ) {
-				$cell = implode( '<br>', array_unique( $tests ) );
+				$tests = array_unique( $tests );
+				sort( $tests, SORT_STRING );
+
+				$cell = implode( '<br>', $tests );
 			} elseif ( isset( TOOLING[ $id ] ) ) {
 				$cell = '*' . TOOLING[ $id ] . '*';
 			} else {

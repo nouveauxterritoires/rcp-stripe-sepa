@@ -30,6 +30,13 @@ jobs:
         run: vendor/bin/phpcs
       - name: PHPStan
         run: vendor/bin/phpstan analyse --memory-limit=1G --no-progress
+      - name: Conformité PSR-4
+        # Un fichier dont le chemin ne reproduit pas la casse de son espace de
+        # noms reste autochargeable sur macOS et introuvable sur Linux. Le
+        # défaut ne se voit donc qu'ici.
+        run: |
+          composer dump-autoload --optimize --strict-psr --no-interaction 2>&1 | tee /tmp/psr4.txt
+          ! grep -q "does not comply with psr-4" /tmp/psr4.txt
 
   security:
     name: Sécurité

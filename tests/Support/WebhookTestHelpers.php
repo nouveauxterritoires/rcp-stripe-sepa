@@ -2,19 +2,23 @@
 /**
  * Utilitaires partagés par les tests de webhooks.
  *
+ * Placé dans `tests/Support/`, seul répertoire de tests dont la casse
+ * corresponde au préfixe PSR-4 : un trait n'est atteignable que par
+ * l'autochargement, qui échoue sur un système de fichiers sensible à la casse
+ * si le dossier ne s'écrit pas comme l'espace de noms.
+ *
  * @package RCP_Stripe_Sepa
  */
 
 declare( strict_types = 1 );
 
-namespace RCP_Stripe_Sepa\Tests\Webhooks;
+namespace RCP_Stripe_Sepa\Tests\Support;
 
 use RCP_Membership;
 use RCP_Stripe_Sepa\Webhook\Endpoint;
 use RCP_Stripe_Sepa\Webhook\EventStore;
 use RCP_Stripe_Sepa\Webhook\RateLimiter;
 use RCP_Stripe_Sepa\Webhook\SignatureVerifier;
-use RCP_Stripe_Sepa\Tests\Support\RcpFixtures;
 use RCP_Stripe_Sepa\Webhook\WebhookSecret;
 use WP_REST_Request;
 use WP_REST_Response;

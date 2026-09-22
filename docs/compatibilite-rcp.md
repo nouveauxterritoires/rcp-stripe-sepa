@@ -88,7 +88,7 @@ une rupture d'API amont en incident diagnostiquable plutôt qu'en erreur fatale.
 
 ## 4. Le filet de sécurité : les tests de contrat
 
-`tests/contract/RcpContractTest.php` s'exécute contre l'installation réelle et
+`tests/Contract/RcpContractTest.php` s'exécute contre l'installation réelle et
 vérifie, indépendamment de la variante :
 
 - que `RCP_Payment_Gateway_Stripe` n'est ni finale ni détachée de sa classe

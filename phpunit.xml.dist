@@ -13,19 +13,19 @@
     <testsuites>
         <!-- WordPress mocké (Brain Monkey) : rapide, sans base de données. -->
         <testsuite name="unit">
-            <directory suffix="Test.php">tests/unit</directory>
+            <directory suffix="Test.php">tests/Unit</directory>
         </testsuite>
         <!-- WordPress et RCP réels, API Stripe bouchonnée. -->
         <testsuite name="integration">
-            <directory suffix="Test.php">tests/integration</directory>
+            <directory suffix="Test.php">tests/Integration</directory>
         </testsuite>
         <!-- Contrats : schéma Stripe (stripe-mock) et API interne de RCP. -->
         <testsuite name="contract">
-            <directory suffix="Test.php">tests/contract</directory>
+            <directory suffix="Test.php">tests/Contract</directory>
         </testsuite>
         <!-- Webhooks : signature, idempotence, désordre, livemode. -->
         <testsuite name="webhooks">
-            <directory suffix="Test.php">tests/webhooks</directory>
+            <directory suffix="Test.php">tests/Webhooks</directory>
         </testsuite>
     </testsuites>
 

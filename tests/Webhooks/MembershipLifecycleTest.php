@@ -9,6 +9,7 @@ declare( strict_types = 1 );
 
 namespace RCP_Stripe_Sepa\Tests\Webhooks;
 
+use RCP_Stripe_Sepa\Tests\Support\WebhookTestHelpers;
 use RCP_Stripe_Sepa\Membership\StateMachine;
 use RCP_Stripe_Sepa\Webhook\EventStore;
 use WP_UnitTestCase;

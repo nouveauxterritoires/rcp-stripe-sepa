@@ -319,6 +319,44 @@ function membershipGateway( id ) {
 	);
 }
 
+/**
+ * Relève ce que Stripe a réellement créé pour une adhésion.
+ *
+ * Un paiement à vie ne doit laisser aucun abonnement derrière lui : c'est la
+ * seule façon de distinguer, côté base, une adhésion à vie d'une adhésion
+ * reconductible dont le premier versement serait encaissé de la même manière.
+ *
+ * @param {string} email Adresse de l'adhérent.
+ * @return {{status: string, subscriptionId: string, gateway: string, transactionId: string}}
+ */
+function membershipFacts( email ) {
+	const raw = wpEval(
+		`do_action( "admin_init" );
+		 $user = get_user_by( "email", "${ email }" );
+		 if ( ! $user ) { echo "{}"; return; }
+		 $customer = rcp_get_customer_by_user_id( $user->ID );
+		 if ( ! $customer ) { echo "{}"; return; }
+		 $memberships = rcp_get_customer_memberships( $customer->get_id() );
+		 if ( ! $memberships ) { echo "{}"; return; }
+		 $m = reset( $memberships );
+		 $payments = new RCP_Payments();
+		 $last = $payments->get_payments( array( "object_id" => $m->get_id(), "number" => 1 ) );
+		 echo wp_json_encode( array(
+			 "status"         => $m->get_status(),
+			 "subscriptionId" => (string) $m->get_gateway_subscription_id(),
+			 "gateway"        => (string) $m->get_gateway(),
+			 "expiration"     => (string) $m->get_expiration_date( false ),
+			 "transactionId"  => $last ? (string) $last[0]->transaction_id : "",
+		 ) );`
+	);
+
+	try {
+		return JSON.parse( raw );
+	} catch ( error ) {
+		return {};
+	}
+}
+
 module.exports = {
 	IBAN,
 	createStripeCustomer,
@@ -329,6 +367,7 @@ module.exports = {
 	sendEventFor,
 	createMember,
 	membershipStatus,
+	membershipFacts,
 	membershipId,
 	waitForMembership,
 	logIn,

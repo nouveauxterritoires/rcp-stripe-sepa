@@ -3,6 +3,7 @@ name: CI
 on:
   push:
     branches: [main, develop]
+    tags: ['v*']
   pull_request:
   workflow_dispatch:
   schedule:
@@ -154,12 +155,29 @@ jobs:
   integration-pro:
     name: Intégration — Restrict Content Pro
     runs-on: ubuntu-latest
+
     # L'archive de RCP Pro est un produit commercial : elle ne peut pas être
-    # versionnée. Ce job ne s'exécute que si l'URL de téléchargement est
-    # configurée en secret de dépôt, et il n'est jamais bloquant pour une
-    # contribution externe.
-    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
-    continue-on-error: true
+    # versionnée, et l'URL qui la télécharge porte la clé de licence.
+    #
+    # Ce secret vit donc dans un environnement protégé, accessible depuis
+    # `main` et les étiquettes de version seulement, et dont chaque exécution
+    # demande une approbation. Un workflow modifié sur une autre branche ne
+    # peut pas l'atteindre.
+    #
+    # L'approbation étant réclamée dès que le job démarre — même pour ne rien
+    # faire —, une variable de dépôt décide en amont s'il doit exister. C'est
+    # le seul contexte lisible avant le démarrage : `secrets` ne l'est pas.
+    # Poser `RCP_PRO_ENABLED` à `true` une fois le secret configuré.
+    #
+    # La compatibilité avec la variante commerciale ne bouge pas d'un commit à
+    # l'autre : la vérifier chaque nuit, à chaque version et à la demande
+    # suffit, et évite une approbation par push.
+    if: >-
+      vars.RCP_PRO_ENABLED == 'true'
+      && ( github.event_name == 'schedule'
+        || github.event_name == 'workflow_dispatch'
+        || startsWith( github.ref, 'refs/tags/v' ) )
+    environment: rcp-pro
     services:
       mysql:
         image: mysql:8.0

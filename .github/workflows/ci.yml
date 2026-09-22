@@ -62,7 +62,18 @@ jobs:
           php-version: ${{ matrix.php }}
           coverage: xdebug
           tools: composer:v2
-      - run: composer install --no-interaction --prefer-dist
+      - name: Dépendances
+        # Le verrou Composer est résolu sur PHP 8.2 : PHPUnit y tire des
+        # paquets qui exigent PHP 8.1. Sur les versions antérieures, laisser
+        # Composer résoudre un outillage compatible — le plugin, lui, reste
+        # tenu à PHP 7.4, ce que vérifie PHPCompatibility dans la tâche de
+        # standards.
+        run: |
+          if [ "${{ matrix.php }}" = "7.4" ] || [ "${{ matrix.php }}" = "8.0" ]; then
+            composer update --no-interaction --prefer-dist
+          else
+            composer install --no-interaction --prefer-dist
+          fi
       - run: vendor/bin/phpunit --testsuite unit
 
   integration:
@@ -94,6 +105,10 @@ jobs:
           coverage: xdebug
           tools: composer:v2
       - run: composer install --no-interaction --prefer-dist
+      - name: Installer Subversion
+        # La bibliothèque de tests de WordPress ne se récupère qu'en SVN, et le
+        # runner n'embarque pas le client. L'image Docker, elle, l'inclut.
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq subversion
       - name: Installer la bibliothèque de tests WordPress
         env:
           WP_VERSION: ${{ matrix.wp }}
@@ -171,6 +186,9 @@ jobs:
         run: |
           mkdir -p vendor-plugins
           curl -sSLf "${{ secrets.RCP_PRO_ARCHIVE_URL }}" -o vendor-plugins/restrict-content-pro.zip
+      - name: Installer Subversion
+        if: steps.guard.outputs.run == 'true'
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq subversion
       - name: Installer la bibliothèque de tests WordPress
         if: steps.guard.outputs.run == 'true'
         env:
@@ -205,5 +223,8 @@ jobs:
       - run: wp i18n make-pot . languages/rcp-stripe-sepa.pot --slug=rcp-stripe-sepa --exclude=vendor,tests,ressources,node_modules,stubs
       - name: Échouer si le .pot a changé
         run: |
-          git diff --quiet -- languages/rcp-stripe-sepa.pot \
-            || { echo "Le fichier .pot n'est pas à jour. Régénérez-le."; git diff -- languages/; exit 1; }
+          # `POT-Creation-Date` change à chaque génération : la comparer
+          # ferait échouer la tâche même sur un fichier parfaitement à jour.
+          ignore='^"POT-Creation-Date:'
+          git diff -I"$ignore" --quiet -- languages/rcp-stripe-sepa.pot \
+            || { echo "Le fichier .pot n'est pas à jour. Régénérez-le."; git diff -I"$ignore" -- languages/; exit 1; }

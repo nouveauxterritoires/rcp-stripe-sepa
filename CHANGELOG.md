@@ -3,6 +3,20 @@
 Format : [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/).
 Versionnement : [SemVer](https://semver.org/lang/fr/).
 
+## [Non publié]
+
+### Modifié
+- La restriction au prélèvement SEPA suit désormais la version d'API visée : `payment_method_types`
+  jusqu'au cycle dahlia, `allowed_payment_method_types` à partir du retrait opéré par
+  `2026-08-26.preview` et repris par `2026-09-30.endive`. Transmettre l'ancien paramètre au-delà de
+  ce retrait fait refuser toute création d'intention ; le plugin reste donc opérant le jour où
+  Stripe imposera cette version au compte, sans autre geste que de relever
+  `RCP_SEPA_STRIPE_API_VERSION` lorsque le SDK embarqué par Restrict Content Pro saura la servir.
+  Les deux formes sont éprouvées contre `stripe-mock`. Rien ne change pour les sites existants, qui
+  continuent de viser `2022-11-15`.
+- Les outils console de `bin/` transmettent explicitement la version d'API du plugin plutôt que de
+  s'en remettre à celle du compte Stripe, qui évolue sans prévenir.
+
 ## [1.0.0-rc.1] — 2026-09-22
 
 Candidate à la version 1.0.0. Le code est complet et vérifié — 456 tests PHP,

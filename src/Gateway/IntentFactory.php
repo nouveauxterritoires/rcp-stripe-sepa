@@ -9,6 +9,9 @@ declare( strict_types = 1 );
 
 namespace RCP_Stripe_Sepa\Gateway;
 
+use RCP_Stripe_Sepa\Support\StripeApiVersion;
+use RCP_Stripe_Sepa\Support\StripeSdk;
+
 /**
  * Fabrique les arguments des PaymentIntent et SetupIntent.
  *
@@ -20,7 +23,12 @@ namespace RCP_Stripe_Sepa\Gateway;
  * ce qui interdit de se greffer sur sa passerelle carte et impose cette
  * construction séparée.
  *
- * @see docs/cahier-des-charges.md §3.6 et §6.1
+ * La restriction au prélèvement SEPA s'écrit différemment selon la version
+ * d'API visée : `payment_method_types` jusqu'au cycle dahlia, puis
+ * `allowed_payment_method_types` à partir du retrait opéré par endive. La
+ * forme est déduite de la version, jamais figée.
+ *
+ * @see docs/cahier-des-charges.md §3.3 règle R-API-4, §3.6 et §6.1
  */
 final class IntentFactory {
 
@@ -95,11 +103,12 @@ final class IntentFactory {
 	 */
 	private static function common( array $context ): array {
 		$args = array(
-			'customer'             => (string) ( $context['customer_id'] ?? '' ),
-			'description'          => (string) ( $context['description'] ?? '' ),
-			'payment_method_types' => array( self::PAYMENT_METHOD_TYPE ),
-			'metadata'             => (array) ( $context['metadata'] ?? array() ),
+			'customer'    => (string) ( $context['customer_id'] ?? '' ),
+			'description' => (string) ( $context['description'] ?? '' ),
+			'metadata'    => (array) ( $context['metadata'] ?? array() ),
 		);
+
+		$args[ self::payment_method_parameter( $context ) ] = array( self::PAYMENT_METHOD_TYPE );
 
 		/*
 		 * La confirmation a lieu dans le navigateur : c'est elle qui recueille
@@ -115,6 +124,33 @@ final class IntentFactory {
 		}
 
 		return $args;
+	}
+
+	/**
+	 * Nom du paramètre restreignant les moyens de paiement de l'intention.
+	 *
+	 * @param array $context Contexte d'inscription.
+	 * @return string
+	 */
+	private static function payment_method_parameter( array $context ): string {
+		return StripeApiVersion::intent_payment_method_parameter( self::api_version( $context ) );
+	}
+
+	/**
+	 * Version d'API que la requête transmettra.
+	 *
+	 * Le contexte peut l'imposer — les tests s'en servent pour éprouver les
+	 * deux formes d'arguments sans toucher à une constante, figée pour la
+	 * durée du processus. À défaut, c'est celle que le plugin transmet à
+	 * chacune de ses requêtes.
+	 *
+	 * @param array $context Contexte d'inscription.
+	 * @return string
+	 */
+	private static function api_version( array $context ): string {
+		$version = trim( (string) ( $context['api_version'] ?? '' ) );
+
+		return '' !== $version ? $version : StripeSdk::api_version();
 	}
 
 	/**

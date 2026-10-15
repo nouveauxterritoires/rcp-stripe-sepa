@@ -141,11 +141,14 @@ services:
   #
   # Version épinglée, et non `latest` : chaque image embarque la spécification
   # OpenAPI d'une seule version d'API, et valide toute requête contre elle sans
-  # considérer l'en-tête `Stripe-Version`. À partir de 0.206.0, cette
-  # spécification retire `payment_method_types` à la création d'une intention,
-  # paramètre attendu par la version d'API que le plugin cible
-  # (RCP_SEPA_STRIPE_API_VERSION). Ne relever cette version qu'en même temps
-  # que cette constante.
+  # considérer l'en-tête `Stripe-Version`. Le plugin produit deux formes
+  # d'arguments d'intention selon la version visée — `payment_method_types`
+  # jusqu'au cycle dahlia, `allowed_payment_method_types` à partir du retrait
+  # opéré par 2026-08-26.preview — et la suite de contrat les éprouve toutes
+  # les deux : il faut donc une image dont la spécification connaisse les deux
+  # paramètres. 0.205.0 est la dernière dans ce cas, 0.206.0 embarquant déjà
+  # 2026-09-30.endive. Ne relever cette version que le jour où le plugin
+  # cessera d'émettre la forme historique.
   stripe-mock:
     image: stripe/stripe-mock:v0.205.0
     ports:

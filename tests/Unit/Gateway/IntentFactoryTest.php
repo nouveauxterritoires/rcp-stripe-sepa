@@ -54,6 +54,75 @@ final class IntentFactoryTest extends TestCase {
 		$this->assertSame( array( 'sepa_debit' ), $args['payment_method_types'] );
 	}
 
+	// -- Forme imposée par la version d'API ---------------------------------------
+
+	/**
+	 * La version `2026-08-26.preview`, reprise dans le canal stable par
+	 * `2026-09-30.endive`, retire `payment_method_types` à la création d'une
+	 * intention. Le transmettre au-delà fait refuser la requête.
+	 */
+	public function test_la_version_endive_restreint_le_paiement_par_le_parametre_qui_succede(): void {
+		$args = IntentFactory::payment_intent(
+			$this->context( array( 'api_version' => '2026-09-30.endive' ) )
+		);
+
+		$this->assertSame( array( 'sepa_debit' ), $args['allowed_payment_method_types'] );
+		$this->assertArrayNotHasKey( 'payment_method_types', $args );
+	}
+
+	public function test_la_version_endive_restreint_aussi_l_intention_d_enregistrement(): void {
+		$args = IntentFactory::setup_intent(
+			$this->context( array( 'amount' => 0, 'api_version' => '2026-09-30.endive' ) )
+		);
+
+		$this->assertSame( array( 'sepa_debit' ), $args['allowed_payment_method_types'] );
+		$this->assertArrayNotHasKey( 'payment_method_types', $args );
+	}
+
+	/**
+	 * Le SDK Stripe embarqué par Restrict Content Pro borne la version que le
+	 * plugin peut viser : la forme historique reste celle émise par défaut.
+	 */
+	public function test_une_version_anterieure_au_retrait_conserve_la_forme_historique(): void {
+		$args = IntentFactory::payment_intent(
+			$this->context( array( 'api_version' => '2022-11-15' ) )
+		);
+
+		$this->assertSame( array( 'sepa_debit' ), $args['payment_method_types'] );
+		$this->assertArrayNotHasKey( 'allowed_payment_method_types', $args );
+	}
+
+	/**
+	 * Les deux formes s'excluent : les transmettre ensemble ferait refuser la
+	 * requête, quelle que soit la version visée.
+	 */
+	public function test_les_deux_formes_ne_sont_jamais_transmises_ensemble(): void {
+		foreach ( array( '2022-11-15', '2026-09-30.endive' ) as $version ) {
+			$args = IntentFactory::payment_intent( $this->context( array( 'api_version' => $version ) ) );
+
+			$this->assertCount(
+				1,
+				array_intersect_key(
+					$args,
+					array( 'payment_method_types' => true, 'allowed_payment_method_types' => true )
+				),
+				"Version {$version} : une seule des deux formes doit être transmise."
+			);
+		}
+	}
+
+	/**
+	 * La version visée pilote la forme des arguments, elle ne doit pas se
+	 * retrouver dans la charge utile envoyée à Stripe.
+	 */
+	public function test_la_version_visee_n_est_pas_transmise_a_stripe(): void {
+		$args = IntentFactory::payment_intent(
+			$this->context( array( 'api_version' => '2026-09-30.endive' ) )
+		);
+
+		$this->assertArrayNotHasKey( 'api_version', $args );
+	}
+
 	// -- Usage futur ------------------------------------------------------------
 
 	public function test_une_adhesion_recurrente_enregistre_le_mandat_pour_l_avenir(): void {

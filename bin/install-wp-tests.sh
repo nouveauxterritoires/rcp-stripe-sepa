@@ -28,21 +28,39 @@ log() { printf '\033[1;34m==>\033[0m %s\n' "$*"; }
 # commande uniquement (PHP/mysqli n'est pas concerné).
 MYSQL_CLIENT_OPTS="${MYSQL_CLIENT_OPTS:---skip-ssl}"
 
+# `latest` est résolu en un numéro de version concret. La bibliothèque de tests
+# et le cœur doivent provenir du même point de l'historique : prendre le tronc
+# pour l'une et l'archive stable pour l'autre les désynchronise dès que le tronc
+# prend de l'avance, et la bibliothèque référence alors des classes que le cœur
+# publié ne connaît pas encore. Le défaut n'apparaît pas au moment du commit,
+# mais le jour où WordPress ouvre un nouveau cycle de développement.
 if [ "$WP_VERSION" = "latest" ]; then
-  WP_TESTS_TAG="trunk"
-else
-  WP_TESTS_TAG="tags/$WP_VERSION"
+  log "Résolution de la dernière version publiée de WordPress"
+
+  # `|| true` : sans lui, `pipefail` ferait échouer l'affectation avant le
+  # contrôle qui suit, et l'erreur n'en dirait pas la cause.
+  WP_VERSION="$(
+    curl -sSL "https://api.wordpress.org/core/version-check/1.7/" \
+      | grep -o '"version":"[^"]*' | head -1 | cut -d'"' -f4 || true
+  )"
+
+  if [ -z "$WP_VERSION" ]; then
+    echo "Impossible de déterminer la dernière version publiée de WordPress." >&2
+    exit 1
+  fi
+
+  log "Dernière version publiée : $WP_VERSION"
 fi
+
+WP_TESTS_TAG="tags/$WP_VERSION"
 
 if [ ! -d "$WP_CORE_DIR" ]; then
   log "Téléchargement du cœur WordPress ($WP_VERSION)"
   mkdir -p "$WP_CORE_DIR"
-  if [ "$WP_VERSION" = "latest" ]; then
-    url="https://wordpress.org/latest.tar.gz"
-  else
-    url="https://wordpress.org/wordpress-${WP_VERSION}.tar.gz"
-  fi
-  curl -sSL "$url" | tar --strip-components=1 -zx -C "$WP_CORE_DIR"
+  # Toujours une version nommée, jamais `latest.tar.gz` : c'est ce qui garantit
+  # que le cœur et la bibliothèque de tests désignent la même version.
+  curl -sSL "https://wordpress.org/wordpress-${WP_VERSION}.tar.gz" \
+    | tar --strip-components=1 -zx -C "$WP_CORE_DIR"
 fi
 
 if [ ! -d "$WP_TESTS_DIR" ]; then

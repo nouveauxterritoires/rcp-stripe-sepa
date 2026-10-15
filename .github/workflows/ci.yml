@@ -111,14 +111,17 @@ jobs:
         # spécification OpenAPI d'une seule version d'API, et valide toute
         # requête contre elle sans considérer l'en-tête `Stripe-Version`.
         #
-        # À partir de 0.206.0, cette spécification est celle de la version
-        # 2026-09-30.endive, qui retire `payment_method_types` à la création
-        # d'un PaymentIntent ou d'un SetupIntent. Le plugin cible la version
-        # 2022-11-15 (RCP_SEPA_STRIPE_API_VERSION), où ce paramètre est celui
-        # attendu : le bouchon refusait donc des requêtes parfaitement valides.
+        # Le plugin produit deux formes d'arguments d'intention selon la
+        # version visée : `payment_method_types` jusqu'au cycle dahlia, et
+        # `allowed_payment_method_types` à partir du retrait opéré par
+        # 2026-08-26.preview, repris par 2026-09-30.endive. La suite de
+        # contrat les éprouve toutes les deux, ce qui exige une image dont la
+        # spécification connaisse les deux paramètres : 0.205.0 est la
+        # dernière dans ce cas, 0.206.0 embarquant déjà endive.
         #
-        # Ne relever cette version qu'en même temps que
-        # RCP_SEPA_STRIPE_API_VERSION.
+        # Ne relever cette version que le jour où le plugin cessera d'émettre
+        # la forme historique, c'est-à-dire quand RCP_SEPA_STRIPE_API_VERSION
+        # atteindra la version du retrait.
         image: stripe/stripe-mock:v0.205.0
         ports: ['12111:12111']
     steps:
@@ -205,14 +208,17 @@ jobs:
         # spécification OpenAPI d'une seule version d'API, et valide toute
         # requête contre elle sans considérer l'en-tête `Stripe-Version`.
         #
-        # À partir de 0.206.0, cette spécification est celle de la version
-        # 2026-09-30.endive, qui retire `payment_method_types` à la création
-        # d'un PaymentIntent ou d'un SetupIntent. Le plugin cible la version
-        # 2022-11-15 (RCP_SEPA_STRIPE_API_VERSION), où ce paramètre est celui
-        # attendu : le bouchon refusait donc des requêtes parfaitement valides.
+        # Le plugin produit deux formes d'arguments d'intention selon la
+        # version visée : `payment_method_types` jusqu'au cycle dahlia, et
+        # `allowed_payment_method_types` à partir du retrait opéré par
+        # 2026-08-26.preview, repris par 2026-09-30.endive. La suite de
+        # contrat les éprouve toutes les deux, ce qui exige une image dont la
+        # spécification connaisse les deux paramètres : 0.205.0 est la
+        # dernière dans ce cas, 0.206.0 embarquant déjà endive.
         #
-        # Ne relever cette version qu'en même temps que
-        # RCP_SEPA_STRIPE_API_VERSION.
+        # Ne relever cette version que le jour où le plugin cessera d'émettre
+        # la forme historique, c'est-à-dire quand RCP_SEPA_STRIPE_API_VERSION
+        # atteindra la version du retrait.
         image: stripe/stripe-mock:v0.205.0
         ports: ['12111:12111']
     steps:

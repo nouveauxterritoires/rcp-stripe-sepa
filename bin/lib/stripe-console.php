@@ -15,6 +15,33 @@ namespace RCP_Stripe_Sepa\Console;
 const STRIPE_API = 'https://api.stripe.com/v1';
 
 /**
+ * Version d'API que le plugin vise, lue dans son fichier d'amorçage.
+ *
+ * Les outils console parlent à la même API que le plugin et doivent donc
+ * parler la même version : sans en-tête explicite, Stripe appliquerait celle
+ * du compte, qui évolue sans prévenir et dont la forme des requêtes dépend
+ * — `payment_method_types` a ainsi disparu de la création d'une intention au
+ * cycle endive. La valeur est relue plutôt que recopiée, pour qu'elle ne
+ * puisse pas diverger de la constante du plugin.
+ *
+ * @return string
+ */
+function api_version(): string {
+	static $version = null;
+
+	if ( null !== $version ) {
+		return $version;
+	}
+
+	$source  = (string) file_get_contents( __DIR__ . '/../../rcp-stripe-sepa.php' );
+	$version = preg_match( "/'RCP_SEPA_STRIPE_API_VERSION',\s*'([^']+)'/", $source, $matches )
+		? $matches[1]
+		: '2022-11-15';
+
+	return $version;
+}
+
+/**
  * Écrit un message sur la sortie standard.
  *
  * @param string $message Message.
@@ -225,6 +252,7 @@ function stripe( string $key, string $path, string $method = 'GET', ?array $para
 		array(
 			'Authorization: Bearer ' . $key,
 			'Content-Type: application/x-www-form-urlencoded',
+			'Stripe-Version: ' . api_version(),
 		),
 		$body
 	);

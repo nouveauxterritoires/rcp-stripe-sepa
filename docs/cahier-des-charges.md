@@ -149,6 +149,25 @@ est ≥ `10.0.0`. En deçà, la passerelle ne s'enregistre pas et un avis d'admi
 cause. Une évolution ultérieure (§16.3) pourra embarquer un SDK propre, préfixé via PHP-Scoper /
 Strauss, pour s'affranchir de cette dépendance.
 
+**Règle d'implémentation (R-API-4).** La forme des arguments d'intention suit la version visée, elle
+n'est jamais figée. La version `2026-08-26.preview`, reprise dans le canal stable par
+`2026-09-30.endive`, retire `payment_method_types` à la création, à la mise à jour et à la
+confirmation d'un PaymentIntent comme d'un SetupIntent : le transmettre au-delà renvoie une erreur
+`400` de code `payment_method_types_no_longer_supported`. Son successeur,
+`allowed_payment_method_types`, filtre **silencieusement** les moyens incompatibles au lieu de
+refuser la requête — c'est le contrôle de devise du plugin (RG-02) qui intercepte désormais un
+prélèvement SEPA hors zone euro, et non plus Stripe. `StripeApiVersion` déduit le paramètre de la
+version, et `IntentFactory` n'en émet jamais qu'un seul : les deux s'excluent. Le paramètre reste
+**lisible** sur les objets renvoyés, où il reflète la liste calculée des moyens disponibles ; les
+charges utiles de webhook et les fixtures qui s'y appuient sont donc inchangées. Le paramètre
+homonyme de `Subscription` — `payment_settings.payment_method_types` — n'est pas concerné par ce
+retrait et reste inscriptible.
+
+Ce retrait ne se traduira par un changement de version visée que lorsque le SDK embarqué par RCP
+saura la servir : `RCP_SEPA_STRIPE_API_VERSION` ne peut pas dépasser `\Stripe\Util\ApiVersion::CURRENT`
+(R-API-2), ce qu'établit la suite de contrat. Les deux formes sont néanmoins éprouvées dès
+aujourd'hui, afin que le passage se réduise à changer la constante.
+
 ### 3.4 Contrainte majeure n°2 — SEPA est asynchrone
 
 | Propriété | Carte | Prélèvement SEPA |
@@ -323,8 +342,9 @@ utiliser de carte bancaire.
    fourni par Stripe (§10.1).
 3. À la soumission, RCP déclenche `process_ajax_signup()` (capacité `ajax-payment`). La passerelle :
    - récupère ou crée le `Customer` Stripe (via `get_or_create_customer()`, hérité) ;
-   - crée un **PaymentIntent** si `initial_amount > 0`, sinon un **SetupIntent**, avec
-     `payment_method_types: ['sepa_debit']` et `setup_future_usage: 'off_session'` ;
+   - crée un **PaymentIntent** si `initial_amount > 0`, sinon un **SetupIntent**, restreint au
+     prélèvement SEPA — `payment_method_types` ou `allowed_payment_method_types` selon la version
+     d'API visée (R-API-4) — avec `setup_future_usage: 'off_session'` ;
    - stocke l'ID d'intention dans la meta de paiement `stripe_payment_intent_id` ;
    - renvoie `client_secret` + `stripe_intent_type`.
 4. Le JS appelle `stripe.confirmSepaDebitPayment()` ou `stripe.confirmSepaDebitSetup()` avec
@@ -362,7 +382,7 @@ utiliser de carte bancaire.
 **En tant que** visiteur, **je veux** régler une adhésion à vie par prélèvement SEPA.
 
 - Niveau d'adhésion non récurrent (durée illimitée ou `auto_renew` désactivé).
-- Un **PaymentIntent** unique est créé : `payment_method_types: ['sepa_debit']`, `confirm: false`,
+- Un **PaymentIntent** unique est créé, restreint à `sepa_debit` (R-API-4), `confirm: false`,
   `setup_future_usage` **omis** (aucun usage futur — évite de créer un mandat récurrent inutile).
 - Aucun objet `Subscription` Stripe n'est créé.
 - L'adhésion reste `pending` jusqu'à `payment_intent.succeeded`, puis passe `active` sans date
@@ -374,8 +394,9 @@ utiliser de carte bancaire.
 
 **Critères d'acceptation**
 
-- [ ] Le PaymentIntent créé contient bien `payment_method_types: ['sepa_debit']` et aucun
-      `setup_future_usage` (test unitaire sur `IntentFactory`).
+- [ ] Le PaymentIntent créé est bien restreint à `sepa_debit`, dans la forme qu'impose la version
+      d'API visée (R-API-4), et ne porte aucun `setup_future_usage` (test unitaire sur
+      `IntentFactory`).
 - [ ] Aucune `Subscription` Stripe n'est créée (test d'intégration avec Stripe en mode test).
 - [ ] L'adhésion activée n'a pas de date d'expiration.
 
@@ -384,7 +405,7 @@ utiliser de carte bancaire.
 **En tant que** membre actif payant par carte, **je veux** basculer sur le prélèvement SEPA.
 
 1. Depuis la page « Mon compte » RCP, le membre choisit « Passer au prélèvement SEPA ».
-2. Un **SetupIntent** `payment_method_types: ['sepa_debit']`, `usage: 'off_session'` est créé pour le
+2. Un **SetupIntent** restreint à `sepa_debit` (R-API-4), `usage: 'off_session'`, est créé pour le
    `Customer` Stripe existant.
 3. Après `confirmSepaDebitSetup()` côté client, le webhook `setup_intent.succeeded` fournit le
    `payment_method` généré.

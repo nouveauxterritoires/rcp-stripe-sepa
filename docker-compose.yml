@@ -138,8 +138,16 @@ services:
       - payment_intent.processing,payment_intent.succeeded,payment_intent.payment_failed,setup_intent.succeeded,setup_intent.setup_failed,invoice.paid,invoice.payment_failed,invoice.payment_action_required,charge.dispute.created,charge.refunded,mandate.updated,customer.subscription.updated,customer.subscription.deleted
 
   # API Stripe bouchonnée : tests de contrat hors ligne, sans clé ni réseau.
+  #
+  # Version épinglée, et non `latest` : chaque image embarque la spécification
+  # OpenAPI d'une seule version d'API, et valide toute requête contre elle sans
+  # considérer l'en-tête `Stripe-Version`. À partir de 0.206.0, cette
+  # spécification retire `payment_method_types` à la création d'une intention,
+  # paramètre attendu par la version d'API que le plugin cible
+  # (RCP_SEPA_STRIPE_API_VERSION). Ne relever cette version qu'en même temps
+  # que cette constante.
   stripe-mock:
-    image: stripe/stripe-mock:latest
+    image: stripe/stripe-mock:v0.205.0
     ports:
       - "${STRIPE_MOCK_PORT:-12111}:12111"
 
